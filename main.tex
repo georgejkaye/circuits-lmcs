@@ -16,6 +16,7 @@
 
 \usepackage{etoolbox}
 \usepackage{xparse}
+\usepackage{mleftright}
 
 \usepackage{standalone}
 \usepackage{wrapfig}
@@ -26,14 +27,19 @@
 
 \usepackage{figures/tikzit}
 \usepackage{tikz-cd}
-\usepackage{todonotes}
 
 \usepackage{bussproofs}
 \usepackage{mathpartir}
 \usepackage{hyperref}
 \usepackage[capitalise]{cleveref}
 
-\input{macros/all.tex}
+\input{macros/letters}
+\input{macros/sets}
+\input{macros/category}
+\input{macros/circuits}
+\input{macros/streams}
+\input{macros/graphs}
+\input{macros/proofs}
 \input{figures/circuits.tikzdefs}
 \input{figures/circuits.tikzstyles}
 
@@ -193,7 +199,7 @@ with some global clock.
     For a study of the latter, see \cite{boisseau2022string}.
 \end{rem}
 
-\section{Circuit signatures}
+\subsection{Circuit signatures}
 
 To construct circuits, we define a category in which a morphism
 \(m \to n\) is a circuit with \(m\) inputs and \(n\) outputs.
@@ -257,7 +263,7 @@ majority of examples in this thesis, is that of gate-level circuits.
     (a short circuit).
 \end{rem}
 
-\section{Combinational circuits}
+\subsection{Combinational circuits}
 
 Before diving straight into sequential circuits, we will define a category of
 \emph{combinational circuits}.
@@ -446,7 +452,7 @@ boxes \iltikzfig{strings/category/f}[box=f,colour=comb,dom=m,cod=n].
     \]
 \end{exa}
 
-\section{Sequential circuits}
+\subsection{Sequential circuits}
 
 Combinational circuits compute functions of their inputs, but have no internal
 state.
@@ -591,7 +597,7 @@ morphisms are drawn as green boxes \(
     and bottom differ.
 \end{exa}
 
-\section{Generalised circuit signatures}
+\subsection{Generalised circuit signatures}
 
 In a circuit signature, gates are assigned a number of input and output wires.
 This serves us well when we want to model lower level circuits in which we
@@ -766,6 +772,782 @@ Most of the upcoming results will be shown for the monochromatic case, as the
 proofs are more elegant.
 However, most of the results also generalise to the coloured case, and this will
 be remarked upon throughout.
+
+\section{Denotational semantics}
+
+Circuits in \(\scircsigma\) are purely \emph{syntax}: they currently have no
+behaviour associated with them.
+In this section we will present a fully compositional denotational
+semantics for sequential circuits based on \emph{causal}, \emph{monotone} and
+\emph{finitely specified} stream functions.
+This denotational semantics is constructed \emph{compositionally} using a
+functor from \(\scircsigma\) to a PROP of stream functions with the desired
+properties; a reverse functor is then defined which maps a stream function \(f\)
+to a circuit in \(\scircsigma\) with \(f\) as its denotation, showing that this
+denotational semantics is \emph{sound and complete}.
+
+\begin{rem}
+    In \cite{mendler2012constructive}, the semantics of digital circuits with
+    delays cycles are presented using \emph{timed ternary simulation}, an
+    algorithm to compute how a sequence of circuit outputs stabilises over time
+    given the inputs and value of the current state.
+    Essentially, one must solve a system of equations in terms of the nodes
+    inside a circuit to determine its behaviour.
+    Our approach is different as we assign each circuit a concrete stream
+    function describing its behaviour, and show that every such stream function
+    is the behaviour of at least one circuit in \(\scircsigma\).
+\end{rem}
+
+We will interpret digital circuits as a certain class of
+\emph{stream functions}, functions that operate on infinite sequences of values.
+This represents how the output of a circuit may not just operate on the current
+input, but all of the previous ones as well.
+
+\begin{rem}
+    In \cite{mendler2012constructive}, the semantics of digital circuits with
+    delays and cycles are presented using \emph{timed ternary simulation}, an
+    algorithm to compute how a sequence of circuit outputs stabilises over time
+    given the inputs and value of the current state.
+    This differs from our approach as we assign each circuit a concrete stream
+    function describing its behaviour, rather than having to solve a system of
+    equations in terms of the gates inside a circuit in order to determine its
+    behaviour.
+\end{rem}
+
+Recall that a function \(f\) between two posets is \emph{monotone}
+if \(x \leq y \Rightarrow f(x) \leq f(y)\), and a \emph{lattice} is a poset
+in which each pair of elements has a least upper bound \(\vee\) (a \emph{join})
+and a greatest lower bound \(\wedge\) (a \emph{meet}); subsequently
+every \emph{finite} lattice has an \emph{infimum} \(\bot\) and a \emph{supremum}
+\(\top\).
+We write \(v^n\) for the \(n\)-tuple containing only \(v\), and call a function
+\(\morph{f}{\valuetuple{m}}{\valuetuple{n}}\) \emph{\(\bot\)-preserving} if
+\(f(\bot^m) = \bot^n\).
+
+\subsection{Interpreting circuit components}\label{sec:interpreting-components}
+
+Before assigning stream functions to a given circuit in \(\scircsigma\), we will
+first decide how to interpret the individual \emph{components} of a given
+circuit signature.
+First we consider the interpretation of the \emph{values} that flow through the
+wires in our circuits.
+In the denotational semantics the set of values will need to have a bit more
+structure, as it must be ordered by how much \emph{information} each value
+carries.
+
+In our context of digital circuits the least and greatest elements respectively
+represent signals with a complete \emph{lack} of information and \emph{every}
+piece of information at once.
+However, we need to add more structure than just this; given two signals we want
+a way to be able to combine their information into one signal.
+
+\begin{defi}
+    Let \(A,B\) be finite lattices, where \(\bot_A\) is the least element of
+    \(A\) and \(\bot_B\) is the least element of \(B\).
+    A function \(\morph{f}{A}{B}\) is \emph{\(\bot\)-preserving} if
+    \(f(\bot_A) = \bot_B\).
+\end{defi}
+
+Assigning interpretations to the combinational components of a circuit sets the
+stage for the entire denotational semantics.
+
+\begin{defi}[Interpretation]
+    For a signature \(
+    \signature = (
+    \values, \bullet, \circuitsignaturegates, \circuitsignaturearity,
+    \circuitsignaturecoarity
+    )\), an \emph{interpretation} of
+    \(\signature\) is a tuple \((\sqsubseteq, \gateinterpretation)\) where
+    \((\values, \sqsubseteq)\) is a lattice with \(\bullet\) as the least
+    element, and \(\gateinterpretation\) maps each
+    \(p \in \circuitsignaturegates\) to a \(\bot\)-preserving monotone function
+    \(
+    \valuetuple{\circuitsignaturearity(p)}
+    \to
+    \valuetuple{\circuitsignaturecoarity(p)}
+    \).
+\end{defi}
+
+\begin{exa}\label{ex:belnap-interpretation}
+    \index{Belnap!interpretation}
+    Recall the Belnap signature \(
+    \belnapsignature = (
+    \belnapvalues, \bot, \belnapgates, \belnaparity, \belnapcoarity
+    )
+    \) from \cref{ex:belnap-signature}.
+    We assign a partial order \(\leq_\mathsf{B}\) to values in
+    \(\belnapvalues\) as follows:
+
+    \begin{center}
+        \begin{tikzcd}
+            & \top & \\
+            \belnapfalse \arrow[dash]{ur} & & \belnaptrue \arrow[dash]{ul} \\
+            & \bot \arrow[dash]{ul} \arrow[dash]{ur} &
+        \end{tikzcd}
+    \end{center}
+
+    The gate interpretation \(\belnapgateinterpretation\) has action \(
+    \andgate \mapsto \land, \orgate \mapsto \lor, \notgate \mapsto \neg
+    \) where \(\land\), \(\lor\) and \(\neg\) are defined by the following
+    truth tables~\cite{belnap1977useful}:
+
+    \begin{center}
+        \begin{tabular}{|c|cccc|}
+            \hline
+            \(\land\)        & \(\bot\)         & \(\belnapfalse\) & \(\belnaptrue\)  & \(\top\)         \\
+            \hline
+            \(\bot\)         & \(\bot\)         & \(\belnapfalse\) & \(\bot\)         & \(\belnapfalse\) \\
+            \(\belnapfalse\) & \(\belnapfalse\) & \(\belnapfalse\) & \(\belnapfalse\) & \(\belnapfalse\) \\
+            \(\belnaptrue\)  & \(\bot\)         & \(\belnapfalse\) & \(\belnaptrue\)  & \(\top\)         \\
+            \(\top\)         & \(\belnapfalse\) & \(\belnapfalse\) & \(\top\)         & \(\top\)         \\
+            \hline
+        \end{tabular}
+        \quad
+        \begin{tabular}{|c|cccc|}
+            \hline
+            \(\lor\)         & \(\bot\)        & \(\belnapfalse\) & \(\belnaptrue\) & \(\top\)        \\
+            \hline
+            \(\bot\)         & \(\bot\)        & \(\bot\)         & \(\belnaptrue\) & \(\belnaptrue\) \\
+            \(\belnapfalse\) & \(\bot\)        & \(\belnapfalse\) & \(\belnaptrue\) & \(\top\)        \\
+            \(\belnaptrue\)  & \(\belnaptrue\) & \(\belnaptrue\)  & \(\belnaptrue\) & \(\belnaptrue\) \\
+            \(\top\)         & \(\belnaptrue\) & \(\top\)         & \(\belnaptrue\) & \(\top\)        \\
+            \hline
+        \end{tabular}
+        \quad
+        \begin{tabular}{|c|c|}
+            \hline
+            \(\neg\)         &                  \\
+            \hline
+            \(\bot\)         & \(\bot\)         \\
+            \(\belnaptrue\)  & \(\belnapfalse\) \\
+            \(\belnapfalse\) & \(\belnaptrue\)  \\
+            \(\top\)         & \(\top\)         \\
+            \hline
+        \end{tabular}
+    \end{center}
+
+    The Belnap interpretation is then \(
+    (\leq_\mathsf{B}, \belnapgateinterpretation)
+    \).
+    An online tool for experimenting with the Belnap interpretation can be found
+    at \url{https://belnap.georgejkaye.com}.
+\end{exa}
+\subsection{Denotational semantics of combinational circuits}
+
+The semantic domain for \emph{combinational} circuits is straightforward: each
+circuit maps to a monotone function.
+
+\begin{defi}
+    Let \(\funci\) be the PROP in which the morphisms
+    \(m \to n\) are the \(\bot\)-preserving monotone
+    functions \(\valuetuple{m} \to \valuetuple{n}\).
+\end{defi}
+
+To map between PROPs we must use a PROP morphism.
+
+\begin{defi}
+    Let \(\morph{\circuittofunci}{\ccircsigma}{\funci}\) be the PROP morphism
+    with action defined as%
+    \vspace{-\abovedisplayskip}
+    \begin{center}
+        \begin{minipage}{0.32\textwidth}
+            \centering
+            \begin{align*}
+                \circuittofunci[
+                    \iltikzfig{strings/structure/comonoid/copy}[colour=comb]
+                ]
+                 & \coloneqq
+                (v) \mapsto (v, v)
+                \\
+                \circuittofunci[
+                    \iltikzfig{strings/structure/monoid/merge}[colour=comb]
+                ]
+                 & \coloneqq
+                (v, w) \mapsto v \sqcup w
+            \end{align*}
+        \end{minipage}
+        \quad
+        \begin{minipage}{0.25\textwidth}
+            \centering
+            \begin{align*}
+                \circuittofunci[
+                    \iltikzfig{strings/structure/comonoid/discard}[colour=comb]
+                ]
+                 & \coloneqq
+                (v) \mapsto ()
+                \\
+                \circuittofunci[
+                    \iltikzfig{strings/structure/monoid/init}[colour=comb]
+                ]
+                 & \coloneqq
+                () \mapsto \bot
+            \end{align*}
+        \end{minipage}
+        \quad
+        \begin{minipage}{0.25\textwidth}
+            \centering
+            \vspace{1.5em}
+            \(\circuittofunci[
+                \iltikzfig{circuits/components/gates/gate}[gate=p,dom=m,cod=n]
+            ]
+            \coloneqq
+            \gateinterpretation[p]
+            \)
+        \end{minipage}
+    \end{center}
+\end{defi}
+
+\begin{rem}
+    One might wonder why the fork and the join have different semantics, as they
+    would be physically realised by the same wiring.
+    This is because digital circuits have a notion of \emph{static causality}:
+    outputs can only connect to inputs.
+    This is why the semantics of combinational circuits is \emph{functions} and
+    not \emph{relations}.
+
+    In real life one could force together two digital devices, but this might
+    lead to undefined behaviour in the digital realm.
+    This is reflected in the semantics by the use of the join; for example, in
+    the Belnap interpretation if one tries to join together \(\belnaptrue\) and
+    \(\belnapfalse\) then the overspecified \(\top\) value is produced.
+\end{rem}
+
+\subsection{Denotational semantics of sequential circuits}
+
+As one might expect, sequential circuits are slightly trickier to deal with.
+In a combinational circuit, the output only depends on the inputs at the current
+cycle, but for sequential circuits inputs can affect outputs many cycles after
+they occur.
+
+We therefore have to reason with \emph{infinite sequences} of inputs rather than
+individual values; these are known as \emph{streams}.
+
+\begin{nota}
+    Given a set \(A\), we denote the set of streams (infinite sequences) of
+    \(A\) by \(\stream{A}\).
+    As a stream can equivalently be viewed as a function \(\nat \to A\), we
+    write \(\sigma(i) \in A\) for the \(i\)-th element of stream
+    \(\sigma \in \stream{A}\).
+    Individual streams are written as \(
+    \sigma \in \stream{A}
+    \coloneqq
+    \sigma(0) \streamcons \sigma(1) \streamcons
+    \sigma(2) \streamcons \cdots
+    \).
+\end{nota}
+
+Streams can be viewed a bit like lists, in that they have a head component and
+an (infinite) tail component.
+
+\begin{defi}[Operations on streams]\label{def:stream-operations}
+    Given a stream \(\sigma \in \stream{A}\), its \emph{initial value}
+    \(\streaminit(\sigma) \in A\) is defined as \(\sigma \mapsto \sigma(0)\)
+    and its \emph{stream derivative} \(\streamderv(\sigma) \in \stream{A}\) is
+    defined as \(\sigma \mapsto (i \mapsto \sigma(i+1))\).
+\end{defi}
+
+\begin{nota}
+    For a stream \(\sigma\) with initial value \(a\) and stream derivative
+    \(\tau\) we write it as \(\sigma \coloneqq a \streamcons \tau\).
+\end{nota}
+
+Streams will serve as the inputs and outputs to circuits, so the denotations of
+sequential circuits will be \emph{stream functions}, which consume and produce
+streams.
+Just like with functions, we cannot claim that all streams are the
+denotations of sequential circuits.
+
+\begin{defi}[Causal stream function~\cite{rutten2006algebraic}]
+    A stream function \(\morph{f}{\stream{A}}{\stream{B}}\) is \emph{causal} if,
+    for all \(i \in \nat\) and \(\sigma,\tau \in \stream{A}\) we have that
+    \(\sigma(j) = \tau(j)\) for all \(j \leq i\), then
+    \(f(\sigma)(i) = f(\tau)(i)\).
+\end{defi}
+
+Causality is a form of continuity; a causal stream function is a stream function
+in which the \(i\)-th element of its output stream only depends on elements
+\(0\) through \(i\) inclusive of the input stream; it cannot look into the
+future.
+A neat consequence of causality is that it enables us to lift the stream
+operations of initial value and stream derivative to stream \emph{functions}.
+
+\begin{defi}[Initial output~\cite{rutten2006algebraic}]
+    For a causal stream function \(\morph{f}{\stream{A}}{\stream{B}}\) and
+    \(a \in A\), the \emph{initial output of \(f\) on input \(a\)} is an element
+    \(\initialoutput{f}{a} \in A\) defined as
+    \(\initialoutput{f}{a} \coloneqq \streaminit(f(a \streamcons \sigma))\) for
+    an arbitrary \(\sigma \in \stream{A}\).
+\end{defi}
+
+Since \(f\) is causal, the stream \(\sigma\) in the definition of initial
+output truly is arbitrary; the \(\streaminit\) function only depends on the
+first element of the stream.
+
+\begin{defi}[Functional stream derivative~\cite{rutten2006algebraic}]
+    For a stream function \(\morph{f}{\stream{A}}{\stream{B}}\) and
+    \(a \in A\), the
+    \emph{functional stream derivative of \(f\) on input \(a\)} is a stream
+    function \(\streamderivative{f}{a}\) defined as \(
+    \streamderivative{f}{a}
+    \coloneqq
+    \sigma \mapsto \streamderv(f(a \streamcons \sigma))
+    \).
+\end{defi}
+
+The functional stream derivative \(\streamderivative{f}{a}\) is a new stream
+function which acts as \(f\) would `had it seen \(a\) first'.
+
+\begin{rem}
+    One intuitive way to view stream functions is to think of them as the states
+    of some Mealy machine; the initial output is the output given some input,
+    and the functional stream derivative is the transition to a new state.
+    As with most things in mathematics, this is no coincidence; there is a
+    homomorphism from any Mealy machine to a stream function.
+    We will exploit this fact in the next section.
+\end{rem}
+
+This leads us to the next property of denotations of sequential circuits.
+Although they may have infinitely many inputs and outputs, circuits themselves
+are built from a finite number of components.
+This means they cannot specify infinite \emph{behaviour}.
+
+\begin{nota}
+    Given a finite word \(\listvar{a} \in \freemon{A}\), we abuse notation
+    and write \(\streamderivative{f}{\listvar{a}}\) for the repeated
+    application of the functional stream derivative for the elements of
+    \(\listvar{a}\), i.e.\ \(
+    \streamderivative{f}{\varepsilon} \coloneqq f
+    \) and \(
+    \streamderivative{f}{a \streamcons \listvar{b}} \coloneqq
+    \streamderivative{(\streamderivative{f}{a})}{\listvar{b}}
+    \).
+\end{nota}
+
+\begin{defi}
+    Given a stream function \(\morph{f}{\stream{A}}{\stream{B}}\), we say it is
+    \emph{finitely specified} if the set \(\{
+    \streamderivative{f}{\listvar{a}} \,|\, \listvar{a} \in \freemon{A}
+    \}\) is finite.
+\end{defi}
+
+As the components of our circuits are monotone and \(\bot\)-preserving, a
+denotational semantics for circuits must also be monotone and
+\(\bot\)-preserving.
+This means we need to lift the order on values to an order on streams.
+
+\begin{nota}
+    For a poset \((A, \leq_A)\) and streams \(\sigma,\tau \in \stream{A}\), we
+    say that \(\sigma \leq_{\stream{A}} \tau\) if \(\sigma(i) \leq_A \tau(i)\)
+    for all \(i \in \nat\).
+\end{nota}
+
+For these properties to be suitable as a denotational semantics for
+sequential circuits, we must show that stream functions with these
+properties form a category we can map into from \(\scircsigma\).
+We will first show that these categories form a symmetric monoidal category, so
+we need a suitable candidate for composition and tensor.
+There are fairly obvious choices here: for the former we use regular function
+composition and for the latter we use the Cartesian product.
+
+\begin{lem}\label{lem:causality-preserved}
+    Causality is preserved by composition and Cartesian product.
+\end{lem}
+\begin{proof}
+    If the \(i\)-th element of two stream functions \(f\) and \(g\) only depends
+    on the first \(i+1\) elements of the input, then so will their composition
+    and product.
+\end{proof}
+
+\begin{lem}\label{lem:finitely-specified-preserved}
+    Finite specification is preserved by composition and Cartesian
+    product.
+\end{lem}
+\begin{proof}
+    For both the composition and product of two stream functions \(f\) and
+    \(g\), the largest the set of stream derivatives could be is the product of
+    stream derivatives of \(f\) and \(g\), so this will also be finite.
+\end{proof}
+
+\begin{lem}\label{lem:monotonicity-preserved}
+    \(\bot\)-preserving monotonicity is preserved by composition and Cartesian
+    product.
+\end{lem}
+\begin{proof}
+    The composition and product of any monotone function is monotone, and must
+    preserve the \(\bot\) element.
+\end{proof}
+
+As the categorical operations preserve the desired properties, these stream
+functions form a PROP.
+
+\begin{prop}
+    There is a PROP \(\streami\) in which the morphisms \(m \to n\) are the
+    causal, finitely specified and \(\bot\)-preserving monotone stream
+    functions \(\valuetuplestream{m} \to \valuetuplestream{n}\).
+\end{prop}
+\begin{proof}
+    Identity is the identity function, the symmetry swaps streams, composition
+    is composition of functions, and tensor product on morphisms
+    \(\morph{f}{\valuetuplestream{m}}{\valuetuplestream{n}}\) and
+    \(\morph{g}{\valuetuplestream{p}}{\valuetuplestream{q}}\) is the Cartesian
+    product of functions composed with the components of the isomorphism
+    \(\valuetuplestream{m} \times \valuetuplestream{n}
+    \cong \valuetuplestream{m+n}\).
+
+    As these constructs satisfy the categorical axioms, and as function
+    composition and Cartesian product preserve causality
+    (\cref{lem:causality-preserved}),
+    finite specification (\cref{lem:finitely-specified-preserved}),
+    and monotonicity (\cref{lem:monotonicity-preserved}), this data defines a
+    symmetric monoidal category.
+\end{proof}
+
+Modelling sequential circuits as stream functions deals with temporal
+aspects, but what about feedback?
+As the assignment of denotations needs to be compositional, we need
+to map the trace on \(\scircsigma\) to a trace on \(\streami\).
+A usual candidate for the trace when considering partially ordered settings is
+the \emph{least fixed point}.
+
+\begin{defi}[Least fixed point]
+    For a poset \((A, \leq)\) and function \(\morph{f}{A}{A}\), the least
+    fixed point of \(f\) is a value \(\mu_f\) such that \(f(\mu_f) = f\) and,
+    for all values \(v\) such that \(f(v) = v\), \(\mu_f \leq v\).
+\end{defi}
+
+Least fixed points are ubiquitous in program semantics, where they are often
+used to model \emph{recursion}; since feedback is a form of recursion it seems
+apt that we should also follow this route.
+As fixed points are so important, they are the subject of many theorems; one
+that will come in very useful for us is the \emph{Kleene fixed-point thm},
+which is concerned with a special class of monotone functions.
+
+\begin{nota}[Image]
+    For a function \(\morph{f}{A}{B}\) and subset \(C \subseteq A\), we write
+    \(f[C] \subseteq B\) for the \emph{image} of \(C\) under \(f\).
+\end{nota}
+
+\begin{defi}[Scott continuity]
+    Given two posets \((A, \leq_A)\) and \((B, \leq_B)\), a function
+    \(\morph{f}{A}{B}\) is \emph{Scott-continuous} if for every directed
+    subset \(C \subseteq A\) it holds that \(f(\bigvee_A C) = \bigvee_B(f[C])\)
+    i.e.\ \(f\) preserves directed joins.
+\end{defi}
+
+\begin{thm}[Kleene fixed-point theorem~\cite{tarski1955latticetheoretical}]
+    \index{Kleene fixed-point thm}
+    Let \((A, \leq)\) be a poset in which each of its directed subsets has a
+    join, and let \(\morph{f}{L}{L}\) be a Scott-continuous function.
+    Then \(f\) has a least fixed point, defined as \(
+    \bot \vee f(\bot) \vee f(f(\bot)) \vee \cdots
+    \).
+\end{thm}
+
+So far we have not explicitly enforced Scott-continuity on stream functions; it
+turns out that it is implied by causality and monotonicity.
+
+\begin{prop}\label{prop:monotone-causal-scott}
+    Let \((A, \leq_A)\) and \((B, \leq_B)\) be finite lattices, and let
+    \((\stream{A}, \leq_{\stream{A}})\) and \((\stream{B}, \leq_{\stream{B}})\)
+    be the induced lattices on streams.
+    Then a causal and monotone function \(\stream{A} \to \stream{B}\) must also
+    be Scott-continuous.
+\end{prop}
+\begin{proof}
+    Consider a directed subset \(D \subseteq \stream{A}\); we need to show that
+    for an arbitrary causal, monotone and finitely specified function \(f\) we
+    have that \(f\left(\bigvee D\right) = \bigvee f[D]\).
+
+    First consider the case when there is a greatest element in \(D\).
+    In this case, \(\bigvee D\) must be the greatest element, and as such
+    \(\bigvee D \in D\).
+    As \(f\) is monotone then \(f(\bigvee D)\) must be the greatest element in
+    \(f[D]\); subsequently, \(f\left(\bigvee D\right) = \bigvee f[D]\).
+
+    Now consider the case where there is no greatest element in \(D\) and
+    subsequently \(\bigvee D \not\in D\); if there is no greatest element,
+    \(D\) must be infinite.
+    Even though it is infinite, \(D\) is a directed subset so each pair of
+    elements must have an upper bound, and as \(\leq_{\stream{A}}\) is computed
+    pointwise by using \(\leq_A\) we can consider what the upper bounds are
+    pointwise too.
+    Because \(A\) is finite, there cannot be an infinite chain of upper bounds
+    for each element \(i\); there must exist an element \(a_i \in A\) such that
+    \(D\) contains infinitely many streams \(\sigma\) such that
+    \(\sigma(i) = a_i\).
+    This means that \(\left(\bigvee D\right)(i) = a\), so every prefix of
+    \(\bigvee D\) must exist as a prefix of a stream in \(D\).
+    As \(f\) is causal, for each prefix
+    \(f\left(\bigvee D\right)\) there must also exist a \(d \in D\) such that
+    \(f(d)\) has that prefix, and as such
+    \(\bigvee f[D] = f\left(\bigvee D\right)\).
+\end{proof}
+
+This means we can use the Kleene fixed point theorem as a tool to show that the
+least fixed point is a trace on \(\streami\).
+
+\begin{nota}[Concatenation]
+    For a set \(A\), \(\listvar{a} \in A^m\), and \(\listvar{b} \in A^n\), we
+    write \(\listvar{a} \concat \listvar{b}\) for the \emph{concatenation}
+    of \(\listvar{a}\) and \(\listvar{b}\): the tuple of length \(m+n\)
+    containing the elements of \(\listvar{a}\) followed by the elements of
+    \(\listvar{b}\).
+\end{nota}
+
+\begin{nota}[Projection]
+    For a set \(A\), let \(\listvar{a} \in A^m\) and \(\listvar{b} \in A^n\).
+    Then for their concatenation \(
+    \listvar{c} \coloneqq \listvar{a} \concat \listvar{b} \in A^{m+n}\),
+    we write \(\proj{0}(\listvar{c}) = \listvar{a}\) and
+    \(\proj{1}(\listvar{c}) = \listvar{b}\) for the \emph{projections}.
+\end{nota}
+
+\begin{lem}\label{lem:lfp-stream-function}
+    Given a morphism \(
+    \morph{f}{\valuetuplestream{x+m}}{\valuetuplestream{x+n}}
+    \in \streami
+    \), and stream \(\sigma \in \valuetuplestream{m}\), the function \(
+    \tau \mapsto \proj{0}\mleft(f(\tau,\sigma)\mright)
+    \) has a least fixed point.
+\end{lem}
+\begin{proof}
+    The function \(\tau \mapsto \proj{0}\mleft(f(\tau,\sigma)\mright)\) is
+    causal and monotone because \(f\) and the projection function are
+    causal and monotone, so it is Scott-continuous by
+    \cref{prop:monotone-causal-scott}.
+    By the Kleene fixed point theorem, this function has a least fixed point,
+    defined as \(
+    \proj{0}\mleft(f(\bot^\omega, \sigma)\mright) \ljoin
+    \proj{0}\mleft(f(\proj{0}\mleft(f(\bot^\omega, \sigma)\mright), \sigma)\mright) \ljoin
+    \cdots
+    \).
+\end{proof}
+
+We must show that this notion of least fixed point is a trace on \(\streami\).
+The first step is to show that taking the least fixed point of a stream function
+in \(\streami\) produces another causal, finitely specified,
+\(\bot\)-preserving, and monotone stream function.
+
+\begin{defi}\label{def:state-order}
+    Let \(A\) and \(B\) be posets and let
+    \(\morph{f, g}{\stream{A}}{\stream{B}}\) be stream functions.
+    We say \(f \stateorder g\) if \(f(\sigma) \leq_{\stream{B}} g(\sigma)\)
+    for all \(\sigma \in \stream{A}\).
+\end{defi}
+
+\begin{thm}\label{thm:trace-well-defined}
+    For a function \(\morph{f}{\valuetuplestream{x+m}}{\valuetuplestream{x+n}}\),
+    let \(\mu_f(\sigma)\) be the least fixed point of the function \(
+    \tau \mapsto \proj{0}\mleft(f(\tau,\sigma)\mright)
+    \).
+    Then, the stream function \(
+    \sigma \mapsto \proj{1}\mleft(f(\mu_f(\sigma), \sigma)\mright)
+    \) is in \(\streami\).
+\end{thm}
+\begin{proof}
+    To show this, we need to prove that
+    \(\sigma \mapsto \proj{1}\mleft(f(\mu_f(\sigma)\sigma)\mright)\) is in
+    \(\streami\): it is causal, finitely specified, and \(\bot\)-preserving
+    monotone.
+
+    Since \(
+    \morph{f}{\valuetuplestream{x+m}}{\valuetuplestream{x+n}}
+    \) is a morphism of \(\streami\), it has finitely many stream derivatives.
+    For each stream derivative \(\streamderivative{f}{\,\listvar{w}}\), let the
+    function \(
+    \morph{
+        \widehat{\streamderivative{f}{\listvar{w}}}
+    }{
+        \valuetuplestream{x+m}
+    }{
+        \valuetuplestream{x}
+    }
+    \) be defined as \(
+    \tau\sigma
+    \mapsto
+    \proj{0}(\streamderivative{f}{\listvar{w}}(\tau\sigma))
+    \).
+    Note that each of these functions are causal, \(\bot\)-preserving, and
+    monotone, because they are constructed from pieces that are causal
+    \(\bot\)-preserving and monotone.
+
+    In particular, \(\mu_f(\sigma)\) is the least fixed point of
+    \(\widehat{f_\varepsilon}\left((-)\sigma\right)\).
+    Using the Kleene fixed point theorem, the least fixed point of
+    \(\widehat{f}((-)\sigma)\) can be obtained by composing
+    \(\widehat{f}((-)\sigma)\) repeatedly with itself.
+    This means that \(
+    \mu_f(\sigma)
+    =
+    \bigsqcup_{k \in \nat} \widehat{f^k}(\bot^\omega,\sigma)
+    \) where \(\widehat{f^k}\) is the \(k\)-fold composition of \(f(-,\sigma)\)
+    with itself, i.e.\ \(\widehat{f^0}(\tau\sigma) = \tau\) and \(
+    \widehat{f^{k+1}}(\tau\sigma)
+    =
+    \widehat{f}\left(\left(\widehat{f^{k}}(\sigma, \tau)\right)\sigma\right)
+    \).
+    That the mapping \(\mu_f\) is causal and monotone is
+    straightforward: each of the functions in the join is causal and monotone,
+    and join preserves these properties.
+    It remains to show that this mapping has finitely many stream derivatives.
+
+    When equipped with \(\stateorder\), the set of functions
+    \(\valuetuplestream{x+m} \to \valuetuplestream{x}\)
+    is a poset, of which
+    \(\{\widehat{f_w} \,|\, w \in (\valuetuple{x+m})^\star\}\)
+    is a finite subset.
+    Restricting the ordering \(\stateorder\) to this set yields a finite poset.
+    Since this poset is finite, the set of strictly increasing sequences in this
+    poset is also finite.
+    We will now demonstrate a relationship between these sequences and stream
+    derivatives of \(\mu_f\).
+
+    Suppose \(
+    S = \widehat{f_{\,\listvar{w_0}}} \prec \widehat{f_{\,\listvar{w_1}}} \prec
+    \cdots \prec \widehat{f_{\,\listvar{w_{\ell-1}}}}
+    \) is a strictly increasing sequence of length \(\ell\) in the set of stream
+    functions \(
+    \{\widehat{f_w} \,|\, w \in (\valuetuple{x+m})^\star\}
+    \).
+    We define a function \(
+    \morph{g_S}{
+        \valuetuplestream{m}
+    }{
+        \valuetuplestream{x}
+    }
+    \) as \(
+    (\sigma) \mapsto \bigsqcup_{k \in \nat} g_k(\sigma)
+    \) where \[
+        g_k(\sigma) =
+        \begin{cases}
+            \bot^\omega                                                                & \text{ if } k = 0              \\
+            \widehat{f_{\,\listvar{w_k}}}(\left(g_{k-1}(\sigma), \sigma\right))        & \text{ if } 1 \leq k \leq \ell \\
+            \widehat{f_{\,\listvar{w_{\ell-1}}}}(\left(g_{k-1}(\sigma), \sigma\right)) & \text{ if } \ell < k
+        \end{cases}.
+    \]
+    Let the set \(G \coloneqq \{
+    g_S \,|\, S \text{ is a strictly increasing sequence}
+    \}\).
+    When \(S\) is set to the one-item sequence \(\widehat{f}\), \(g_S\) is
+    \(\mu_f\), so \(\mu_f \in G\).
+    As \(G\) is finite, this means that if \(G\) is closed under stream
+    derivative, \(\mu_f\) has finitely many stream derivatives.
+    Any element of \(G\) is either \(\bot^\omega\) or has the form \(
+    \sigma
+    \mapsto
+    \widehat{\streamderivative{f}{\,\listvar{w}}}(g_k(\sigma), \sigma)
+    \) for some \(\sigma \in \valuetuplestream{m}\) and
+    \(k > 0\).
+    As \(\bot^\omega\) is its own stream derivative, we need to show that
+    applying stream derivative to the latter produces another element of \(G\).
+    \begin{align*}
+        \streamderivative{\sigma \mapsto \left(\widehat{\streamderivative{f}{\, \listvar{w}}}\left(g_{k-1}(\sigma), \sigma\right)\right)}{(a,b)}
+         & = \sigma \mapsto \streamderv\left(\widehat{\streamderivative{f}{\, \listvar{w}}}((a,b) \streamcons \left(g_{k-1}(\sigma), \sigma\right))\right)              \\
+         & = \sigma \mapsto \streamderv\left(\proj{0}\mleft(\streamderivative{f}{\, \listvar{w}}((a,b) \streamcons \left(g_{k-1}(\sigma), \sigma\right))\mright)\right) \\
+         & = \sigma \mapsto \proj{0}\mleft(\streamderv\left(\streamderivative{f}{\, \listvar{w}}((a,b) \streamcons \left(g_{k-1}(\sigma), \sigma\right))\right)\mright) \\
+         & = \sigma \mapsto \proj{0}\mleft(\streamderivative{\left(\streamderivative{f}{\, \listvar{w}}(g_{k-1}(\sigma), \sigma)\right)}{(a,b)}\mright)                 \\
+         & = \sigma \mapsto \proj{0}\mleft(\streamderivative{f}{\, (a,b) \streamcons \listvar{w}}(g_{k-1}(\sigma), \sigma)\mright)                                      \\
+         & = \sigma \mapsto \widehat{\streamderivative{f}{\, (a,b) \streamcons \listvar{w}}}(g_{k-1}(\sigma), \sigma)
+    \end{align*}
+    As \(\proj{0}\mleft(\streamderivative{f}{(a,b) \streamcons \listvar{w}}\mright)\)
+    is in \(G\), the latter  is closed under stream derivative.
+    Subsequently, \(\mu_f\) has finitely many stream derivatives.
+
+    This means that all the components of
+    \(\sigma \mapsto \proj{1}(f(\mu_f(\sigma), \sigma))\) are causal, monotone and
+    finitely specified, and as these properties are preserved by composition,
+    the composite must also have them, so
+    \(\sigma \mapsto \proj{1}(f(\mu_f(\sigma), \sigma))\) is in \(\streami\).
+\end{proof}
+
+Even if \(\streami\) is closed under least fixed point, this does not mean that
+it is a valid trace.
+To verify this we must establish that the categorical axioms of the trace hold.
+
+\begin{thm}
+    A trace on \(\streami\) is given for a function \(
+    \morph{f}{\valuetuplestream{x+m}}{\valuetuplestream{x+n}}
+    \) by the stream function \(
+    \sigma \mapsto \proj{1}(f(\mu_f(\sigma), \sigma))
+    \), where \(\mu_f(\sigma)\) is the least fixed point of the function \(
+    \tau \mapsto \proj{0}\mleft(f(\tau,\sigma)\mright)
+    \) for fixed \(\sigma\).
+\end{thm}
+\begin{proof}
+    By \cref{thm:trace-well-defined}, \(\streami\) is closed under taking the
+    least fixed point, so we just need to show that the axioms of STMCs hold.
+    Most of these follow in a straightforward way; the only interesting one is
+    the sliding axiom.
+    We need to show that for stream functions \(
+    \morph{f}{\valuetuplestream{x+m}}{\valuetuplestream{y+n}}
+    \) and \(
+    \morph{g}{\valuetuplestream{y}}{\valuetuplestream{x}}
+    \), we have that \(
+    \trace{y}{(\tau, \sigma) \mapsto f(g(\tau), \sigma)}
+    =
+    \trace{x}{
+        (\tau, \sigma)
+        \mapsto
+        g(\proj{0}\mleft(f(\tau, \sigma)\mright),
+        \proj{1}\mleft(f(\tau, \sigma)\mright))
+    }
+    \).
+
+    Let \(l \coloneqq (\tau, \sigma) \mapsto f(g(\tau), \sigma)\) and
+    \(r \coloneqq (\tau, \sigma)
+    \mapsto
+    g(\proj{0}\mleft(f(\tau, \sigma)\mright),
+    \proj{1}\mleft(f(\tau, \sigma)\mright))\); we must apply the candidate
+    trace construction to both of these and check they are equal.
+    For \(l\), the least fixed point of \(
+    \tau \mapsto \proj{0}\mleft(f(g(\tau), \sigma)\mright)
+    \) is \[
+        \mu_l(\sigma) =
+        \proj{0}\mleft(f(g(\bot^\omega), \sigma)\mright) \ljoin
+        \proj{0}\mleft(f(g(\proj{0}\mleft(f(g(\bot^\omega), \sigma))\mright), \sigma)\mright) \ljoin
+        \cdots.\]
+    Plugging this into the candidate trace construction we have that \begin{align*}
+         &
+        \sigma \mapsto \proj{1}\mleft(f(g(\mu_l^l(\sigma)), \sigma)\mright)
+        \\
+         & \qquad=
+        \sigma \mapsto \proj{1}\mleft(f(g(\proj{0}\mleft(f(g(\dots f(g(\proj{0}\mleft(f(g(\bot^\omega), \sigma)\mright)), \sigma)))\mright)), \sigma)\mright)
+    \end{align*}
+    For the right-hand side, the least fixed point of \(
+    \tau \mapsto g(\proj{0}\mleft(f(\tau, \sigma)\mright))
+    \) is \[
+        \mu_r(\sigma) =
+        g(\proj{0}\mleft(f(\bot^\omega, \sigma)\mright)) \ljoin
+        g(\proj{0}\mleft(f(g(\proj{0}\mleft(f(g(\bot^\omega), \sigma)\mright)), \sigma)\mright)) \ljoin
+        \cdots
+    \]
+    When plugged into the candidate trace construction this produces \begin{align*}
+         & \sigma \mapsto \proj{1}\mleft(g(\proj{0}(f(\mu_r(\sigma), \sigma))), \proj{1}(f(\mu_r(\sigma), \sigma))\mright)
+        \\
+         & \qquad =
+        \sigma \mapsto \proj{1}(f(\mu_\sigma^r, \sigma))
+        \\
+         & \qquad=
+        \sigma \mapsto \proj{1}(f(
+        g(\proj{0}\mleft(f(g(\dots f(g(\proj{0}\mleft(f(g(\bot^\omega), \sigma)\mright)), \sigma)\mright)), \sigma))))
+        \\
+         & \qquad=
+        \sigma \mapsto \proj{1}(f(
+        g(\proj{0}\mleft(f(g(\dots f(g(\proj{0}\mleft(f(\bot^\omega, \sigma)\mright)), \sigma)\mright)), \sigma))))
+    \end{align*}
+    Both the left-hand and the right-hand sides of the sliding equation are
+    equal, so the construction is indeed a trace.
+\end{proof}
+
+We now have two traced PROPs: a \emph{syntactic} PROP of sequential circuit
+terms \(\scircsigma\) and a \emph{semantic} PROP of causal, finitely
+specified, monotone stream functions \(\streami\).
+It would be straightforward to now define a map from circuits to these stream
+functions; indeed, this is the strategy used in~\cite{ghica2024fully}.
+Instead, we will first examine another structure with close links to both
+circuits and stream functions; that of \emph{Mealy machines}.
+The structure of Mealy machines will come in useful when considering the
+\emph{completeness} of the denotational semantics.
 
 \bibliographystyle{alphaurl}
 \bibliography{refs/refs}
