@@ -184,8 +184,7 @@ power of the framework must hold a certain degree of appeal and promise.
 
 \section{Syntax}
 
-Our \emph{soup du jour} is that of
-\emph{sequential synchronous digital circuits}
+Our work is concerned with \emph{sequential synchronous digital circuits}
 constructed from primitive components such as logic gates or transistors.
 These circuits are \emph{sequential} as they have a notion of \emph{state}:
 outputs can be impacted by inputs in previous cycles rather than solely those in
@@ -268,11 +267,127 @@ majority of examples in this thesis, is that of gate-level circuits.
 
 \subsection{Combinational circuits}
 
-Before diving straight into sequential circuits, we will define a category of
-\emph{combinational circuits}.
-These are circuits with no state; they compute \emph{functions} of their inputs.
+A circuit signature freely generates symmetric monoidal categories (SMCs) of
+digital circuits.
+These are PROPS (categories of \emph{PRO}ducts and
+\emph{P}ermutations)~\cite{maclane1965categorical}, SMCs with natural numbers as
+objects and addition as tensor product on objects.
 
-\begin{defi}[Combinational circuit generators]
+Instead of term strings, we employ the two dimensional syntax of
+\emph{string diagrams}~\cite{joyal1991geometry,joyal1996traced,selinger2011survey}.
+We draw an arbitrary generator \(\morph{\varphi}{m}{n}\) as a box \(
+\iltikzfig{strings/category/generator-wires}[box=\varphi,colour=white,dom=m,cod=n]
+\) with \(m\) input wires and \(n\) output wires.
+To avoid clutter and to enable reasoning about diagrams with arbitrary
+inputs and outputs, wires may be collapsed into one wire and labelled
+appropriately \(
+\iltikzfig{strings/category/generator}[box=\phi,colour=white,dom=m,cod=n]
+\).
+Composite morphisms, or `terms', are drawn as wider boxes \(
+\iltikzfig{strings/category/f}[box=f,colour=white,dom=m,cod=n]
+\); composition as horizontal juxtaposition \(
+\iltikzfig{strings/category/composition}[box1=f,box2=g,colour=white,dom=m,cod=n]
+\) and tensor product as vertical juxtaposition \(
+\iltikzfig{strings/monoidal/tensor}[box1=f,box2=g,colour=white,dom1=m,dom2=p,cod1=n,cod2=q]
+\).
+One of the advantages of this notation over standard term syntax is that
+structural rules (identity, associativity, functoriality) are `absorbed' into
+the diagrams, as illustrated in \cref{fig:stmc-axioms}.
+
+\begin{figure*}
+    \centering
+    \(
+    \iltikzfig{strings/category/identity-l-lhs}[box=f,colour=white,dom=m,cod=n]
+    =
+    \iltikzfig{strings/category/f}[box=f,colour=white,dom=m,cod=n]
+    \quad
+    \iltikzfig{strings/category/identity-r-lhs}[box=f,colour=white,dom=m,cod=n]
+    =
+    \iltikzfig{strings/category/f}[box=f,colour=white,dom=m,cod=n]
+    \quad
+    \iltikzfig{strings/category/associativity-lhs}[box1=f,box2=g,box3=h,colour=white,dom=m,cod=p]
+    =
+    \iltikzfig{strings/category/associativity-rhs}[box1=f,box2=g,box3=h,colour=white,dom=m,cod=p]
+    \)
+    \\[1em]
+    \(
+    \iltikzfig{strings/monoidal/unit-l-lhs}[box=f,colour=white,dom=m,cod=n]
+    =
+    \iltikzfig{strings/category/f}[box=f,colour=white,dom=m,cod=n]
+    \,\,
+    \iltikzfig{strings/monoidal/unit-r-lhs}[box=f,colour=white,dom=m,cod=n]
+    =
+    \iltikzfig{strings/category/f}[box=f,colour=white,dom=m,cod=n]
+    \,\,
+    \iltikzfig{strings/monoidal/associativity-lhs}[box1=f,box2=g,box3=h,colour=white,dom1=m,cod1=n,dom2=p,cod2=q,dom3=r,cod3=s]
+    =
+    \iltikzfig{strings/monoidal/associativity-rhs}[box1=f,box2=g,box3=h,colour=white,dom1=m,cod1=n,dom2=p,cod2=q,dom3=r,cod3=s]
+    \,\,
+    \iltikzfig{strings/monoidal/identity-tensor-lhs}[colour=white,obj1=m,obj2=n]
+    =
+    \iltikzfig{strings/category/identity}[colour=white,obj=m+n]
+    \,\,
+    \iltikzfig{strings/monoidal/interchange-lhs}[box1=f,box2=g,box3=h,box4=k,colour=white,dom1=m,dom2=p,cod1=n,cod2=q]
+    =
+    \iltikzfig{strings/monoidal/interchange-rhs}[box1=f,box2=g,box3=h,box4=k,colour=white,dom1=m,dom2=p,cod1=n,cod2=q]
+    \)
+    \\[1em]
+    \(
+    \iltikzfig{strings/symmetric/naturality-lhs}[box1=f,box2=g,colour=white,dom1=m,dom2=p,cod1=n,cod2=q]
+    =
+    \iltikzfig{strings/symmetric/naturality-rhs}[box1=f,box2=g,colour=white,dom1=m,dom2=p,cod1=n,cod2=q]
+    \quad
+    \iltikzfig{strings/symmetric/hexagon-lhs}[colour=white,obj1=m,obj2=n,obj3=p]
+    =
+    \iltikzfig{strings/symmetric/symmetry}[colour=white,obj1=m,obj2=n+p]
+    \quad
+    \iltikzfig{strings/symmetric/unit-l-lhs}[colour=white,unit=0,obj=n]
+    =
+    \iltikzfig{strings/category/identity}[colour=white,obj=n]
+    \quad
+    \iltikzfig{strings/symmetric/unit-r-lhs}[colour=white,obj=m,unit=0]
+    =
+    \iltikzfig{strings/category/identity}[colour=white,obj=m]
+    \quad
+    \iltikzfig{strings/symmetric/self-inverse-lhs}[colour=white,obj1=m,obj2=n]
+    =
+    \iltikzfig{strings/symmetric/self-inverse-rhs}[colour=white,obj1=m,obj2=n]
+    \)
+    \\[1em]
+    \(
+    \iltikzfig{strings/traced/naturality-lhs}[box1=f,box2=g,box3=h,colour=white,dom=m,cod=q]
+    =
+    \iltikzfig{strings/traced/naturality-rhs}[box1=f,box2=g,box3=h,colour=white,dom=m,cod=q]
+    \quad
+    \iltikzfig{strings/traced/sliding-lhs}[box1=f,box2=g,colour=white,dom=m,cod=n]
+    =
+    \iltikzfig{strings/traced/sliding-rhs}[box1=f,box2=g,colour=white,dom=m,cod=n]
+    \)
+    \\[1em]
+    \(
+    \iltikzfig{strings/traced/vanishing-lhs}[box=f,colour=white,dom=m,cod=n,trace1=x,trace2=y]
+    =
+    \iltikzfig{strings/traced/vanishing-rhs}[box=f,colour=white,dom=m,cod=n,trace1=x,trace2=y]
+    \quad
+    \iltikzfig{strings/traced/superposing-lhs}[box1=f,box2=g,colour=white,dom1=m,dom2=p,cod1=n,cod2=q]
+    =
+    \iltikzfig{strings/traced/superposing-rhs}[box1=f,box2=g,colour=white,dom1=m,dom2=p,cod1=n,cod2=q]
+    \quad
+    \iltikzfig{strings/traced/yanking-lhs}[obj=m,colour=white]
+    =
+    \iltikzfig{strings/traced/yanking-rhs}[obj=m]
+    \)
+    \caption{
+        The equations of traced PROPS in
+        string diagram notation
+    }
+    \label{fig:stmc-axioms}
+\end{figure*}
+
+We will first define a category of \emph{combinational circuits} with no state;
+these circuits compute \emph{functions} of their inputs.
+
+\begin{defi}[Combinational generators]
     Given a circuit signature \(
     \circuitsignature = (
     \circuitsignaturevalues,
@@ -322,9 +437,9 @@ boxes \iltikzfig{strings/category/f}[box=f,colour=comb,dom=m,cod=n].
 \begin{nota}\label{not:arbitrary-width-structure}
     The structural generators are only defined on single bits, but it is
     straightforward to define versions for arbitrary bit wires.
-    Much like we often draw multiple wires as one
-    (\autoref{not:arbitrary-width-wires}), we can also draw these `thicker'
-    constructs in a similar way to the single-bit versions:
+    Structural generators for \(0\)-bit wires are drawn as empty space or as
+    `faded' wires, and `thicker' constructs have their wires annotated with
+    their widths.
     \begin{gather*}
         \iltikzfig{strings/structure/monoid/init}[colour=comb,obj=n]
         \quad
@@ -390,13 +505,6 @@ boxes \iltikzfig{strings/category/f}[box=f,colour=comb,dom=m,cod=n].
         \end{minipage}
     \end{center}
 \end{nota}
-
-\begin{rem}
-    As mentioned during \autoref{not:arbitrary-width-wires}, wires of zero width
-    are usually drawn as empty space; in a similar fashion the zero width fork,
-    join, and elimination constructs can be drawn as empty space or using
-    `faded' wires.
-\end{rem}
 
 \begin{exa}[More logic gates]
     The \(\andgate\), \(\orgate\), and \(\notgate\) gates are not the only logic
@@ -792,8 +900,7 @@ denotational semantics is \emph{sound and complete}.
 \begin{rem}
     In \cite{mendler2012constructive}, the semantics of digital circuits with
     delays cycles are presented using \emph{timed ternary simulation}, an
-    algorithm to compute how a sequence of circuit outputs stabilises over time
-    given the inputs and value of the current state.
+    algorithm to compute how a sequence of circuit outputs stabilises over time.
     Essentially, one must solve a system of equations in terms of the nodes
     inside a circuit to determine its behaviour.
     Our approach is different as we assign each circuit a concrete stream
@@ -837,22 +944,10 @@ wires in our circuits.
 In the denotational semantics the set of values will need to have a bit more
 structure, as it must be ordered by how much \emph{information} each value
 carries.
-
 In our context of digital circuits the least and greatest elements respectively
 represent signals with a complete \emph{lack} of information and \emph{every}
-piece of information at once.
-However, we need to add more structure than just this; given two signals we want
-a way to be able to combine their information into one signal.
-
-\begin{defi}
-    Let \(A,B\) be finite lattices, where \(\bot_A\) is the least element of
-    \(A\) and \(\bot_B\) is the least element of \(B\).
-    A function \(\morph{f}{A}{B}\) is \emph{\(\bot\)-preserving} if
-    \(f(\bot_A) = \bot_B\).
-\end{defi}
-
-Assigning interpretations to the combinational components of a circuit sets the
-stage for the entire denotational semantics.
+piece of information at once; for this reason, we model the values as elements
+of a \emph{lattice}.
 
 \begin{defi}[Interpretation]
     For a signature \(
@@ -949,7 +1044,7 @@ To map between PROPs we must use a PROP morphism.
 
 \begin{defi}
     Let \(\morph{\circuittofunci}{\ccircsigma}{\funci}\) be the PROP morphism
-    with action defined as%
+    with action%
     \vspace{-\abovedisplayskip}
     \begin{center}
         \begin{minipage}{0.32\textwidth}
@@ -1049,8 +1144,8 @@ an (infinite) tail component.
 \end{defi}
 
 \begin{nota}
-    For a stream \(\sigma\) with initial value \(a\) and stream derivative
-    \(\tau\) we write it as \(\sigma \coloneqq a \streamcons \tau\).
+    A stream \(\sigma\) with initial value \(a\) and stream derivative
+    \(\tau\) is written \(\sigma \coloneqq a \streamcons \tau\).
 \end{nota}
 
 Streams will serve as the inputs and outputs to circuits, so the denotations of
@@ -1210,31 +1305,8 @@ As the assignment of denotations needs to be compositional, we need
 to map the trace on \(\scircsigma\) to a trace on \(\streami\).
 A usual candidate for the trace when considering partially ordered settings is
 the \emph{least fixed point}.
-
-\begin{defi}[Least fixed point]
-    For a poset \((A, \leq)\) and function \(\morph{f}{A}{A}\), the least
-    fixed point of \(f\) is a value \(\mu_f\) such that \(f(\mu_f) = f\) and,
-    for all values \(v\) such that \(f(v) = v\), \(\mu_f \leq v\).
-\end{defi}
-
-Least fixed points are ubiquitous in program semantics, where they are often
-used to model \emph{recursion}; since feedback is a form of recursion it seems
-apt that we should also follow this route.
-As fixed points are so important, they are the subject of many theorems; one
-that will come in very useful for us is the \emph{Kleene fixed-point thm},
-which is concerned with a special class of monotone functions.
-
-\begin{nota}[Image]
-    For a function \(\morph{f}{A}{B}\) and subset \(C \subseteq A\), we write
-    \(f[C] \subseteq B\) for the \emph{image} of \(C\) under \(f\).
-\end{nota}
-
-\begin{defi}[Scott continuity]
-    Given two posets \((A, \leq_A)\) and \((B, \leq_B)\), a function
-    \(\morph{f}{A}{B}\) is \emph{Scott-continuous} if for every directed
-    subset \(C \subseteq A\) it holds that \(f(\bigvee_A C) = \bigvee_B(f[C])\)
-    i.e.\ \(f\) preserves directed joins.
-\end{defi}
+There is an important result concerning fixed points that will be crucial to
+the remainder of this section.
 
 \begin{thm}[Kleene fixed-point theorem~\cite{tarski1955latticetheoretical}]
     Let \((A, \leq)\) be a poset in which each of its directed subsets has a
@@ -1439,8 +1511,8 @@ in \(\streami\) produces another causal, finitely specified,
     \widehat{\streamderivative{f}{\,\listvar{w}}}(g_k(\sigma), \sigma)
     \) for some \(\sigma \in \valuetuplestream{m}\) and
     \(k > 0\).
-    As \(\bot^\omega\) is its own stream derivative, we need to show that
-    applying stream derivative to the latter produces another element of \(G\).
+    As the former is its own stream derivative, we need to show that the stream
+    derivative of the latter is in \(G\).
     \begin{align*}
         \streamderivative{\sigma \mapsto \left(\widehat{\streamderivative{f}{\, \listvar{w}}}\left(g_{k-1}(\sigma), \sigma\right)\right)}{(a,b)}
          & = \sigma \mapsto \streamderv\left(\widehat{\streamderivative{f}{\, \listvar{w}}}((a,b) \streamcons \left(g_{k-1}(\sigma), \sigma\right))\right)              \\
@@ -1543,21 +1615,18 @@ To verify this we must establish that the categorical axioms of the trace hold.
 We now have two traced PROPs: a \emph{syntactic} PROP of sequential circuit
 terms \(\scircsigma\) and a \emph{semantic} PROP of causal, finitely
 specified, monotone stream functions \(\streami\).
-It would be straightforward to now define a map from circuits to these stream
-functions; indeed, this is the strategy used in~\cite{ghica2024fully}.
-Instead, we will first examine another structure with close links to both
-circuits and stream functions; that of \emph{Mealy machines}.
-The structure of Mealy machines will come in useful when considering the
-\emph{completeness} of the denotational semantics.
+Before mapping from circuits to streams we will examine an intermediate
+structure with close links to both circuits and stream functions; that of
+\emph{Mealy machines}.
 
 \subsection{Monotone Mealy machines}\label{sec:mealy}
 
-It is not immediately obvious how to translate back from stream functions in
-\(\streami\) to circuits in \(\scircsigma\).
-Even though these stream functions have finitely many stream derivatives, how
-does one encapsulate this behaviour into a circuit?
-Fortunately, we have a secret weapon: the
-\emph{Mealy machine}~\cite{mealy1955method}.
+While it would be straightforward to map from circuits to stream functions by
+mapping from each generator of \(\scircsigma\) to stream functions in
+\(\streami\), it is not immediately obvious how to define a reverse mapping.
+Even though every stream function in \(\streami\) has finitely many stream
+derivatives, how does one encapsulate this behaviour into a circuit?
+To answer this question, we will consider \emph{Mealy machines}.
 
 Mealy machines are used in circuit design to specify the behaviour of a circuit
 without having to use concrete components.  They also have
@@ -1624,19 +1693,8 @@ output.
 
 The definition of Mealy machine above is timeless and forms the basis for most
 of modern electronics.
-The natural question for the categorist to ask is
-\emph{can we make it more categorical?}
-And as is often the case, we can, using the notion of a \emph{coalgebra}.
-
-\begin{defi}[Coalgebra]
-    For a category \(\mcc\), let \(\morph{F}{\mcc}{\mcc}\) be an endofunctor.
-    A \emph{coalgebra} for \(F\), or \(F\)-coalgebra, is an object
-    \(A \in \mcc\) along with a morphism \(\morph{\alpha}{A}{FA} \in \mcc\),
-    usually written \((A,\alpha)\).
-\end{defi}
-
-A Mealy machine is a pair of a set
-and a function, so this is a coalgebra in \(\set\).
+However, they can also be viewed in a more mathematical way as a
+\emph{coalgebra}.
 
 \begin{defi}
     For sets \(A\) and \(B\), an \emph{\((A,B)\)-Mealy coalgebra} is a coalgebra
@@ -3135,8 +3193,8 @@ bit from \(1\) to \(0\).
 
 \begin{lem}
     \label{lem:boolean-complete-monotone}
-    All monotone functions \(\booleans^m \to \booleans\) can be expressed with
-    the set of operations \(\{\land,\lor,1\}\).
+    A monotone functions \(\booleans^m \to \booleans\) can be expressed with
+    the operations \(\{\land,\lor,1\}\).
 \end{lem}
 \begin{proof}
     This progresses as with \autoref{lem:boolean-complete}, but if the element of
@@ -3157,18 +3215,17 @@ bit from \(1\) to \(0\).
 \end{proof}
 
 \begin{cor}\label{cor:func-complete-falsy-truthy}
-    All monotone functions \((\values_0)^m \to \values_0\) can be expressed
-    with the operations \(\{\land,\lor,\belnapfalse\}\), and all monotone
-    functions \((\values_1)^m \to \values_1\) can be expressed with the
+    A mnonotone \((\values_0)^m \to \values_0\) can be expressed
+    with the operations \(\{\land,\lor,\belnapfalse\}\), and a monotone
+    function \((\values_1)^m \to \values_1\) can be expressed with the
     operations \(\{\land,\lor,\belnaptrue\}\).
 \end{cor}
 \begin{proof}
-    As there is an order isomorphism
-    \(\values_0 \cong \values_1 \cong \booleans\), any monotone function in
+    There is an order isomorphism
+    \(\values_0 \cong \values_1 \cong \booleans\) so any monotone function in
     the Belnap subsets can be viewed as a monotone Boolean function.
     This means the strategy of \autoref{lem:boolean-complete-monotone} can
-    be applied using \autoref{lem:belnap-bool-correspondence} to substitute the
-    appropriate Belnap operation.
+    be applied using \autoref{lem:belnap-bool-correspondence}.
 \end{proof}
 
 All the pieces are now in place to express the final functional completeness
@@ -3200,8 +3257,8 @@ Otherwise, they produce \(\bot\).
 
 \begin{lem}
     \label{lem:translation-functions}
-    The functions in \autoref{def:translation-tables} can be expressed using the
-    operations \(\{\land,\lor,\neg,\bot\}\).
+    The functions in \autoref{def:translation-tables} can be expressed using
+    \(\{\land,\lor,\neg,\bot\}\).
 \end{lem}
 \begin{proof}
     From left to right, the columns in the table above are the functions \(
@@ -3262,7 +3319,7 @@ functions.
 
     The output of \(f^\prime(\listvar{v})\) is \(
     \left(\phi_0(f(\listvar{v})), \phi_1(f(\listvar{v}))\right)
-    \) by definition; the falsiness and the truthiness of \(f(\listvar{v})\).
+    \) by definition.
     To combine the two outputs into a single output we want to
     implement the following truth table:
 
@@ -3396,7 +3453,7 @@ different.
 
 The two subcircuits are falsy and truthy disjunctive normal forms, and can be
 defined syntactically by using a `composite fork' to copy the inputs for each
-clause in the normal form.
+clause.
 
 \begin{defi}\label{def:mk-fork}
     For \(n \in \nat\), an \emph{\(m,k\)-fork}
@@ -3648,7 +3705,7 @@ Although morphisms in \(\mealyig\) have different interfaces to those in
 translate them into stream functions or coloured circuits.
 
 \begin{defi}
-    Let the coloured PROP morphisms
+    Let the three coloured PROP morphisms
     \(\morph{\mealytostreamig}{\mealyig}{\streamig}\),
     \(\morph{\streamtomealyig}{\streamig}{\mealyig}\) and
     \(\morph{\mealytocircuitig}{\mealyig}{\scircsigmag}\) be defined as before,
@@ -3694,48 +3751,67 @@ circuits.
 
 \section{Operational semantics}
 
-With the sound and complete denotational semantics, the behaviour of circuits is
-determined by observing their behaviour as stream functions.
-This already gives us a perspective on digital circuits closer to that of
-programming languages.
-To compare the behaviour of two circuits in \(\scircsigma\), we examine their
-corresponding stream functions.
+The behaviour of two circuits in \(\scircsigma\) can be compared by examining
+their corresponding stream functions.
+However, translating a circuit into a stream function obscures the internal
+structure of the circuit, much like representing a combinational circuit by its
+truth table
+To better relate behaviour and structure in circuits we now define an
+\emph{operational semantics} which evaluates circuits in a stepwise manner.
+An informal operational semantics was presented in~\cite{ghica2017diagrammatic}
+but only for the case of \emph{closed} circuits with \emph{delay-guarded}
+feedback; in this section we drop these two requirements and present a sound
+and complete operational semantics for \emph{all} sequential circuits.
 
-Denotational semantics is not the be-all and end-all of circuit semantics.
-Crucially, it obscures the \emph{structure} of a circuit by compressing all the
-behaviour into one function: we don't know \emph{why} the circuit is behaving
-the way it does, just that something has caused it to do so.
-When it comes to circuit design, the structure of the circuit is important, as
-that is what is going to be printed onto silicon.
-Space is at a premium, so knowing how each component contributes to the
-output behaviour is of critical importance.
+An operational semantics is defined in terms of \emph{reductions}.
+Here we are motivated by \emph{mechanising} circuit reduction;
+for a set of reductions to be suitable then there should be a terminating
+strategy for evaluating inputs to circuits.
 
-We now turn our attention to the next course in our menu of semantics:
-\emph{operational semantics}.
-This is quite a different beast to denotational semantics: rather than assigning
-a mathematical structure to each circuit, semantics are derived from how
-something is \emph{executed}.
-One can think of an operational semantics as stepping through a
-program using a debugger, with rules applied in order to derive the next state.
-As we will come to see, it is not feasible to create a small-step reduction
-semantics for digital circuits while remaining terminating and confluent.
-However, what we \emph{can} do is specify some larger transformations to apply
-to a circuit followed by some more traditional exhaustive reductions.
+\begin{nota}[Reduction]
+    A \emph{reduction} from \(
+    \iltikzfig{strings/category/f}[box=F,colour=seq,dom=m,cod=n]
+    \) to \(
+    \iltikzfig{strings/category/f}[box=G,colour=seq,dom=m,cod=n]
+    \), is denoted \(
+    \iltikzfig{strings/category/f}[box=F,colour=seq,dom=m,cod=n]
+    \reduction
+    \iltikzfig{strings/category/f}[box=G,colour=seq,dom=m,cod=n]
+    \).
+    If there are reductions \(
+    \iltikzfig{strings/category/f}[box=F,colour=seq,dom=m,cod=n]
+    \reduction
+    \iltikzfig{strings/category/f}[box=G,colour=seq,dom=m,cod=n]
+    \reduction
+    \cdots
+    \reduction
+    \iltikzfig{strings/category/f}[box=H,colour=seq,dom=m,cod=n]
+    \), we write \(
+    \iltikzfig{strings/category/f}[box=F,colour=seq,dom=m,cod=n]
+    \reductions
+    \iltikzfig{strings/category/f}[box=H,colour=seq,dom=m,cod=n]
+    \).
+    A reduction \(
+    \iltikzfig{strings/category/f}[box=F,colour=seq,dom=m,cod=n]
+    \reduction
+    \iltikzfig{strings/category/f}[box=G,colour=seq,dom=m,cod=n]
+    \) is \emph{sound} if \(
+    \circuittostreami[
+        \iltikzfig{strings/category/f}[box=F,colour=seq,dom=m,cod=n]
+    ]
+    =
+    \circuittostreami[
+        \iltikzfig{strings/category/f}[box=G,colour=seq,dom=m,cod=n]
+    ].
+    \)
+\end{nota}
 
-Our goal for this section is to develop a sound and complete notion of
-\emph{observational equivalence} i.e.\ circuits are related if and only if
-`executing' them using the operational semantics produces the same values.
-To determine which transformations and reductions are sound, we turn to the
-denotational semantics; a reduction between circuits \(
-\iltikzfig{strings/category/f}[box=f,colour=seq,dom=m,cod=n]
-\reduction
-\iltikzfig{strings/category/f}[box=g,colour=seq,dom=m,cod=n]
-\) is sound with respect to some interpretation \(\interpretation\) if and only
-if \(
-\circuittostreami[\iltikzfig{strings/category/f}[box=f,colour=seq,dom=m,cod=n]]
-=
-\circuittostreami[\iltikzfig{strings/category/f}[box=g,colour=seq,dom=m,cod=n]]
-\).
+A reduction is effectively a directed equation, which we will apply to circuits
+in \(\scircsigma\).
+This means that the only equations that hold `on the nose' are the axioms of
+STMCs; diagrams can be deformed in order to expose redexes.
+To mechanise the reduction process it is also preferable to appeal to the
+graphical notation and use \emph{graph rewriting}~\cite{ghica2023rewriting}.
 
 \subsection{Feedback}\label{sec:feedback}
 
@@ -3754,7 +3830,7 @@ it follows immediately from axioms of STMCs.
     \iltikzfig{strings/category/f}[box=f,colour=seq,dom=m,cod=n]
     \) there exists a combinational circuit \(
     \iltikzfig{circuits/productivity/pre-mealy-core}
-    \) and values \(\overline{v} \in \valuetuple{z}\) such that \(
+    \) and \(\overline{v} \in \valuetuple{z}\) such that \(
     \iltikzfig{strings/category/f}[box=f,colour=seq,dom=m,cod=n]
     =
     \iltikzfig{circuits/productivity/trace-delay}[core=f,state=\listvar{v},dom=m,cod=n,delay=y,trace=x,valwidth=z]
@@ -4339,9 +4415,9 @@ Fortunately, since circuits are constructed from a finite number of
 \begin{lem}\label{lem:number-of-states}
     Let \(
     \iltikzfig{strings/category/f}[box=f,colour=seq]
-    \) be a sequential circuit with \(c\) delay components.
-    Then applying \autoref{cor:productivity} successively to a Mealy form of this
-    circuit will produce at most \(|\values|^c\) unique states.
+    \) be a sequential circuit with \(c\) delays.
+    Then applying \autoref{cor:productivity} successively to a Mealy form of
+    this circuit will produce at most \(|\values|^c\) unique states.
 \end{lem}
 \begin{proof}
     The only varying elements of the state word are contributed by
@@ -4379,7 +4455,7 @@ no other states that could arise.
 \begin{cor}\label{cor:repeated-state}
     Given a circuit in Mealy form \(
     \iltikzfig{circuits/productivity/mealy-form}[dom=m,cod=n,delay=x,core=f]
-    \) and input sequence \(\listlistvar{v} \in \valuetupleseq{m}\) of length
+    \) and inputs \(\listlistvar{v} \in \valuetupleseq{m}\) of length
     \(|\values|^c + 1\), there exists a state \(
     \listvar{r} \in \valuetuple{x}
     \), an input sequence \(
@@ -4673,64 +4749,28 @@ nicely to the multicoloured case.
 
 \section{Algebraic semantics}
 
-The operational semantics and notion of observational equivalence means that the
-behaviour of two circuits can be compared by checking
-whether every input produces the same output for both circuits.
-But this is somewhat of a nuclear option; rather than using what we know
-about the structure of a circuit's components, we just blast away
-exhaustively trying all the inputs to find a contradiction.
+The previous section gives an upper bound on the length of waveforms required to
+establish observational equivalence, so we have a terminating strategy
+for comparing the behaviour of digital circuits using a
+pseudo-normal form.
+Unfortunately, this is still an \emph{exponential} upper bound, so it is
+infeasible to check for equivalence of circuits with more than a few
+delay components.
 
-A more elegant method of reasoning is by defining a set of \emph{equations}
-between subcircuits and \emph{quotienting} \(\scircsigma\) by these equations.
-A proof of equivalence between two circuits is then presented using algebraic
-reasoning: applying equations to translate one circuit into the other.
-This is often far more efficient than having test every input, and is
-known formally as an \emph{algebraic} semantics.
-As with the operational semantics, we are especially interested in defining a
-\emph{sound and complete} algebraic semantics with respect to the denotational
-semantics.
-That is to say, for each equation \(
-\iltikzfig{strings/category/f}[box=f,colour=seq]
-=
-\iltikzfig{strings/category/f}[box=g,colour=seq]
-\) then \(
-\circuittostreami[\iltikzfig{strings/category/f}[box=f,colour=seq]]
-=
-\circuittostreami[\iltikzfig{strings/category/f}[box=g,colour=seq]]
-\), and there must be enough equations such that if \(
-\circuittostreami[\iltikzfig{strings/category/f}[box=f,colour=seq]]
-=
-\circuittostreami[\iltikzfig{strings/category/f}[box=g,colour=seq]]
-\) then there exists a series of equations identifying \(
-\iltikzfig{strings/category/f}[box=f,colour=seq]
-\) and \(
-\iltikzfig{strings/category/f}[box=g,colour=seq]
-\).
+It is often the case that circuits differ by only a few components;
+perhaps one is trying to show that two similar implementations are the same.
+In this case, it is more feasible to find the parts of the circuit that differ
+and then check if they have the same behaviour.
+With the syntactic representation, we can reason about these subcircuits
+\emph{algebraically} using equations.
+The final contribution of this paper is to define a \emph{sound and complete}
+algebraic semantics for sequential circuits.
 
 \begin{rem}
-    An `equational theory' for sequential circuits was one of the first things
-    presented in the previous
-    work~\cite{ghica2016categorical,ghica2017diagrammatic}.
-    In that paper, equations that `seemed right' were used to quotient the
-    syntax, with the ultimate aim of showing that the resulting category was
-    \emph{Cartesian}.
-    This was done quite informally, and was made more confusing as
-    the categories of circuits were subsequently quotiented by some notion of
-    `extensional equivalence', an attempt to rectify the fact that the
-    equations only dealt with closed circuits.
-    Soundness and completeness of the equational theory was not considered
-    because there was nothing to compare it against.
-
-    In essence, the previous work was almost `the wrong way round': equations
-    were defined and semantics drawn from them.
-    In the more recent version of the work~\cite[Sec.\ 5]{ghica2024fully}, which
-    forms the basis for this chapter, the equations are derived from the
-    denotational semantics.
-    Not only does this give us a formal way of verifying that these equations
-    are sound, it sets the backdrop against which we can test if the algebraic
-    semantics are sufficient: are any two denotationally equal circuits
-    identified by equations?
-
+    An `equational theory' was presented in \cite{ghica2016categorical},
+    but the equations were used to quotient the syntax as an ad-hoc semantics,
+    and soundness and completeness were not considered.
+    Here we use the stream semantics to guide our choice in equations.
 \end{rem}
 
 When defining such an equational theory, there may be several different sound
@@ -5512,7 +5552,7 @@ translate between the state sets of any two denotationally equivalent circuits.
 With the right encoders, the initial state of a circuit can be translated into
 a different word, giving us a new circuit in Mealy form.
 As all the involved components are essentially combinational, the circuit can
-be normalised again to produce a circuit in normalised Mealy form.
+be normalised to produce a circuit in normalised Mealy form.
 
 \subsection{Restriction equations}\label{sec:restriction}
 
@@ -5671,9 +5711,30 @@ their will.
 
 \subsection{Algebraic semantics for Belnap logic}\label{sec:algebraic-belnap}
 
-\renewcommand\theContinuedFloat{\alph{ContinuedFloat}}
+For a sound and complete equational theory, equations are required to bring any
+essentially combinational circuit into a canonical form.
+We will now demonstrate this for the Belnap interpretation; recall from
+\autoref{sec:denotational-belnap} that the canonical form for Belnap circuits is a
+circuit that `explodes' its inputs into circuits for the `falsy' and `truthy'
+components of the output, before joining these together.
+The first equations we will define translate any essentially combinational
+circuit into such an exploded circuit.
+
+\begin{defi}[Explosion equations]
+    Let the set of \emph{explosion equations} \(\mathcal{X}\) be defined as the
+    equations listed
+    in \autoref{fig:explosion-equations-1} and
+    \autoref{fig:explosion-equations-2}.
+\end{defi}
+
+\begin{lem}
+    The explosion equations are sound.
+\end{lem}
+\begin{proof}
+    By checking all the inputs.
+\end{proof}
+
 \begin{figure}
-    \ContinuedFloat*
     \centering
     \scalebox{0.85}{\(\equationdisplay{
             \iltikzfig{circuits/axioms/belnap/translation/explosion-lhs}
@@ -5792,28 +5853,6 @@ their will.
     \label{fig:explosion-equations-1}
 \end{figure}
 
-For a sound and complete equational theory, equations are required to bring any
-essentially combinational circuit into a canonical form.
-We will now demonstrate this for the Belnap interpretation; recall from
-\autoref{sec:denotational-belnap} that the canonical form for Belnap circuits is a
-circuit that `explodes' its inputs into circuits for the `falsy' and `truthy'
-components of the output, before joining these together.
-The first equations we will define translate any essentially combinational
-circuit into such an exploded circuit.
-
-\begin{defi}[Explosion equations]
-    Let the set of \emph{explosion equations} \(\mathcal{X}\) be defined as the
-    equations listed
-    in \autoref{fig:explosion-equations-1} and
-    \autoref{fig:explosion-equations-2}.
-\end{defi}
-
-\begin{lem}
-    The explosion equations are sound.
-\end{lem}
-\begin{proof}
-    By checking all the inputs.
-\end{proof}
 
 Most of the equations in \(\mathcal{X}\) are well-known; the only interesting
 one is \((\belnapexpeqn)\), which says that we can always `explode' a wire and
@@ -5902,7 +5941,7 @@ push them across the translators.
     For tensor, the circuits can be interleaved using axioms of STMCs.
 \end{proof}
 %
-\begin{figure}\ContinuedFloat
+\begin{figure}
     \centering
     \scalebox{0.85}{\(\equationdisplay{
             \iltikzfig{circuits/axioms/belnap/translation/not-fork-lhs}
@@ -6504,14 +6543,13 @@ the compositional theory can bring to the table.
 
 \subsection{Tidying up}\label{sec:tidy}
 
-When building a circuit, it is often desirable to reduce the number of wires
+When building a circuit, it is desirable to reduce the number of wires
 and components used; this reduces both the physical size of the circuit and its
 power consumption.
 We can use partial evaluation to transform a circuit into a more minimal form.
 
 \begin{defi}[Tidying rules]
-    Let the set of \emph{tidying rules} be defined as the rules in
-    \autoref{fig:tidy-rules}.
+    Let the \emph{tidying rules} be defined as in \autoref{fig:tidy-rules}.
 \end{defi}
 
 Most of the tidying rules are self-explanatory; the final rule is necessary in
@@ -6588,7 +6626,7 @@ As non-delay-guarded feedback is already handled by the
 \end{figure}
 
 \begin{prop}
-    Applying the tidying rules to a circuit in Mealy form is confluent and
+    Applying the tidying rules to a Mealy form is confluent and
     terminating.
 \end{prop}
 \begin{proof}
@@ -6888,7 +6926,7 @@ which we either know nothing about or know can only take some specified values.
     generators for each word \(\listvar{v?} \in \freemon{\values}\).
 \end{defi}
 
-The additional value generators indicate that they could produce one of multiple
+The additional value generators indicate that there are multiple
 possible values.
 When a circuit contains uncertain values \(
 \iltikzfig{circuits/components/values/vs-longer}[val=\listvar{v_0?}],
@@ -7044,9 +7082,8 @@ ordinary value in future reductions and outputs.
 
 Circuits can be viewed at multiple levels of abstraction.
 One could drop down to the level of transistors, as illustrated in
-\cite[Sec.\ 4.1]{ghica2017diagrammatic}.
-Alternatively, one could become more abstract, setting the generators to be
-\emph{subcircuits}, such as arithmetic operations.
+\cite[Sec.\ 4.1]{ghica2017diagrammatic}, or become more abstract, setting the
+generators to be \emph{subcircuits} such as arithmetic operations.
 
 The levels of abstraction need not remain isolated.
 Using \emph{layered explanations}~\cite{lobski2022string}, multiple signatures
