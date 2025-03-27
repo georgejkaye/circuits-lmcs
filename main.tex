@@ -147,6 +147,14 @@ paint a fully formal and coherent picture.
 This paper develops the informal presentation into a mathematically
 rigorous framework.
 
+\begin{figure}
+    \centering
+    \includestandalone{figures/circuits/map}
+    \caption{Relating categorical models of circuits}
+    \label{fig:map}
+\end{figure}
+
+A summary of our contributions is shown in \autoref{fig:map}.
 Our first contribution is to give, for the first time, a sound and complete
 denotational semantics to digital circuits in the domain of causal and monotone
 stream functions.
@@ -186,9 +194,8 @@ power of the framework must hold a certain degree of appeal and promise.
 
 Our work is concerned with \emph{sequential synchronous digital circuits}
 constructed from primitive components such as logic gates or transistors.
-These circuits are \emph{sequential} as they have a notion of \emph{state}:
-outputs can be impacted by inputs in previous cycles rather than solely those in
-the current cycle, and \emph{synchronous} because their state changes in time
+These circuits are \emph{sequential} as outputs can be impacted by previous
+inputs over time, and \emph{synchronous} because their state changes in time
 with some global clock.
 
 \begin{rem}
@@ -254,15 +261,15 @@ majority of examples in this thesis, is that of gate-level circuits.
 
 \begin{rem}
     Using four values may come as a surprise to those expecting the usual
-    `true' and 'false' logical values.
+    `true' and `false' logical values.
     This logical system is an old idea going back to
     Belnap~\cite{belnap1977useful} who remarked that this is `how a computer
     should think'.
     Rather than just thinking about how much \emph{truth content} a value
     carries, the four value system adds a notion of \emph{information content}:
     the \(\bot\) value is no information at all (a disconnected wire), whereas
-    the \(\top\) value is both true and false information at once
-    (a short circuit).
+    the \(\top\) value is `inconsistent' information, or both true and false
+    information at once.
 \end{rem}
 
 \subsection{Combinational circuits}
@@ -304,7 +311,9 @@ the diagrams, as illustrated in \cref{fig:stmc-axioms}.
     \iltikzfig{strings/category/identity-r-lhs}[box=f,colour=white,dom=m,cod=n]
     =
     \iltikzfig{strings/category/f}[box=f,colour=white,dom=m,cod=n]
-    \quad
+    \)
+    \\[1em]
+    \(
     \iltikzfig{strings/category/associativity-lhs}[box1=f,box2=g,box3=h,colour=white,dom=m,cod=p]
     =
     \iltikzfig{strings/category/associativity-rhs}[box1=f,box2=g,box3=h,colour=white,dom=m,cod=p]
@@ -318,7 +327,9 @@ the diagrams, as illustrated in \cref{fig:stmc-axioms}.
     \iltikzfig{strings/monoidal/unit-r-lhs}[box=f,colour=white,dom=m,cod=n]
     =
     \iltikzfig{strings/category/f}[box=f,colour=white,dom=m,cod=n]
-    \,\,
+    \)
+    \\[1em]
+    \(
     \iltikzfig{strings/monoidal/associativity-lhs}[box1=f,box2=g,box3=h,colour=white,dom1=m,cod1=n,dom2=p,cod2=q,dom3=r,cod3=s]
     =
     \iltikzfig{strings/monoidal/associativity-rhs}[box1=f,box2=g,box3=h,colour=white,dom1=m,cod1=n,dom2=p,cod2=q,dom3=r,cod3=s]
@@ -358,7 +369,9 @@ the diagrams, as illustrated in \cref{fig:stmc-axioms}.
     \iltikzfig{strings/traced/naturality-lhs}[box1=f,box2=g,box3=h,colour=white,dom=m,cod=q]
     =
     \iltikzfig{strings/traced/naturality-rhs}[box1=f,box2=g,box3=h,colour=white,dom=m,cod=q]
-    \quad
+    \)
+    \\[1em]
+    \(
     \iltikzfig{strings/traced/sliding-lhs}[box1=f,box2=g,colour=white,dom=m,cod=n]
     =
     \iltikzfig{strings/traced/sliding-rhs}[box1=f,box2=g,colour=white,dom=m,cod=n]
@@ -533,7 +546,8 @@ boxes \iltikzfig{strings/category/f}[box=f,colour=comb,dom=m,cod=n].
     \iltikzfig{circuits/components/gates/xor}
     \), which outputs true if and only if exactly one of the inputs is
     true.
-    In \(\ccirc{\belnapsignature}\) this is constructed as \[
+    In \(\ccirc{\belnapsignature}\) this is constructed as
+    \[
         \iltikzfig{circuits/components/gates/xor}
         \coloneqq
         \iltikzfig{circuits/components/gates/xor-construction-1}
@@ -680,8 +694,9 @@ morphisms are drawn as green boxes \(
 \begin{exa}[SR latch]\label{ex:sr-latch}
     A sequential circuit one might come across early on in an electronics
     textbook is the \emph{SR NOR latch}, one of the simplest registers.
-    A possible design and interpretation in \(\scirc{\belnapsignature}\) are
-    illustrated below.
+    A possible design in usual circuit diagram notation is shown below on the
+    left, with an interpretation in \(\scirc{\belnapsignature}\) using string
+    diagram notation to the right.
     \begin{gather*}
         \iltikzfig{circuits/examples/sr-latch/real-circuit}
         \qquad
@@ -886,8 +901,10 @@ be remarked upon throughout.
 
 \section{Denotational semantics}
 
-Circuits in \(\scircsigma\) are purely \emph{syntax}: they currently have no
-behaviour associated with them.
+Circuits in \(\scircsigma\) are purely \emph{syntax}; the only equational
+properties they satisfy are the `structural equations' of traced PROPs.
+This amounts to moving boxes around while preserving connectivity: the boxes
+themselves cannot be altered.
 In this section we will present a fully compositional denotational
 semantics for sequential circuits based on \emph{causal}, \emph{monotone} and
 \emph{finitely specified} stream functions.
@@ -1027,7 +1044,7 @@ of a \emph{lattice}.
     (\leq_\mathsf{B}, \belnapgateinterpretation)
     \).
     An online tool for experimenting with the Belnap interpretation can be found
-    at \url{https://belnap.georgejkaye.com}.
+    online\footnote{\url{https://belnap.georgejkaye.com}}.
 \end{exa}
 \subsection{Denotational semantics of combinational circuits}
 
@@ -1111,7 +1128,6 @@ To map between PROPs we must use a PROP morphism.
 
 \subsection{Denotational semantics of sequential circuits}
 
-As one might expect, sequential circuits are slightly trickier to deal with.
 In a combinational circuit, the output only depends on the inputs at the current
 cycle, but for sequential circuits inputs can affect outputs many cycles after
 they occur.
@@ -1626,7 +1642,8 @@ mapping from each generator of \(\scircsigma\) to stream functions in
 \(\streami\), it is not immediately obvious how to define a reverse mapping.
 Even though every stream function in \(\streami\) has finitely many stream
 derivatives, how does one encapsulate this behaviour into a circuit?
-To answer this question, we will consider \emph{Mealy machines}.
+To answer this question, we will factor our proof through
+\emph{Mealy machines}.
 
 Mealy machines are used in circuit design to specify the behaviour of a circuit
 without having to use concrete components.  They also have
@@ -1691,9 +1708,11 @@ output.
 
 \subsection{The coalgebraic perspective}
 
-The definition of Mealy machine above is timeless and forms the basis for most
-of modern electronics.
-However, they can also be viewed in a more mathematical way as a
+It has been shown that there are close links between Mealy machines and certain
+types of stream
+functions~\cite{rutten2006algebraic,bonsangue2008coalgebraic}, which we will
+exploit to show the correspondence between \(\scircsigma\) and \(\streami\).
+These results use an alternative definition of Mealy machines as types of
 \emph{coalgebra}.
 
 \begin{defi}
@@ -1827,57 +1846,11 @@ inputs, then executes the second on the outputs of the first.
     Recall the initialised \((\booleans,\booleans)\)-Mealy machine
     \((S, f, s_0)\) from \autoref{ex:mealy-init}; we will now compose this with
     \((\{t_0,t_1\},g,t_0)\) where \(g\) is defined as follows:
-    \begin{gather*}
-        g(t_0, \mathsf{f}) \coloneqq \langle{t_0,\mathsf{f}}\rangle
-        \qquad
-        g(t_0, \mathsf{t}) \coloneqq \langle{t_1,\mathsf{t}}\rangle
-        \qquad
-        g(t_1, \mathsf{f}) \coloneqq \langle{t_1,\mathsf{t}}\rangle
-        \qquad
-        g(t_1, \mathsf{t}) \coloneqq \langle{t_1,\mathsf{t}}\rangle
-    \end{gather*}
     \begin{center}
         \includestandalone[scale=1]{figures/mealy/example2-init}
     \end{center}
-    The cascade product \((R, h, r_0)\) of these two machines defined as
+    The cascade product \((R, h, r_0)\) of these two machines is defined as
     follows:
-    \begin{gather*}
-        R \coloneqq \{(s_0,t_0), (s_1,t_0), (s_0,t_1), (s_1,t_1)\}
-        \qquad
-        r_0 \coloneqq (s_0,t_0)
-        \\
-        h((s_0, t_0), \mathsf{f})
-        \coloneqq
-        \left\langle(s_0, t_0), \mathsf{f}\right\rangle
-        \qquad
-        h((s_0, t_0), \mathsf{t})
-        \coloneqq
-        \left\langle(s_0, t_1), \mathsf{t}\right\rangle
-        \\
-        h((s_1, t_0), \mathsf{f})
-        \coloneqq
-        \left\langle(s_1, t_1), \mathsf{t}\right\rangle
-        \qquad
-        h((s_1, t_0), \mathsf{t})
-        \coloneqq
-        \left\langle(s_0, t_0), \mathsf{f}\right\rangle
-        \\
-        h((s_0, t_1), \mathsf{f})
-        \coloneqq
-        \left\langle(s_0, t_1), \mathsf{t}\right\rangle
-        \qquad
-        h((s_0, t_1), \mathsf{t})
-        \coloneqq
-        \left\langle(s_1, t_1), \mathsf{t}\right\rangle
-        \\
-        h((s_1, t_1), \mathsf{f})
-        \coloneqq
-        \left\langle(s_1, t_1), \mathsf{t}\right\rangle
-        \qquad
-        h((s_1, t_1), \mathsf{t})
-        \coloneqq
-        \left\langle(s_0, t_1), \mathsf{t}\right\rangle
-    \end{gather*}
     \begin{center}
         \includestandalone[scale=1]{figures/mealy/cascade}
     \end{center}
@@ -1909,75 +1882,6 @@ Tensor product is far more straightforward.
     machines introduced in \autoref{ex:mealy-init} and \autoref{ex:mealy-cascade} is
     a \((\booleans^2,\booleans^2)\)-Mealy machine \((Q,k,q_0)\) defined as
     follows:
-    \begin{gather*}
-        Q \coloneqq \{(s_0,t_0), (s_1,t_0), (s_0,t_1), (s_1,t_1)\}
-        \qquad
-        q_0 \coloneqq (s_0,t_0)
-        \\
-        h((s_0, t_0), \mathsf{ff})
-        \coloneqq
-        \left\langle(s_0, t_0), \mathsf{ff}\right\rangle
-        \qquad
-        h((s_0, t_0), \mathsf{tf})
-        \coloneqq
-        \left\langle(s_1, t_0), \mathsf{tf}\right\rangle
-        \\
-        h((s_0, t_0), \mathsf{ft})
-        \coloneqq
-        \left\langle(s_0, t_1), \mathsf{ft}\right\rangle
-        \qquad
-        h((s_0, t_0), \mathsf{tt})
-        \coloneqq
-        \left\langle(s_1, t_1), \mathsf{tt}\right\rangle
-        \\
-        h((s_1, t_0), \mathsf{ff})
-        \coloneqq
-        \left\langle(s_1, t_0), \mathsf{tf}\right\rangle
-        \qquad
-        h((s_1, t_0), \mathsf{tf})
-        \coloneqq
-        \left\langle(s_0, t_0), \mathsf{ff}\right\rangle
-        \\
-        h((s_1, t_0), \mathsf{ft})
-        \coloneqq
-        \left\langle(s_1, t_1), \mathsf{tt}\right\rangle
-        \qquad
-        h((s_1, t_0), \mathsf{tt})
-        \coloneqq
-        \left\langle(s_0, t_1), \mathsf{ft}\right\rangle
-        \\
-        h((s_0, t_1), \mathsf{ff})
-        \coloneqq
-        \left\langle(s_0, t_1), \mathsf{ft}\right\rangle
-        \qquad
-        h((s_0, t_1), \mathsf{tf})
-        \coloneqq
-        \left\langle(s_1, t_1), \mathsf{tt}\right\rangle
-        \\
-        h((s_1, t_1), \mathsf{ft})
-        \coloneqq
-        \left\langle(s_0, t_1), \mathsf{ft}\right\rangle
-        \qquad
-        h((s_0, t_1), \mathsf{tt})
-        \coloneqq
-        \left\langle(s_1, t_1), \mathsf{tt}\right\rangle
-        \\
-        h((s_1, t_1), \mathsf{ff})
-        \coloneqq
-        \left\langle(s_1, t_1), \mathsf{tt}\right\rangle
-        \qquad
-        h((s_1, t_1), \mathsf{tf})
-        \coloneqq
-        \left\langle(s_0, t_1), \mathsf{ft}\right\rangle
-        \\
-        h((s_1, t_1), \mathsf{ft})
-        \coloneqq
-        \left\langle(s_1, t_1), \mathsf{tt}\right\rangle
-        \qquad
-        h((s_1, t_1), \mathsf{tt})
-        \coloneqq
-        \left\langle(s_0, t_1), \mathsf{ft}\right\rangle
-    \end{gather*}
     \begin{center}
         \includestandalone[scale=1]{figures/mealy/direct}
     \end{center}
@@ -2252,12 +2156,11 @@ function, but the result of
 \(\mealytostreami \circ \streamtomealyi \circ \mealytostreami\) is of course
 equal to \(\mealytostreami\).
 
-\subsection{Between circuits and Mealy machines}\label{sec:synthesis}
+\subsection{From circuits to Mealy machines}\label{sec:synthesis}
 
-The close links between \(\streami\) and \(\mealyi\) are nice to have but hardly
-ground-breaking; the main contribution of this chapter is to introduce
-\(\scircsigma\) to the mix by defining maps \(\scircsigma \to \mealyi\) and
-\(\mealyi \to \scircsigma\).
+The close links between \(\streami\) and \(\mealyi\) are nice to have but are
+unsurprising; the main contribution of this chapter is to define maps
+\(\scircsigma \to \mealyi\) and \(\mealyi \to \scircsigma\).
 This allows us to use monotone Mealy machines as a stepping stone in the
 correspondence between sequential circuits and stream functions.
 By exploiting the coalgebraic properties shared between Mealy machines and
@@ -2384,7 +2287,7 @@ The `purest' semantics of a sequential circuit is a stream function in
     \(\mealytostreami \circ \circuittomealyi\).
 \end{defi}
 
-We have now finally established the \emph{denot} of a sequential circuit \(
+We have now finally established the \emph{denotation} of a sequential circuit \(
 \iltikzfig{strings/category/f}[box=f,colour=seq,dom=m,cod=n]
 \): it is the stream function \(
 \morph{\circuittostreami[\iltikzfig{strings/category/f}[box=f,colour=seq]]}{\valuetuplestream{m}}{\valuetuplestream{n}}
@@ -2465,7 +2368,8 @@ a circuit using combinational logic.
         \includestandalone{figures/mealy/boolean-example}
     \end{center}
     \vspace{-\belowdisplayskip}
-    To convert this machine to a circuit, we assign each state a boolean value:
+    To convert this machine to a circuit, we encode each state as a boolean
+    value:
     in this case \(s_0 \mapsto \belnapfalse, s_1 \mapsto \belnaptrue\).
     We can now construct a truth table to show how a state and an input map to
     a transition and an output:
@@ -3817,8 +3721,8 @@ graphical notation and use \emph{graph rewriting}~\cite{ghica2023rewriting}.
 
 One of the major issues that comes with trying to reduce circuits in
 \(\scircsigma\) is the presence of feedback.
-Without proper attention, one could end up infinitely unfolding and we never
-produce any output values.
+Without proper attention, one could end up infinitely unfolding, not producing
+any output values.
 The first portion of our operational semantics revolves around some
 \emph{global transformations} to make a circuit suitable for reduction.
 
@@ -5024,8 +4928,6 @@ We need to \emph{encode} the states of one circuit as another; we have already
 encountered this notion using \emph{Mealy homomorphisms}
 (\autoref{def:mealy-homomorphism});
 functions between the state sets that preserve transitions and outputs.
-While two `inverse' homomorphisms may not be isomorphisms, the round
-trip will always map to a state with the same behaviour.
 
 \begin{lem}
     Given two Mealy homomorphisms \(\morph{h}{(S,f)}{(T,g)}\) and
@@ -6528,34 +6430,30 @@ So far, we have been concerned largely with \emph{theoretical} concepts; we have
 shown how the categorical framework of sequential digital circuits is rigorous
 enough to handle composing circuits in sequence, parallel or with the trace
 without causing any of the three semantic models to become degenerate.
-Unfortunately, this is not enough for people in industry, who are more concerned
-with the \emph{practical} benefits of the framework: what can we do with it that
-cannot already be done?
 
-Circuit design is already a very well-studied area and existing technologies are
-incredibly successful.
-Our framework is therefore not meant to \emph{replace} the existing
-technologies, but to \emph{complement} them by highlighting different
-perspectives on reasoning with sequential digital circuits.
+As existing circuit design technologies are incredibly successful,
+our framework is not meant to \emph{replace} but to \emph{complement} them by
+highlighting different perspectives on reasoning with sequential digital
+circuits.
 While the ideas provided in this section are certainly not industry-grade
 applications, they are intended to demonstrate the potential of what
 the compositional theory can bring to the table.
 
-\subsection{Tidying up}\label{sec:tidy}
+\subsection{Refactoring}\label{sec:tidy}
 
 When building a circuit, it is desirable to reduce the number of wires
 and components used; this reduces both the physical size of the circuit and its
 power consumption.
 We can use partial evaluation to transform a circuit into a more minimal form.
 
-\begin{defi}[Tidying rules]
-    Let the \emph{tidying rules} be defined as in \autoref{fig:tidy-rules}.
+\begin{defi}[Refactoring rules]
+    Let the \emph{refactoring rules} be defined as in \autoref{fig:tidy-rules}.
 \end{defi}
 
-Most of the tidying rules are self-explanatory; the final rule is necessary in
+Most of the refactoring rules are self-explanatory; the final rule is necessary in
 order to deal with traced circuits with no outputs.
 Since all circuits with no outputs have the same behaviour, we are permitted to
-cut the trace to obtain a circuit we can apply more tidying rules to.
+cut the trace to obtain a circuit we can apply more refactoring rules to.
 As non-delay-guarded feedback is already handled by the
 \((\instantfeedbackeqn)\) rule, we only need to consider the delay-guarded case.
 
@@ -6621,16 +6519,16 @@ As non-delay-guarded feedback is already handled by the
     \\[0.25em]
     \rule{\textwidth}{0.1mm}
     \\[0.5em]
-    \caption{Rules for tidying up circuits in Mealy form}
+    \caption{Rules for refactoring up circuits in Mealy form}
     \label{fig:tidy-rules}
 \end{figure}
 
 \begin{prop}
-    Applying the tidying rules to a Mealy form is confluent and
+    Applying the refactoring rules to a Mealy form is confluent and
     terminating.
 \end{prop}
 \begin{proof}
-    The tidying rules always decrease the size of the circuit.
+    The refactoring rules always decrease the size of the circuit.
     The only choice is raised when there is a trace around a combinational
     circuit, but this does not change the internal structure of the subcircuit,
     so rule applications are prevented.
@@ -7295,25 +7193,17 @@ blackboxes, layered explanations, and graphical reasoning.
 
 \section{Conclusion}\label{sec:conclusion}
 
-\begin{figure}
-    \centering
-    \includestandalone{figures/circuits/map}
-    \caption{Relating categorical models of circuits}
-    \label{fig:map}
-\end{figure}
-
 We have presented three ways of showing equivalence of
 circuits: \emph{denotationally} by using the stream semantics,
 \emph{operationally} by using the productive reduction strategy, and
 \emph{algebraically} by using the sound and complete equational theory.
 This completes the research programme initiated
 by~\cite{ghica2016categorical,ghica2017diagrammatic}.
-A summary of the categories involved is shown in \autoref{fig:map}.
 
 String diagrams as a graphical syntax for monoidal categories were introduced a
 few decades ago~\cite{joyal1991geometry,joyal1996traced}, and there has since
 been an explosion in their use for various applications, such as
-cyclic lambda calculi~\cite{hasegawa1997recursion}, fixpoint
+cyclic lambda calculi~\cite{hasegawa1997recursion,ghica2023string}, fixpoint
 operators~\cite{hasegawa2003uniformity},
 quantum protocols~\cite{abramsky2004categorical}, signal flow
 diagrams~\cite{bonchi2014categorical,bonchi2015full}, linear
@@ -7329,8 +7219,8 @@ In many of the above applications, the join and the fork form a
 This means the trace is constructed as
 \(\iltikzfig{strings/traced/trace-from-product}\),
 which degenerates to
-\(\iltikzfig{strings/traced/trace-from-product-bialg}\) in our \emph{Cartesian}
-setting.
+\(\iltikzfig{strings/traced/trace-from-product-bialg}\) in the presence of
+\emph{Cartesian} structure.
 Indeed, in any compact closed category the product would automatically be a
 coproduct (biproduct), which is a degeneracy incompatible with models of
 digital circuits.
@@ -7389,8 +7279,8 @@ structure~\cite{fritz2023free,milosavljevic2023string}, and \emph{traced}
 comonoid structure~\cite{ghica2023rewriting}: the setting in which we model
 digital circuits.
 We have already begun to develop an automated framework for rewriting
-circuits based on this work, which can be found at
-\url{https://github.com/georgejkaye/circuit-cj}.
+circuits based on this work, which can be found
+online\footnote{\url{https://github.com/georgejkaye/circuit-cj}}.
 
 \bibliographystyle{alphaurl}
 \bibliography{refs/refs}
