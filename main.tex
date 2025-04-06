@@ -1320,7 +1320,7 @@ functions form a PROP.
 \end{prop}
 \begin{proof}
     Identity is the identity function, the symmetry swaps streams, composition
-    is composition of functions, and tensor product on morphisms
+    is composition of functions, and tensor product on
     \(\morph{f}{\valuetuplestream{m}}{\valuetuplestream{n}}\) and
     \(\morph{g}{\valuetuplestream{p}}{\valuetuplestream{q}}\) is the Cartesian
     product of functions composed with the components of the isomorphism
@@ -3192,7 +3192,7 @@ for a set of reductions to be suitable then there should be a terminating
 strategy for evaluating inputs to circuits.
 
 \begin{nota}[Reduction]
-    A \emph{reduction} from \(
+    A \emph{reduction} from circuit \(
     \iltikzfig{strings/category/f}[box=F,colour=seq,dom=m,cod=n]
     \) to \(
     \iltikzfig{strings/category/f}[box=G,colour=seq,dom=m,cod=n]
@@ -3218,7 +3218,7 @@ strategy for evaluating inputs to circuits.
     \iltikzfig{strings/category/f}[box=F,colour=seq,dom=m,cod=n]
     \reduction
     \iltikzfig{strings/category/f}[box=G,colour=seq,dom=m,cod=n]
-    \) is \emph{sound} if \(
+    \) is \emph{sound} if we have that \(
     \circuittostreami[
         \iltikzfig{strings/category/f}[box=F,colour=seq,dom=m,cod=n]
     ]
@@ -4374,9 +4374,9 @@ Instead, these must be specified on an interpretation-by-interpretation basis.
 \end{defi}
 
 \begin{exa}
-    The Belnap interpretation has a set of normalising equations, which mainly
-    consists of the standard completeness equations for Boolean logic extended
-    to act on Belnap values.
+    The Belnap interpretation is normalisable; the set of normalising equations
+    consists primarily of the standard completeness equations for Boolean logic
+    extended to act on Belnap values.
     The complete set is extensive, so in the interests of brevity the equations
     and associated proofs can be found in \cite[Sec.\ 6.5]{kaye2025foundations}.
 \end{exa}
@@ -4403,7 +4403,7 @@ table.
     \iltikzfig{strings/category/f}[box=f,colour=seq,dom=m,cod=n]
     =
     \iltikzfig{circuits/productivity/mealy-form}[core=h]
-    \) and by equations in \(\normalisingequations\), \(
+    \) and by \(\normalisingequations\), \(
     \iltikzfig{strings/category/f-2-2}[box=h,colour=comb]
     =
     \iltikzfig{strings/category/f-2-2-wide}[box=\mealytofunc[g],colour=seq]
