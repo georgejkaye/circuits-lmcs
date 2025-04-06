@@ -368,44 +368,18 @@ the diagrams, as illustrated in \cref{fig:smc-axioms}.
     =
     \iltikzfig{strings/symmetric/self-inverse-rhs}[colour=white,obj1=m,obj2=n]
     \)
-    \\[1em]
-    \(
-    \iltikzfig{strings/traced/naturality-lhs}[box1=f,box2=g,box3=h,colour=white,dom=m,cod=q]
-    =
-    \iltikzfig{strings/traced/naturality-rhs}[box1=f,box2=g,box3=h,colour=white,dom=m,cod=q]
-    \)
-    \\[1em]
-    \(
-    \iltikzfig{strings/traced/sliding-lhs}[box1=f,box2=g,colour=white,dom=m,cod=n]
-    =
-    \iltikzfig{strings/traced/sliding-rhs}[box1=f,box2=g,colour=white,dom=m,cod=n]
-    \)
-    \\[1em]
-    \(
-    \iltikzfig{strings/traced/vanishing-lhs}[box=f,colour=white,dom=m,cod=n,trace1=x,trace2=y]
-    =
-    \iltikzfig{strings/traced/vanishing-rhs}[box=f,colour=white,dom=m,cod=n,trace1=x,trace2=y]
-    \quad
-    \iltikzfig{strings/traced/superposing-lhs}[box1=f,box2=g,colour=white,dom1=m,dom2=p,cod1=n,cod2=q]
-    =
-    \iltikzfig{strings/traced/superposing-rhs}[box1=f,box2=g,colour=white,dom1=m,dom2=p,cod1=n,cod2=q]
-    \quad
-    \iltikzfig{strings/traced/yanking-lhs}[obj=m,colour=white]
-    =
-    \iltikzfig{strings/traced/yanking-rhs}[obj=m]
-    \)
+    \vspace{1em}
     \caption{
-        The equations of traced PROPS in
-        string diagram notation
+        The equations of PROPS in string diagram notation
     }
-    \label{fig:stmc-axioms}
+    \label{fig:smc-axioms}
 \end{figure*}
 
 We will first define a category of \emph{combinational circuits} with no state;
 these circuits compute \emph{functions} of their inputs.
 
 \begin{defi}[Combinational generators]
-    Given a circuit signature \(
+    For a circuit signature \(
     \circuitsignature = (
     \circuitsignaturevalues,
     \bullet,
@@ -452,9 +426,9 @@ Arbitrary combinational circuit morphisms defined in this way are drawn as light
 boxes \iltikzfig{strings/category/f}[box=f,colour=comb,dom=m,cod=n].
 
 \begin{nota}\label{not:arbitrary-width-structure}
-    The structural generators are only defined on single bits, but it is
+    The structural generators are defined on single bits, but it is
     straightforward to define versions for arbitrary bit wires.
-    Structural generators for \(0\)-bit wires are drawn as empty space or as
+    For \(0\)-bit wires they are drawn as empty space or as
     `faded' wires, and `thicker' constructs have their wires annotated with
     their widths.
     \begin{gather*}
@@ -476,7 +450,9 @@ boxes \iltikzfig{strings/category/f}[box=f,colour=comb,dom=m,cod=n].
             \coloneqq
             \iltikzfig{strings/monoidal/empty}
             \)
-            \quad
+
+            \vspace{1em}
+
             \(
             \iltikzfig{strings/structure/comonoid/copy}[obj=n+1,colour=comb]
             \coloneqq
@@ -502,7 +478,9 @@ boxes \iltikzfig{strings/category/f}[box=f,colour=comb,dom=m,cod=n].
             \coloneqq
             \iltikzfig{strings/monoidal/empty}
             \)
-            \quad
+
+            \vspace{1em}
+
             \(
             \iltikzfig{strings/structure/monoid/merge}[obj=n+1,colour=comb]
             \coloneqq
@@ -696,7 +674,7 @@ the signal it received in the previous cycle.
     physical aspect of a digital circuit it models is less clear.
     An obvious interpretation could be that the delay models a D flipflop in
     a clocked circuit, so the delay is one clock cycle.
-    A more subtle interpretation is the `minimum obervable duration'; in this
+    A more subtle interpretation is the `minimum observable duration'; in this
     case the delay models inertial delay on wires up to some fixed precision.
 \end{rem}
 
