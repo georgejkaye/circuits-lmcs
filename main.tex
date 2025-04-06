@@ -299,7 +299,7 @@ Composite morphisms, or `terms', are drawn as wider boxes \(
 \).
 One of the advantages of this notation over standard term syntax is that
 structural rules (identity, associativity, functoriality) are `absorbed' into
-the diagrams, as illustrated in \cref{fig:stmc-axioms}.
+the diagrams, as illustrated in \cref{fig:smc-axioms}.
 
 \begin{figure*}
     \centering
@@ -312,37 +312,39 @@ the diagrams, as illustrated in \cref{fig:stmc-axioms}.
     =
     \iltikzfig{strings/category/f}[box=f,colour=white,dom=m,cod=n]
     \)
-    \\[1em]
+    \\[1.5em]
     \(
     \iltikzfig{strings/category/associativity-lhs}[box1=f,box2=g,box3=h,colour=white,dom=m,cod=p]
     =
     \iltikzfig{strings/category/associativity-rhs}[box1=f,box2=g,box3=h,colour=white,dom=m,cod=p]
     \)
-    \\[1em]
+    \\[1.5em]
     \(
     \iltikzfig{strings/monoidal/unit-l-lhs}[box=f,colour=white,dom=m,cod=n]
     =
     \iltikzfig{strings/category/f}[box=f,colour=white,dom=m,cod=n]
-    \,\,
+    \quad
     \iltikzfig{strings/monoidal/unit-r-lhs}[box=f,colour=white,dom=m,cod=n]
     =
     \iltikzfig{strings/category/f}[box=f,colour=white,dom=m,cod=n]
     \)
-    \\[1em]
+    \\[1.5em]
     \(
     \iltikzfig{strings/monoidal/associativity-lhs}[box1=f,box2=g,box3=h,colour=white,dom1=m,cod1=n,dom2=p,cod2=q,dom3=r,cod3=s]
     =
     \iltikzfig{strings/monoidal/associativity-rhs}[box1=f,box2=g,box3=h,colour=white,dom1=m,cod1=n,dom2=p,cod2=q,dom3=r,cod3=s]
-    \,\,
+    \quad
     \iltikzfig{strings/monoidal/identity-tensor-lhs}[colour=white,obj1=m,obj2=n]
     =
     \iltikzfig{strings/category/identity}[colour=white,obj=m+n]
-    \,\,
+    \)
+    \\[1.5em]
+    \(
     \iltikzfig{strings/monoidal/interchange-lhs}[box1=f,box2=g,box3=h,box4=k,colour=white,dom1=m,dom2=p,cod1=n,cod2=q]
     =
     \iltikzfig{strings/monoidal/interchange-rhs}[box1=f,box2=g,box3=h,box4=k,colour=white,dom1=m,dom2=p,cod1=n,cod2=q]
     \)
-    \\[1em]
+    \\[1.5em]
     \(
     \iltikzfig{strings/symmetric/naturality-lhs}[box1=f,box2=g,colour=white,dom1=m,dom2=p,cod1=n,cod2=q]
     =
@@ -351,7 +353,9 @@ the diagrams, as illustrated in \cref{fig:stmc-axioms}.
     \iltikzfig{strings/symmetric/hexagon-lhs}[colour=white,obj1=m,obj2=n,obj3=p]
     =
     \iltikzfig{strings/symmetric/symmetry}[colour=white,obj1=m,obj2=n+p]
-    \quad
+    \)
+    \\[1.5em]
+    \(
     \iltikzfig{strings/symmetric/unit-l-lhs}[colour=white,unit=0,obj=n]
     =
     \iltikzfig{strings/category/identity}[colour=white,obj=n]
@@ -587,7 +591,45 @@ As we have mentioned earlier, such circuits are called
 \emph{sequential circuits}.
 
 Circuits gain state with \emph{delay} and \emph{feedback}.
-The latter means we need to move into a symmetric \emph{traced} monoidal category.
+The latter means we need to move into a symmetric \emph{traced} monoidal
+category.
+In string diagram notation, the trace is represented as a loop from outputs to
+inputs; much like with the symmetric monoidal setting, this gives the equations
+of STMCs intuitive graphical interpretations, illustrated in
+\autoref{fig:stmc-axioms}.
+
+\begin{figure*}
+    \(
+    \iltikzfig{strings/traced/naturality-lhs}[box1=f,box2=g,box3=h,colour=white,dom=m,cod=q]
+    =
+    \iltikzfig{strings/traced/naturality-rhs}[box1=f,box2=g,box3=h,colour=white,dom=m,cod=q]
+    \)
+    \\[1.5em]
+    \(
+    \iltikzfig{strings/traced/sliding-lhs}[box1=f,box2=g,colour=white,dom=m,cod=n]
+    =
+    \iltikzfig{strings/traced/sliding-rhs}[box1=f,box2=g,colour=white,dom=m,cod=n]
+    \)
+    \\[1.5em]
+    \(
+    \iltikzfig{strings/traced/vanishing-lhs}[box=f,colour=white,dom=m,cod=n,trace1=x,trace2=y]
+    =
+    \iltikzfig{strings/traced/vanishing-prop-rhs}[box=f,colour=white,dom=m,cod=n,trace1=x,trace2=y]
+    \)
+    \\[1.5em]
+    \(
+    \iltikzfig{strings/traced/superposing-lhs}[box1=f,box2=g,colour=white,dom1=m,dom2=p,cod1=n,cod2=q]
+    =
+    \iltikzfig{strings/traced/superposing-rhs}[box1=f,box2=g,colour=white,dom1=m,dom2=p,cod1=n,cod2=q]
+    \qquad
+    \iltikzfig{strings/traced/yanking-lhs}[obj=m,colour=white]
+    =
+    \iltikzfig{strings/traced/yanking-rhs}[obj=m]
+    \)
+    \caption{The trace equations in string diagram notation}
+    \label{fig:stmc-axioms}
+\end{figure*}
+
 
 \begin{defi}[Sequential circuits]
     For a circuit signature \(\circuitsignature\) with value set \(\values\),
