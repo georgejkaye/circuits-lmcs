@@ -107,13 +107,21 @@ our mathematical and logical understanding of digital circuits.
 To be more precise, by `digital circuits' we primarily understand
 \emph{electronic} circuits: deterministic circuits with clear notions of
 input and output and which work on discrete signals.
+These circuits are \emph{sequential} as outputs can be impacted by previous
+inputs over time, and \emph{synchronous} because their state changes in time
+with some global clock.
 A classic example is that of logical gates and basic memory elements of known
 and fixed delays, but there are alternatives such as CMOS transistors operating
 in saturation mode.
+
 What we do not attempt to handle are circuits operating on continuous signals
 (such as amplifiers) or in continuous time (such as asynchronous circuits), nor
 \emph{electrical} circuits of resistors and capacitors, which are quite
 different~\cite{boisseau2022string}.
+The difference between electrical circuits and electronic circuits boils down to
+the difference between traced categories and compact closed categories: digital
+circuits have a clear notion of \emph{causality} whereas electrical circuits are
+\emph{relational} in nature.
 
 Our goal is to devise a \emph{fully compositional} model of digital circuits.
 By `fully compositional' we mean that a larger circuit can be built from smaller
@@ -192,26 +200,10 @@ power of the framework must hold a certain degree of appeal and promise.
 
 \section{Syntax}
 
-Our work is concerned with \emph{sequential synchronous digital circuits}
-constructed from primitive components such as logic gates or transistors.
-These circuits are \emph{sequential} as outputs can be impacted by previous
-inputs over time, and \emph{synchronous} because their state changes in time
-with some global clock.
-
-\begin{rem}
-    Digital (electric) circuits are not to be confused with \emph{electronic}
-    circuits of switches and resistors.
-    Essentially, the difference boils down to the difference between traced
-    categories and compact closed categories: digital circuits have a clear
-    notion of \emph{causality} whereas electronic circuits are \emph{relational}
-    in nature.
-    For a study of the latter, see \cite{boisseau2022string}.
-\end{rem}
-
 \subsection{Circuit signatures}
 
-To construct circuits, we define a category in which a morphism
-\(m \to n\) is a circuit with \(m\) inputs and \(n\) outputs.
+We model circuits as morphisms in a symmetric monoidal (traced) category; a
+morphism \(m \to n\) is a circuit with \(m\) inputs and \(n\) outputs.
 Rather than restricting to any particular gate set, we parameterise a given
 category of circuits over a \emph{circuit signature} containing details about
 the available components.
@@ -277,8 +269,8 @@ majority of examples in this thesis, is that of gate-level circuits.
 A circuit signature freely generates symmetric monoidal categories (SMCs) of
 digital circuits.
 These are PROPS (categories of \emph{PRO}ducts and
-\emph{P}ermutations)~\cite{maclane1965categorical}, SMCs with natural numbers as
-objects and addition as tensor product on objects.
+\emph{P}ermutations)~\cite{maclane1965categorical}, SMCs with objects the
+natural numbers and tensor product on objects as addition.
 
 Instead of term strings, we employ the two dimensional syntax of
 \emph{string diagrams}~\cite{joyal1991geometry,joyal1996traced,selinger2011survey}.
@@ -665,9 +657,9 @@ This is why there is no \(\bullet\) value generator; instead it is a
     sequential.
 \end{exa}
 
-The delay component is the opposite of a value; in the first cycle of execution
-it is intended to produce the \(\bullet\) value, but in future cycles it outputs
-the signal it received in the previous cycle.
+In the first cycle of execution the delay is intended to produce the \(\bullet\)
+value, but in future cycles it outputs the signal it received in the previous
+cycle.
 
 \begin{rem}
     While the mathematical interpretation of a delay is straightforward, the
@@ -679,10 +671,10 @@ the signal it received in the previous cycle.
 \end{rem}
 
 \begin{nota}
-    Like values, we can derive delay components for arbitrary-bit wires, drawn
-    like \(
+    We define delay components for arbitrary-bit wires
+    \(
     \iltikzfig{circuits/components/waveforms/delay}[width=n]
-    \).
+    \) as follows:
     \begin{gather*}
         \iltikzfig{circuits/components/waveforms/unit-delay}[width=0]
         \coloneqq
@@ -922,17 +914,16 @@ be remarked upon throughout.
 \section{Denotational semantics}
 
 Circuits in \(\scircsigma\) are purely \emph{syntax}; the only equational
-properties they satisfy are the `structural equations' of traced PROPs.
-This amounts to moving boxes around while preserving connectivity: the boxes
-themselves cannot be altered.
+properties they satisfy are the `structural equations' of traced PROPs: moving
+boxes around while preserving connectivity.
 In this section we will present a fully compositional denotational
 semantics for sequential circuits based on \emph{causal}, \emph{monotone} and
 \emph{finitely specified} stream functions.
-This denotational semantics is constructed \emph{compositionally} using a
-functor from \(\scircsigma\) to a PROP of stream functions with the desired
-properties; a reverse functor is then defined which maps a stream function \(f\)
-to a circuit in \(\scircsigma\) with \(f\) as its denotation, showing that this
-denotational semantics is \emph{sound and complete}.
+This denotational semantics is defined using a functor from \(\scircsigma\) to a
+PROP of stream functions with the desired properties; a reverse functor is then
+defined which maps a stream function \(f\) to a circuit in \(\scircsigma\) with
+\(f\) as its denotation, showing that this denotational semantics is
+\emph{sound and complete}.
 
 \begin{rem}
     In \cite{mendler2012constructive}, the semantics of digital circuits with
@@ -1010,22 +1001,21 @@ of a \emph{lattice}.
     )
     \) from \autoref{ex:belnap-signature}.
     We assign a partial order \(\leq_\mathsf{B}\) to values in
-    \(\belnapvalues\) as follows:
+    \(\belnapvalues\) as showing on the left of
+    \autoref{fig:belnap-interpretation}.
+    The gate interpretation \(\belnapgateinterpretation\) has action \(
+    \andgate \mapsto \land, \orgate \mapsto \lor, \notgate \mapsto \neg
+    \) where \(\land\), \(\lor\) and \(\neg\) are defined by the truth tables
+    on the right of \autoref{fig:belnap-interpretation}~\cite{belnap1977useful}.
 
-    \begin{center}
+    \begin{figure*}
+        \centering
         \begin{tikzcd}
             & \top & \\
             \belnapfalse \arrow[dash]{ur} & & \belnaptrue \arrow[dash]{ul} \\
             & \bot \arrow[dash]{ul} \arrow[dash]{ur} &
         \end{tikzcd}
-    \end{center}
-
-    The gate interpretation \(\belnapgateinterpretation\) has action \(
-    \andgate \mapsto \land, \orgate \mapsto \lor, \notgate \mapsto \neg
-    \) where \(\land\), \(\lor\) and \(\neg\) are defined by the following
-    truth tables~\cite{belnap1977useful}:
-
-    \begin{center}
+        \qquad\qquad
         \begin{tabular}{|c|cccc|}
             \hline
             \(\land\)        & \(\bot\)         & \(\belnapfalse\) & \(\belnaptrue\)  & \(\top\)         \\
@@ -1058,7 +1048,12 @@ of a \emph{lattice}.
             \(\top\)         & \(\top\)         \\
             \hline
         \end{tabular}
-    \end{center}
+        \caption{
+            The partial order \(\leq_\mathsf{B}\), and the interpretations
+            of primitives in \(\belnapgates\).
+        }
+        \label{fig:belnap-interpretation}
+    \end{figure*}
 
     The Belnap interpretation is then \(
     (\leq_\mathsf{B}, \belnapgateinterpretation)
@@ -2976,52 +2971,55 @@ generators for each \(n \in \natplus\), as well as the bundlers.
 
 \begin{defi}
     Let \(\morph{\circuittofuncig}{\ccircsigmag}{\funcig}\) be the coloured PROP
-    morphism with action defined as%
-    % \vspace{-\abovedisplayskip}
-    \begin{align*}
-        \circuittofuncig[
-            \iltikzfig{circuits/components/gates/gate}[gate=p,dom=\listvar{m},cod=\listvar{n}]
-        ]
-         & \coloneqq
-        \gateinterpretation[p]
-        \\[0.75em]
-        \circuittofuncig[
-            \iltikzfig{strings/structure/comonoid/copy}[colour=comb,obj=n]
-        ]
-         & \coloneqq
-        (\listvar{v}) \mapsto (\listvar{v}, \listvar{v})
-        \\[0.75em]
-        \circuittofuncig[
-            \iltikzfig{strings/structure/comonoid/discard}[colour=comb,obj=n]
-        ]
-         & \coloneqq
-        (\listvar{v}) \mapsto ()
-        \\[0.75em]
-        \circuittofuncig[
-            \iltikzfig{strings/structure/monoid/merge}[colour=comb,obj=n]
-        ]
-         & \coloneqq
-        (\listvar{v}, \listvar{w})
-        \mapsto \listvar{v} \sqcup \listvar{w}
-        \\[0.75em]
-        \circuittofuncig[
-            \iltikzfig{strings/structure/monoid/init}[colour=comb,obj=n]
-        ]
-         & \coloneqq
-        () \mapsto \bot^n
-        \\[0.75em]
-        \circuittofuncig[
-            \iltikzfig{strings/strictifiers/expand}[colour=comb,obj=n]
-        ]
-         & \coloneqq
-        (\listvar{v}) \mapsto (\listvar{v}(0), \listvar{v}(1), \dots, \listvar{v}(n-1))
-        \\[0.75em]
-        \circuittofuncig[
-            \iltikzfig{strings/strictifiers/collapse}[colour=comb,obj=n]
-        ]
-         & \coloneqq
-        (v_0, v_1, \dots, v_{n-1}) \mapsto (v_0v_1\dots v_{n-1})
-    \end{align*}
+    morphism with action defined as in \autoref{fig:circuittofuncig}.
+    \begin{figure}
+        \begin{align*}
+            \circuittofuncig[
+                \iltikzfig{circuits/components/gates/gate}[gate=p,dom=\listvar{m},cod=\listvar{n}]
+            ]
+             & \coloneqq
+            \gateinterpretation[p]
+            \\[0.75em]
+            \circuittofuncig[
+                \iltikzfig{strings/structure/comonoid/copy}[colour=comb,obj=n]
+            ]
+             & \coloneqq
+            (\listvar{v}) \mapsto (\listvar{v}, \listvar{v})
+            \\[0.75em]
+            \circuittofuncig[
+                \iltikzfig{strings/structure/comonoid/discard}[colour=comb,obj=n]
+            ]
+             & \coloneqq
+            (\listvar{v}) \mapsto ()
+            \\[0.75em]
+            \circuittofuncig[
+                \iltikzfig{strings/structure/monoid/merge}[colour=comb,obj=n]
+            ]
+             & \coloneqq
+            (\listvar{v}, \listvar{w})
+            \mapsto \listvar{v} \sqcup \listvar{w}
+            \\[0.75em]
+            \circuittofuncig[
+                \iltikzfig{strings/structure/monoid/init}[colour=comb,obj=n]
+            ]
+             & \coloneqq
+            () \mapsto \bot^n
+            \\[0.75em]
+            \circuittofuncig[
+                \iltikzfig{strings/strictifiers/expand}[colour=comb,obj=n]
+            ]
+             & \coloneqq
+            (\listvar{v}) \mapsto (\listvar{v}(0), \listvar{v}(1), \dots, \listvar{v}(n-1))
+            \\[0.75em]
+            \circuittofuncig[
+                \iltikzfig{strings/strictifiers/collapse}[colour=comb,obj=n]
+            ]
+             & \coloneqq
+            (v_0, v_1, \dots, v_{n-1}) \mapsto (v_0v_1\dots v_{n-1})
+        \end{align*}
+        \caption{Action of the PROP morphism \(\circuittofuncig\)}
+        \label{fig:circuittofuncig}
+    \end{figure}
 \end{defi}
 
 The map from coloured circuits to Mealy machines proceeds in a similar
@@ -3029,98 +3027,102 @@ manner.
 
 \begin{defi}
     Let \(\morph{\circuittomealyig}{\scircsigmag}{\mealyig}\) be the traced PROP
-    morphism defined on generators as
-    \begin{align*}
-        \circuittomealyig[
-            \iltikzfig{circuits/components/gates/gate}[colour=comb]
-        ]
-         & \coloneqq
-        (\{s\},
-         &             & (\listvar{v}_0,\dots,\listvar{v}_{m-1}) \mapsto
-        \left\langle
-        s,
-        \gateinterpretation[g]\left(
-        \listvar{v}_0,\listvar{v}_1,\dots,\listvar{v}_{m-1}
-        \right)
-        \right\rangle,
-         &             & s)
-        \\
-        \circuittomealyig[
-            \iltikzfig{strings/structure/comonoid/copy}[colour=comb,obj=n]
-        ]
-         & \coloneqq (
-        \{s\},
-         &             & \listvar{v}
-        \mapsto
-        \left\langle s, (\listvar{v},\listvar{v})\right\rangle,
-         &             & s
-        )
-        \\
-        \circuittomealyig[
-            \iltikzfig{strings/structure/monoid/merge}[colour=comb,obj=n]
-        ]
-         & \coloneqq (
-        \{s\},
-         &             & (\listvar{v}, \listvar{w}) \mapsto
-        \left\langle s, \listvar{v} \ljoin \listvar{w}\right\rangle,
-         &             & s
-        )
-        \\
-        \circuittomealyig[
-            \iltikzfig{strings/structure/comonoid/discard}[colour=comb,obj=n]
-        ]
-         & \coloneqq
-        (
-        \{s\},
-         &             & \listvar{v} \mapsto
-        \left\langle s, s\right\rangle,
-         &             & s
-        )
-        \\
-        \circuittomealyig[
-            \iltikzfig{strings/strictifiers/expand}[colour=comb,obj=n]
-        ]
-         & \coloneqq
-        (
-        \{s\},
-         &             & (v_0,v_1,\dots,v_{n-1}) \mapsto ((v_0), (v_1), \dots, (v_{n-1})),
-         &             & s
-        )
-        \\
-        \circuittomealyig[
-            \iltikzfig{strings/strictifiers/collapse}[colour=comb,obj=n]
-        ]
-         & \coloneqq
-        (
-        \{s\},
-         &             & ((v_0), (v_1), \dots, (v_{n-1})) \mapsto (v_0,v_1,\dots,v_{n-1}),
-         &             & s
-        )
-        \\
-        \circuittomealyig[
-            \iltikzfig{circuits/components/values/vs}[val=\listvar{v},width=n]
-        ]
-         & \coloneqq
-        (
-        \{s_{\listvar{v}}, s_\bot\},
-         &             & \{
-        s_{\listvar{v}} \mapsto \left\langle{s_\bot,\listvar{v}}\right\rangle,
-        s_\bot \mapsto \left\langle{s_\bot,\bot}\right\rangle
-        \},
-         &             & s_{\listvar{v}}
-        )
-        \\
-        \circuittomealyig[
-            \iltikzfig{circuits/components/waveforms/delay}[width=n]
-        ]
-         & \coloneqq
-        (
-        \{ s_{\listvar{v}} \,|\, \listvar{v} \in \valuetuple{n}\},
-         &             & (s_{\listvar{v}}, \listvar{w}) \mapsto
-        \left\langle{s_{\listvar{w}},\listvar{v}}\right\rangle,
-         &             & s_{\bot^n}
-        )
-    \end{align*}
+    morphism defined on generators as in \autoref{fig:circuittomealyig}.
+    \begin{figure}
+        \begin{align*}
+            \circuittomealyig[
+                \iltikzfig{circuits/components/gates/gate}[colour=comb]
+            ]
+             & \coloneqq
+            (\{s\},
+             &             & (\listvar{v}_0,\dots,\listvar{v}_{m-1}) \mapsto
+            \left\langle
+            s,
+            \gateinterpretation[g]\left(
+            \listvar{v}_0,\listvar{v}_1,\dots,\listvar{v}_{m-1}
+            \right)
+            \right\rangle,
+             &             & s)
+            \\
+            \circuittomealyig[
+                \iltikzfig{strings/structure/comonoid/copy}[colour=comb,obj=n]
+            ]
+             & \coloneqq (
+            \{s\},
+             &             & \listvar{v}
+            \mapsto
+            \left\langle s, (\listvar{v},\listvar{v})\right\rangle,
+             &             & s
+            )
+            \\
+            \circuittomealyig[
+                \iltikzfig{strings/structure/monoid/merge}[colour=comb,obj=n]
+            ]
+             & \coloneqq (
+            \{s\},
+             &             & (\listvar{v}, \listvar{w}) \mapsto
+            \left\langle s, \listvar{v} \ljoin \listvar{w}\right\rangle,
+             &             & s
+            )
+            \\
+            \circuittomealyig[
+                \iltikzfig{strings/structure/comonoid/discard}[colour=comb,obj=n]
+            ]
+             & \coloneqq
+            (
+            \{s\},
+             &             & \listvar{v} \mapsto
+            \left\langle s, s\right\rangle,
+             &             & s
+            )
+            \\
+            \circuittomealyig[
+                \iltikzfig{strings/strictifiers/expand}[colour=comb,obj=n]
+            ]
+             & \coloneqq
+            (
+            \{s\},
+             &             & (v_0,v_1,\dots,v_{n-1}) \mapsto ((v_0), (v_1), \dots, (v_{n-1})),
+             &             & s
+            )
+            \\
+            \circuittomealyig[
+                \iltikzfig{strings/strictifiers/collapse}[colour=comb,obj=n]
+            ]
+             & \coloneqq
+            (
+            \{s\},
+             &             & ((v_0), (v_1), \dots, (v_{n-1})) \mapsto (v_0,v_1,\dots,v_{n-1}),
+             &             & s
+            )
+            \\
+            \circuittomealyig[
+                \iltikzfig{circuits/components/values/vs}[val=\listvar{v},width=n]
+            ]
+             & \coloneqq
+            (
+            \{s_{\listvar{v}}, s_\bot\},
+             &             & \{
+            s_{\listvar{v}} \mapsto \left\langle{s_\bot,\listvar{v}}\right\rangle,
+            s_\bot \mapsto \left\langle{s_\bot,\bot}\right\rangle
+            \},
+             &             & s_{\listvar{v}}
+            )
+            \\
+            \circuittomealyig[
+                \iltikzfig{circuits/components/waveforms/delay}[width=n]
+            ]
+             & \coloneqq
+            (
+            \{ s_{\listvar{v}} \,|\, \listvar{v} \in \valuetuple{n}\},
+             &             & (s_{\listvar{v}}, \listvar{w}) \mapsto
+            \left\langle{s_{\listvar{w}},\listvar{v}}\right\rangle,
+             &             & s_{\bot^n}
+            )
+        \end{align*}
+        \caption{Action of the PROP morphism \(\circuittomealyig\)}
+        \label{fig:circuittomealyig}
+    \end{figure}
 \end{defi}
 
 Although morphisms in \(\mealyig\) have different interfaces to those in
@@ -5748,32 +5750,37 @@ ordinary value in future reductions and outputs.
     applied to a circuit and apply reductions that are not valid in general but
     are in this context.
 
-    In the following example, setting the first two inputs to true/false
-    inverses reduces the circuit to one with combinational behaviour.
-    \begin{gather*}
-        \iltikzfig{circuits/examples/protocol/circuit-with-protocol}
-        \reduction
-        \\[0.25em]
-        \iltikzfig{circuits/examples/protocol/circuit-with-protocol-1}
-        \reduction
-        \\[0.25em]
-        \iltikzfig{circuits/examples/protocol/circuit-with-protocol-2}
-        \reduction
-        \\[0.25em]
-        \iltikzfig{circuits/examples/protocol/circuit-with-protocol-3}
-        \reduction
-        \\[0.25em]
-        \iltikzfig{circuits/examples/protocol/circuit-with-protocol-4}
-        \reduction
-        \iltikzfig{circuits/examples/protocol/circuit-with-protocol-5}
-        \reduction
-        \\[0.25em]
-        \iltikzfig{circuits/examples/protocol/circuit-with-protocol-6}
-        \reduction
-        \iltikzfig{circuits/examples/protocol/circuit-with-protocol-7}
-        \reduction
-        \iltikzfig{circuits/examples/protocol/circuit-with-protocol-8}
-    \end{gather*}
+    In the example in \autoref{fig:protocols-example}, setting the first two
+    inputs to true/false inverses reduces the circuit to one with combinational
+    behaviour.
+    \begin{figure*}
+        \begin{gather*}
+            \iltikzfig{circuits/examples/protocol/circuit-with-protocol}
+            \reduction
+            \\[0.25em]
+            \iltikzfig{circuits/examples/protocol/circuit-with-protocol-1}
+            \reduction
+            \\[0.25em]
+            \iltikzfig{circuits/examples/protocol/circuit-with-protocol-2}
+            \reduction
+            \\[0.25em]
+            \iltikzfig{circuits/examples/protocol/circuit-with-protocol-3}
+            \reduction
+            \\[0.25em]
+            \iltikzfig{circuits/examples/protocol/circuit-with-protocol-4}
+            \reduction
+            \iltikzfig{circuits/examples/protocol/circuit-with-protocol-5}
+            \reduction
+            \\[0.25em]
+            \iltikzfig{circuits/examples/protocol/circuit-with-protocol-6}
+            \reduction
+            \iltikzfig{circuits/examples/protocol/circuit-with-protocol-7}
+            \reduction
+            \iltikzfig{circuits/examples/protocol/circuit-with-protocol-8}
+        \end{gather*}
+        \caption{Reducing a circuit using protocols}
+        \label{fig:protocols-example}
+    \end{figure*}
 \end{exa}
 
 \subsection{Layers of abstraction}\label{sec:abstraction}
@@ -5805,17 +5812,19 @@ different levels of abstraction, and drawn using `functorial boxes'
     \) to morphisms in \(\scirc{\belnapsignature}\), which induces a functor
     \(\scirc{\Sigma_+} \to \scirc{\belnapsignature}\).
     Different implementations can be defined as different maps, and hence
-    different functors.
+    different functors, as illustrated in \autoref{fig:implementations}.
     These circuits can then be tested to see if they act as intended.
-    \begin{gather*}
-        \iltikzfig{circuits/examples/implementation/circuit}
-        \xRightarrow{\text{Imp.\ 1}}
-        \iltikzfig{circuits/examples/implementation/circuit-implemented}
-        \\[1em]
-        \iltikzfig{circuits/examples/implementation/circuit}
-        \xRightarrow{\text{Imp.\ 2}}
-        \iltikzfig{circuits/examples/implementation/circuit-implemented-2}
-    \end{gather*}
+    \begin{figure*}
+        \begin{gather*}
+            \iltikzfig{circuits/examples/implementation/circuit-implemented}
+            \xLeftarrow{\text{Imp.\ 1}}
+            \iltikzfig{circuits/examples/implementation/circuit}
+            \xRightarrow{\text{Imp.\ 2}}
+            \iltikzfig{circuits/examples/implementation/circuit-implemented-2}
+        \end{gather*}
+        \caption{Using different implementations of a circuit}
+        \label{fig:implementations}
+    \end{figure*}
 \end{exa}
 
 \subsection{Refining circuits}\label{sec:refining}
