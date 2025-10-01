@@ -155,14 +155,6 @@ paint a fully formal and coherent picture.
 This paper develops the informal presentation into a mathematically
 rigorous framework.
 
-\begin{figure}
-    \centering
-    \includestandalone{figures/circuits/map}
-    \caption{Relating categorical models of circuits}
-    \label{fig:map}
-\end{figure}
-
-A summary of our contributions is shown in \autoref{fig:map}.
 Our first contribution is to give, for the first time, a sound and complete
 denotational semantics to digital circuits in the domain of causal and monotone
 stream functions.
@@ -282,7 +274,8 @@ inputs and outputs, wires may be collapsed into one wire and labelled
 appropriately \(
 \iltikzfig{strings/category/generator}[box=\phi,colour=white,dom=m,cod=n]
 \).
-Composite morphisms, or `terms', are drawn as wider boxes \(
+Composite morphisms, or `terms', are drawn as wider boxes with rounded corners
+\(
 \iltikzfig{strings/category/f}[box=f,colour=white,dom=m,cod=n]
 \); composition as horizontal juxtaposition \(
 \iltikzfig{strings/category/composition}[box1=f,box2=g,colour=white,dom=m,cod=n]
@@ -814,8 +807,11 @@ In a generalised circuit signature, primitives are typed with input and output
     two \(n\)-bit wires and outputs their \(n\)-bit sum.
 \end{exa}
 
-Just like a monochromatic circuit signature generates monochromatic PROPs, a
-generalised circuit signature generates \(\natplus\)-coloured PROPs.
+When viewed graphically, a regular circuit signature generates a PROP in which
+the string diagrams have wires of a single width, or `colour'.
+A generalised circuit signature generates a PROP in which wires can be of any
+width \(n \in \natplus\); such a category is known as a
+\emph{\(\natplus\)-coloured PROP}.
 
 \begin{defi}
     For a generalised circuit signature \(\circuitsignature\), let the set
@@ -982,8 +978,9 @@ of a \emph{lattice}.
     \).
 \end{defi}
 
+
 \begin{exa}\label{ex:belnap-interpretation}
-    Recall the Belnap signature \(
+    Recall the gate-level signature \(
     \belnapsignature = (
     \belnapvalues, \bot, \belnapgates, \belnaparity, \belnapcoarity
     )
@@ -1043,12 +1040,27 @@ of a \emph{lattice}.
         \label{fig:belnap-interpretation}
     \end{figure*}
 
-    The Belnap interpretation is then \(
+    The gate-level interpretation is then \(
     (\leq_\mathsf{B}, \belnapgateinterpretation)
     \).
-    An online tool for experimenting with the Belnap interpretation can be found
+    An online tool for experimenting with the gate-level interpretation can be found
     online\footnote{\url{https://belnap.georgejkaye.com}}.
 \end{exa}
+
+\begin{remark}
+    When discussing interpretations of circuit signatures, we prefer to use
+    \(\sqsubseteq\) rather than \(\leq\), as this means that the corresponding
+    lattice operations \(\ljoin\) and \(\lmeet\) do not clash with the usual
+    notation for the logical operations for \(\orgate\) and \(\andgate\), as
+    used in the interpretations on primitives in
+    \autoref{fig:belnap-interpretation}
+
+    This clash of notation is actually not a coincidence; if one consults the
+    lattice diagram in \autoref{fig:belnap-interpretation} but rotated by 90
+    degrees anticlockwise, the \(\land\) operation is the meet and the
+    \(\lor\) operation is the join.
+\end{remark}
+
 \subsection{Denotational semantics of combinational circuits}
 
 The semantic domain for \emph{combinational} circuits is straightforward: each
@@ -1063,7 +1075,9 @@ circuit maps to a monotone function.
 To map between PROPs we must use a PROP morphism.
 
 \begin{defi}
-    Let \(\morph{\circuittofunci}{\ccircsigma}{\funci}\) be the PROP morphism
+    For a circuit signature \(\circuitsignature\) and interpretation
+    \(\interpretation = \left(\sqsubseteq, \gateinterpretation\right)\)
+    of Let \(\morph{\circuittofunci}{\ccircsigma}{\funci}\) be the PROP morphism
     with action%
     \vspace{-\abovedisplayskip}
     \begin{center}
@@ -1125,7 +1139,7 @@ To map between PROPs we must use a PROP morphism.
     In real life one could force together two digital devices, but this might
     lead to undefined behaviour in the digital realm.
     This is reflected in the semantics by the use of the join; for example, in
-    the Belnap interpretation if one tries to join together \(\belnaptrue\) and
+    the gate-level interpretation if one tries to join together \(\belnaptrue\) and
     \(\belnapfalse\) then the overspecified \(\top\) value is produced.
 \end{rem}
 
@@ -1170,8 +1184,10 @@ an (infinite) tail component.
 Streams will serve as the inputs and outputs to circuits, so the denotations of
 sequential circuits will be \emph{stream functions}, which consume and produce
 streams.
-Just like with functions, we cannot claim that all streams are the
-denotations of sequential circuits.
+When we discussed the denotations of combinational circuits, we noted that only
+the \(\bot\)-preserving monotone functions were valid denotations; when
+considering stream function denotations of sequential circuits, there are a few
+more properties we need to consider.
 
 \begin{defi}[Causal stream function~\cite{rutten2006algebraic}]
     A stream function \(\morph{f}{\stream{A}}{\stream{B}}\) is \emph{causal} if,
@@ -1931,11 +1947,11 @@ This can be computed in much the same way as it was for stream functions.
         \left(\neg s \land \neg z, s, \neg s \land \neg z\right)
         \right\rangle
         ).\]
-    To take the trace of this machine, we must first compute the least fixed
-    point of \(v \mapsto \neg s \land \neg z\), which is clearly just
-    \(\neg s \land \neg z\).
-    Therefore the Mealy function of the traced
-    \((\valuetuple{2}, \valuetuple{2})\) machine is \(
+    To compute the least fixed point of this machine we must first compute the
+    least fixed point of the function \(v \mapsto \neg s \land \neg z\), which
+    is clearly just \(\neg s \land \neg z\).
+    Therefore the least fixed point of the original machine is a
+    \((\valuetuple{2}, \valuetuple{2})\)-Mealy machine with Mealy function \(
     (s, (y, z)) \mapsto g(s, (\neg s \land \neg z, y, \neg s \land \neg z))
     \).
 \end{exa}
@@ -1995,6 +2011,23 @@ It is also possible to retrieve a Mealy machine for a given stream function in
 finitely many we will be able to compute a finite set of states in a Mealy
 machine.
 
+\begin{defi}
+    For a causal, finitely specified, stream function \(
+    \morph{f}{\stream{M}}{\stream{N}}
+    \), let \(S\) be the least set of
+    causal stream functions including \(f\) and closed under stream derivatives:
+    i.e.\ for all \(h \in S\) and \(a \in M\), \(h_a \in S\).
+    Then let \(
+    \streamtomealy[f]{}
+    \) be defined as the initialised Mealy machine \((S, g, f)\), where \(
+    g(h, a) = \langle\mealytransition{h}{a}, \mealyoutput{h}{a}\rangle
+    \).
+\end{defi}
+
+For a finitely specified stream function \(f\) it is a straightforward procedure
+to find all the states of the corresponding Mealy machine
+\(\streamtomealy[f]{}\).
+
 \begin{exa}
     Let \(\morph{f}{\belnapvalues}{\belnapvalues}\) be a stream function defined
     as \(f(\sigma)(0) = \sigma(0)\) and
@@ -2035,20 +2068,14 @@ machine.
     The initial state of the Mealy machine is \(f\).
 \end{exa}
 
-In fact, for a function \(f\) this procedure produces a \emph{minimal} Mealy
-machine.
+This procedure does not just find an arbitrary Mealy machine with the same
+behaviour as the stream function.
+In fact, it produces the \emph{minimal} such Mealy machine.
 
 \begin{cor}[{\cite[Corollary 2.3]{rutten2006algebraic}}]\label{cor:minimal-mealy}
-    For a causal, finitely specified, stream function \(
-    \morph{f}{\stream{M}}{\stream{N}}
-    \), let \(S\) be the least set of
-    causal stream functions including \(f\) and closed under stream derivatives:
-    i.e.\ for all \(h \in S\) and \(a \in M\), \(h_a \in S\).
-    Then the initialised Mealy machine \(
-    \streamtomealy[f]{\interpretation} = (S, g, f)
-    \), where \(
-    g(h)(a) = \langle\mealytransition{h}{a}, \mealyoutput{h}{a}\rangle
-    \), has the smallest state space of Mealy machines with the property \(
+    For a stream function \(\morph{f}{\stream{M}}}{\stream{N}}\),
+    \(\mealytostream[f]{}\) has the smallest state space of all Mealy machines
+    with the property \(
     \mealytostreami[\streamtomealyi[f]] = f
     \).
 \end{cor}
@@ -2116,8 +2143,12 @@ in order to do this we must verify that the produced Mealy machine is monotone.
     \).
 \end{proof}
 
+As the procedure mapping stream functions to Mealy machines preserves
+monotonicity, we can use it to define a PROP morphism between \(\streami\) and
+\(\mealyi\).
+
 \begin{lem}\label{lem:stream-to-mealy-is-monotone}
-    Given \(f \in \streami\), \(\streamtomealyi[f]\) is
+    Given \(f \in \streami\), \(\streamtomealy[f]{}\) is
     a monotone Mealy machine.
 \end{lem}
 \begin{proof}
@@ -2129,10 +2160,10 @@ in order to do this we must verify that the produced Mealy machine is monotone.
     the Mealy function must also be monotone.
 \end{proof}
 
-\begin{cor}
-    The procedure \(\streamtomealyi\) is a PROP morphism
-    \(\streami \to \mealyi\).
-\end{cor}
+\begin{defi}
+    Let \(\streamtomealyi\) be the traced PROP morphism
+    \(\morph{\streami}{\mealyi}\) with action \(f \mapsto \streamtomealy[f]{}\).
+\end{defi}
 
 This means we can map between monotone Mealy machines and causal, finitely
 specified, monotone stream functions in either direction.
@@ -2259,7 +2290,7 @@ of a PROP morphism from \(\scircsigma\) to \(\mealyi\) is intuitive.
 
     \includestandalone{figures/mealy/delay}
     \caption{
-        Mealy machines for Belnap values and delays
+        Mealy machines for gate-level values and delays
     }
     \label{fig:belnap-machines}
 \end{figure}
@@ -2509,12 +2540,12 @@ to a circuit \(\mealytofunc[f]\) as the \emph{normalised circuit for \(f\)}.\
 \end{rem}
 
 \begin{exa}
-    The Belnap interpretation from \autoref{ex:belnap-interpretation} is
+    The gate-level interpretation from \autoref{ex:belnap-interpretation} is
     functionally complete, due to a variation of the standard functional
     completeness method for Boolean values.
     In the interests of space, we omit the proof and point the interested reader
     to \cite[Sec.\ 4.5]{kaye2025foundations}.
-    A tool has been developed to generate Belnap expressions from functions
+    A tool has been developed to generate gate-level expressions from functions
     and truth tables, and it can be found
     online\footnote{\url{https://belnap.georgejkaye.com}}.
 \end{exa}
@@ -3530,7 +3561,7 @@ it only does so linearly in the height of the lattice.
     This definition excludes circuits that oscillate between two values, as
     these are not considered to be monotone circuits.
     Conversely, in our model such circuits \emph{can} be monotone.
-    For example a Belnap circuit may alternate between \(\belnaptrue\) and
+    For example a gate-level circuit may alternate between \(\belnaptrue\) and
     \(\belnapfalse\) because these occupy the same level of the lattice.
 \end{rem}
 
@@ -4364,9 +4395,9 @@ Instead, these must be specified on an interpretation-by-interpretation basis.
 \end{defi}
 
 \begin{exa}
-    The Belnap interpretation is normalisable; the set of normalising equations
-    consists primarily of the standard completeness equations for Boolean logic
-    extended to act on Belnap values.
+    The gate-level interpretation is normalisable; the set of normalising
+    equations consists primarily of the standard completeness equations for
+    Boolean logic extended to act on Belnap values.
     The complete set is extensive, so in the interests of brevity the equations
     and associated proofs can be found in \cite[Sec.\ 6.5]{kaye2025foundations}.
 \end{exa}
@@ -5390,8 +5421,8 @@ This is not the only way we can partially evaluate with some inputs.
 In some interpretations, it may be that we learn something about the output of
 a primitive with only some of the inputs specified.
 
-\begin{exa}[Belnap shortcuts]
-    In the Belnap interpretation \(\belnapinterpretation\), if one applies a
+\begin{exa}[Gate-level shortcuts]
+    In the gate-level interpretation \(\belnapinterpretation\), if one applies a
     false value to an \(\andgate\) gate then it will output false regardless of
     the other input.
     Similarly, if one applies a true value to an \(\orgate\) gate it will output
@@ -5466,7 +5497,7 @@ be unsound.
     \\[0.3em]
     \rule{\textwidth}{0.1mm}
     \\[0.5em]
-    \caption{Belnap shortcut rules for waveforms}
+    \caption{Gate-level shortcut rules for waveforms}
     \label{fig:shortcut-waveform-rules}
 \end{figure}
 
@@ -5987,12 +6018,21 @@ blackboxes, layered explanations, and graphical reasoning.
 
 \section{Conclusion}\label{sec:conclusion}
 
+\begin{figure}
+    \centering
+    \includestandalone{figures/circuits/map}
+    \caption{Relating categorical models of circuits}
+    \label{fig:map}
+\end{figure}
+
 We have presented three ways of showing equivalence of
 circuits: \emph{denotationally} by using the stream semantics,
 \emph{operationally} by using the productive reduction strategy, and
 \emph{algebraically} by using the sound and complete equational theory.
 This completes the research programme initiated
-by~\cite{ghica2016categorical,ghica2017diagrammatic}.
+by~\cite{ghica2016categorical,ghica2017diagrammatic}; a summary of the various
+categories and morphisms between them that make up the categorical framework of
+circuits is shown in \autoref{fig:map}.
 
 String diagrams as a graphical syntax for monoidal categories were introduced a
 few decades ago~\cite{joyal1991geometry,joyal1996traced}, and there has since
