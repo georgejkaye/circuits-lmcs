@@ -1,7 +1,7 @@
 \documentclass{lmcs}
 
 %% optional lists of keywords
-\keywords{digital circuits,%
+\keywords{digital circuits, %
     symmetric traced monoidal categories, %
     denotational semantics, %
     operational semantics, %
@@ -100,7 +100,7 @@
 Bothe was awarded the 1954 Nobel Prize in physics for creating the electronic
 \(\andgate\) gate in 1924.
 In the ensuing decades, exponential improvements in digital technology have led
-to the development of the defining technologies of the modern world,
+to the development of the defining technologies of the modern world.
 It may therefore seem improbable that there are theoretical gaps remaining in
 our mathematical and logical understanding of digital circuits.
 
@@ -415,7 +415,7 @@ Since the category is freely generated, morphisms are defined by
 juxtaposing the generators in a given signature sequentially or in parallel with
 each other, the identity and the symmetry.
 Arbitrary combinational circuit morphisms defined in this way are drawn as light
-boxes \iltikzfig{strings/category/f}[box=f,colour=comb,dom=m,cod=n].
+blue boxes \iltikzfig{strings/category/f}[box=f,colour=comb,dom=m,cod=n].
 
 \begin{nota}\label{not:arbitrary-width-structure}
     The structural generators are defined on single bits, but it is
@@ -852,9 +852,9 @@ The only new generators are the \emph{bundlers} at the end of the bottom row;
 their intended meaning is that they can be used to \emph{split} and
 \emph{combine} bundles of wire buses into bundles with different widths.
 These constructs were first proposed by Wilson et al in~\cite{wilson2023string}
-as a notation for \emph{non-strict categories}.
+as a notation for \emph{non-strict monoidal categories}.
 We take inspiration from their observation that a similar idea could also be
-applied to strict categories.
+applied to strict monoidal categories.
 
 \begin{exa}[ALU]
     The computation of a CPU is performed by an \emph{arithmetic logic unit},
@@ -925,17 +925,6 @@ defined which maps a stream function \(f\) to a circuit in \(\scircsigma\) with
 \(f\) as its denotation, showing that this denotational semantics is
 \emph{sound and complete}.
 
-\begin{rem}
-    In \cite{mendler2012constructive}, the semantics of digital circuits with
-    delays cycles are presented using \emph{timed ternary simulation}, an
-    algorithm to compute how a sequence of circuit outputs stabilises over time.
-    Essentially, one must solve a system of equations in terms of the nodes
-    inside a circuit to determine its behaviour.
-    Our approach is different as we assign each circuit a concrete stream
-    function describing its behaviour, and show that every such stream function
-    is the behaviour of at least one circuit in \(\scircsigma\).
-\end{rem}
-
 We will interpret digital circuits as a certain class of
 \emph{stream functions}, functions that operate on infinite sequences of values.
 This represents how the output of a circuit may not just operate on the current
@@ -947,9 +936,8 @@ input, but all of the previous ones as well.
     algorithm to compute how a sequence of circuit outputs stabilises over time
     given the inputs and value of the current state.
     This differs from our approach as we assign each circuit a concrete stream
-    function describing its behaviour, rather than having to solve a system of
-    equations in terms of the gates inside a circuit in order to determine its
-    behaviour.
+    function describing its behaviour, rather determining its behaviour by
+    solving a system of equations in terms of its gates.
 \end{rem}
 
 Recall that a function \(f\) between two posets is \emph{monotone}
@@ -1049,7 +1037,7 @@ of a \emph{lattice}.
             \hline
         \end{tabular}
         \caption{
-            The partial order \(\leq_\mathsf{B}\), and the interpretations
+            The partial order \(\leq_\mathsf{B}\), and interpretations
             of primitives in \(\belnapgates\).
         }
         \label{fig:belnap-interpretation}
@@ -1202,7 +1190,7 @@ operations of initial value and stream derivative to stream \emph{functions}.
 \begin{defi}[Initial output~\cite{rutten2006algebraic}]
     For a causal stream function \(\morph{f}{\stream{A}}{\stream{B}}\) and
     \(a \in A\), the \emph{initial output of \(f\) on input \(a\)} is an element
-    \(\initialoutput{f}{a} \in A\) defined as
+    \(\initialoutput{f}{a} \in B\) defined as
     \(\initialoutput{f}{a} \coloneqq \streaminit(f(a \streamcons \sigma))\) for
     an arbitrary \(\sigma \in \stream{A}\).
 \end{defi}
@@ -2050,7 +2038,7 @@ machine.
 In fact, for a function \(f\) this procedure produces a \emph{minimal} Mealy
 machine.
 
-\begin{cor}[Corollary 2.3, \cite{rutten2006algebraic}]\label{cor:minimal-mealy}
+\begin{cor}[{\cite[Corollary 2.3]{rutten2006algebraic}}]\label{cor:minimal-mealy}
     For a causal, finitely specified, stream function \(
     \morph{f}{\stream{M}}{\stream{N}}
     \), let \(S\) be the least set of
@@ -2059,7 +2047,7 @@ machine.
     Then the initialised Mealy machine \(
     \streamtomealy[f]{\interpretation} = (S, g, f)
     \), where \(
-    g(h)(a) = \langle \mealyoutput{h}{a}, \mealytransition{h}{a}\rangle
+    g(h)(a) = \langle\mealytransition{h}{a}, \mealyoutput{h}{a}\rangle
     \), has the smallest state space of Mealy machines with the property \(
     \mealytostreami[\streamtomealyi[f]] = f
     \).
@@ -2124,7 +2112,7 @@ in order to do this we must verify that the produced Mealy machine is monotone.
     \streamderivative{f}{a}(\sigma) \coloneqq
     \streamderv(f(a \streamcons \sigma)) \leq_{\stream{B}}
     \streamderv(f(b \streamcons \sigma)) \coloneqq
-    \streamderivative{f}{a}(\sigma)
+    \streamderivative{f}{b}(\sigma)
     \).
 \end{proof}
 
@@ -3180,7 +3168,7 @@ The behaviour of two circuits in \(\scircsigma\) can be compared by examining
 their corresponding stream functions.
 However, translating a circuit into a stream function obscures the internal
 structure of the circuit, much like representing a combinational circuit by its
-truth table
+truth table.
 To better relate behaviour and structure in circuits we now define an
 \emph{operational semantics} which evaluates circuits in a stepwise manner.
 An informal operational semantics was presented in~\cite{ghica2017diagrammatic}
@@ -3258,7 +3246,7 @@ it follows immediately from axioms of STMCs.
     \) and \(\overline{v} \in \valuetuple{z}\) such that \(
     \iltikzfig{strings/category/f}[box=f,colour=seq,dom=m,cod=n]
     =
-    \iltikzfig{circuits/productivity/trace-delay}[core=f,state=\listvar{v},dom=m,cod=n,delay=y,trace=x,valwidth=z]
+    \iltikzfig{circuits/productivity/trace-delay}[core=\hat{f},state=\listvar{v},dom=m,cod=n,delay=y,trace=x,valwidth=z]
     \) by axioms of STMCs.
 \end{lem}
 \begin{proof}
@@ -3344,7 +3332,7 @@ instance of \emph{non-delay-guarded feedback}.
 The mere mention of non-delay-guarded feedback may trigger alarm bells in
 the minds of those well-acquainted with circuit design.
 It is often common in industry to enforce that circuits have no
-non-delay-guarded feedback; one might ask if we should also enforce this
+non 5.13-delay-guarded feedback; one might ask if we should also enforce this
 tenet in order to stick to `well-behaved' circuits.
 
 \begin{rem}
@@ -3597,7 +3585,7 @@ be open wires awaiting the next inputs.
 Nevertheless, if we precompose a circuit with some inputs we can provide some
 rules for propagating them across the circuit.
 
-Formally, for sequential circuit \(
+Formally, for a sequential circuit \(
 \iltikzfig{strings/category/f}[box=f,colour=seq,dom=m,cod=n]
 \) and values \(
 \listvar{v} \in \valuetuplestream{m}
@@ -4475,7 +4463,7 @@ We will use Mealy homomorphisms as circuits to encode state sets; this means we
 need to ensure the encoders and decoders are monotone.
 
 \begin{lem}
-    For partial orders \(S\) and \(T\) and monotone Mealy coalgebra
+    For partial orders \(S\) and \(T\) and monotone Mealy coalgebras
     \((S,f)\) and \((T,g)\), any Mealy homomorphism \(\morph{h}{(S,f)}{(T,g)}\)
     is monotone.
 \end{lem}
@@ -5120,9 +5108,7 @@ a circuit \(
     Finally, the restriction equations can be used to translate from \(
     \iltikzfig{circuits/algebraic/state-encoded-theorem}
     \) into \(
-    \circuittostreami[
-        \iltikzfig{circuits/productivity/mealy-form-wide}[core=\mealytofunc[\hat{g}],state=\listvar{t}, colour=seq]
-    ]
+    \iltikzfig{circuits/productivity/mealy-form-wide}[core=\mealytofunc[\hat{g}],state=\listvar{t}, colour=seq]
     \).
 \end{proof}
 
@@ -5931,9 +5917,8 @@ same circuit but guarded by different numbers of delays.
     \).
 \end{lem}
 
-This means that to reason with delays we can use streaming and
-timelessness to propagate them across combinational components, and then use
-logical equivalence to
+By combining this with streaming and timelessness, we gain a useful tool for
+translating between circuits with the same behaviour but different timings.
 
 \begin{exa}
     One source of delay in circuits is the time gates take to process input
