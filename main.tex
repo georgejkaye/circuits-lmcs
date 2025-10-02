@@ -562,33 +562,46 @@ of STMCs intuitive graphical interpretations, illustrated in
 \autoref{fig:stmc-axioms}.
 
 \begin{figure*}
+    \textbf{Tightening}
     \(
     \iltikzfig{strings/traced/naturality-lhs}[box1=f,box2=g,box3=h,colour=white,dom=m,cod=q]
     =
     \iltikzfig{strings/traced/naturality-rhs}[box1=f,box2=g,box3=h,colour=white,dom=m,cod=q]
     \)
     \\[1.5em]
+    \textbf{Sliding}
     \(
     \iltikzfig{strings/traced/sliding-lhs}[box1=f,box2=g,colour=white,dom=m,cod=n]
     =
     \iltikzfig{strings/traced/sliding-rhs}[box1=f,box2=g,colour=white,dom=m,cod=n]
     \)
     \\[1.5em]
+    \textbf{Vanishing}
     \(
     \iltikzfig{strings/traced/vanishing-lhs}[box=f,colour=white,dom=m,cod=n,trace1=x,trace2=y]
     =
     \iltikzfig{strings/traced/vanishing-prop-rhs}[box=f,colour=white,dom=m,cod=n,trace1=x,trace2=y]
     \)
     \\[1.5em]
-    \(
-    \iltikzfig{strings/traced/superposing-lhs}[box1=f,box2=g,colour=white,dom1=m,dom2=p,cod1=n,cod2=q]
-    =
-    \iltikzfig{strings/traced/superposing-rhs}[box1=f,box2=g,colour=white,dom1=m,dom2=p,cod1=n,cod2=q]
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \textbf{Superposing}
+        \(
+        \iltikzfig{strings/traced/superposing-lhs}[box1=f,box2=g,colour=white,dom1=m,dom2=p,cod1=n,cod2=q]
+        =
+        \iltikzfig{strings/traced/superposing-rhs}[box1=f,box2=g,colour=white,dom1=m,dom2=p,cod1=n,cod2=q]
+        \)
+    \end{minipage}
     \qquad
-    \iltikzfig{strings/traced/yanking-lhs}[obj=m,colour=white]
-    =
-    \iltikzfig{strings/traced/yanking-rhs}[obj=m]
-    \)
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \textbf{Tightening}
+        \(
+        \iltikzfig{strings/traced/yanking-lhs}[obj=m,colour=white]
+        =
+        \iltikzfig{strings/traced/yanking-rhs}[obj=m]
+        \)
+    \end{minipage}
     \caption{The trace equations in string diagram notation}
     \label{fig:stmc-axioms}
 \end{figure*}
@@ -1047,19 +1060,19 @@ of a \emph{lattice}.
     online\footnote{\url{https://belnap.georgejkaye.com}}.
 \end{exa}
 
-\begin{remark}
+\begin{rem}
     When discussing interpretations of circuit signatures, we prefer to use
     \(\sqsubseteq\) rather than \(\leq\), as this means that the corresponding
     lattice operations \(\ljoin\) and \(\lmeet\) do not clash with the usual
     notation for the logical operations for \(\orgate\) and \(\andgate\), as
     used in the interpretations on primitives in
-    \autoref{fig:belnap-interpretation}
+    \autoref{fig:belnap-interpretation}.
 
     This clash of notation is actually not a coincidence; if one consults the
     lattice diagram in \autoref{fig:belnap-interpretation} but rotated by 90
     degrees anticlockwise, the \(\land\) operation is the meet and the
     \(\lor\) operation is the join.
-\end{remark}
+\end{rem}
 
 \subsection{Denotational semantics of combinational circuits}
 
@@ -1072,13 +1085,14 @@ circuit maps to a monotone function.
     functions \(\valuetuple{m} \to \valuetuple{n}\).
 \end{defi}
 
-To map between PROPs we must use a PROP morphism.
+To map between PROPs we must use a \emph{PROP morphism}, a strict symmetric
+monoidal functor between PROPs.
 
 \begin{defi}
     For a circuit signature \(\circuitsignature\) and interpretation
-    \(\interpretation = \left(\sqsubseteq, \gateinterpretation\right)\)
-    of Let \(\morph{\circuittofunci}{\ccircsigma}{\funci}\) be the PROP morphism
-    with action%
+    \(\interpretation = \left(\sqsubseteq, \gateinterpretation\right)\) of
+    \(\circuitsignature\), let \(\morph{\circuittofunci}{\ccircsigma}{\funci}\)
+    be the PROP morphism with action%
     \vspace{-\abovedisplayskip}
     \begin{center}
         \begin{minipage}{0.32\textwidth}
@@ -2073,7 +2087,7 @@ behaviour as the stream function.
 In fact, it produces the \emph{minimal} such Mealy machine.
 
 \begin{cor}[{\cite[Corollary 2.3]{rutten2006algebraic}}]\label{cor:minimal-mealy}
-    For a stream function \(\morph{f}{\stream{M}}}{\stream{N}}\),
+    For a stream function \(\morph{f}{\stream{M}}{\stream{N}}\),
     \(\mealytostream[f]{}\) has the smallest state space of all Mealy machines
     with the property \(
     \mealytostreami[\streamtomealyi[f]] = f
@@ -2161,8 +2175,8 @@ monotonicity, we can use it to define a PROP morphism between \(\streami\) and
 \end{proof}
 
 \begin{defi}
-    Let \(\streamtomealyi\) be the traced PROP morphism
-    \(\morph{\streami}{\mealyi}\) with action \(f \mapsto \streamtomealy[f]{}\).
+    Let \(\morph{\streamtomealyi}{\streami}{\mealyi}\) be the traced PROP
+    morphism with action \(f \mapsto \streamtomealy[f]{}\).
 \end{defi}
 
 This means we can map between monotone Mealy machines and causal, finitely
@@ -2199,9 +2213,9 @@ This allows us to use monotone Mealy machines as a stepping stone in the
 correspondence between sequential circuits and stream functions.
 By exploiting the coalgebraic properties shared between Mealy machines and
 stream functions, this can be used to show that \(\streami\) is both a
-\emph{sound} and \emph{complete} denotational semantics: there is a stream
-function in \(\streami\) for every circuit in \(\scircsigma\), and there is a
-circuit in \(\scircsigma\) for every stream function in \(\streami\).
+\emph{sound} and \emph{complete} denotational semantics, by which we mean there
+is a stream function in \(\streami\) for every circuit in \(\scircsigma\), and
+there is a circuit in \(\scircsigma\) for every stream function in \(\streami\).
 
 \subsection{Circuits to monotone Mealy machines}
 
@@ -2328,7 +2342,7 @@ We have now finally established the \emph{denotation} of a sequential circuit \(
 \).
 The existence of the PROP morphism \(\circuittostreami\) confirms that causal,
 finitely specified and \(\bot\)-preserving monotone stream functions are a
-\emph{sound} denotational semantics for sequential circuits, as every circuit in
+\emph{sound} denotational semantics for sequential circuits: every circuit in
 \(\scircsigma\) has a corresponding stream function in \(\streami\).
 
 It is useful to verify that this denotational semantics of sequential circuits
@@ -2415,12 +2429,19 @@ a circuit using combinational logic.
             \(\belnaptrue\)  & \(\belnaptrue\)  & \(\belnapfalse\) & \(\belnaptrue\)  \\
         \end{tabular}
     \end{center}
-    It is possible to describe these truth tables as logical expressions: in
-    this case the expression for the next state is \(
+    It is possible to describe these truth tables as logical expressions by
+    creating a disjunction in which each clause corresponds to a row in the
+    truth table that produces \(\belnaptrue\), and each clause is a conjunction
+    of each input, negated if the corresponding column of the row in the table
+    is \(\belnapfalse\).
+
+    Applying this strategy to the table above, the expression for the next state
+    is \(
     (v_0, v_1)
     \mapsto
     (\neg v_0 \land \neg v_1) \lor (v_0 \land \neg v_1)
-    \) and the expression for the output is \(
+    \) (which can further be simplified to \((v_0, v_1) \mapsto \neg v_1\))
+    and the expression for the output is \(
     (v_0, v_1)
     \mapsto
     (\neg v_0 \land \neg v_1) \lor (v_0 \land v_1)
@@ -2430,6 +2451,8 @@ a circuit using combinational logic.
     corresponding to the Mealy machine is constructed by combining the
     combinational logic with registers to hold the state.
     \[\iltikzfig{mealy/synthesis}\]
+    Using this strategy even complicated Mealy machines can be translated into
+    circuits in a systematic way.
 \end{exa}
 
 We will use a variation of this procedure to map from \(\mealyi\) to
@@ -2580,6 +2603,12 @@ that is compatible with monotonicity.
     \]
 \end{defi}
 
+\begin{rem}
+    Phrased more categorically, the monotone \(B\)-completion of
+    \(\morph{f}{A}{C}\) can be viewed as the
+    left Kan extension along the inclusion \(A \hookrightarrow B\).
+\end{rem}
+
 \begin{exa}
     For \(n \in \nat\), let \(\nat_{n}\) be the subset of the natural numbers
     containing the numbers \(0,1,\dots,n-1\) with the usual order.
@@ -2596,6 +2625,7 @@ that is compatible with monotonicity.
     = 0 \vee 0 \vee 6 = 6
     \); and \(f_\mathsf{m}(4) = 7\) because \(f(4) = 7\).
 \end{exa}
+
 
 A Mealy function can now be encoded over powers of \(\values\) by using the
 monotone completion of some encoding function.
@@ -3351,8 +3381,9 @@ What matters most is that we \emph{can} do it.
 \end{cor}
 
 \begin{exa}
-    The \((\mealyeqn)\) rule is applied to the global trace-delay form
-    SR NOR latch in \autoref{fig:sr-latch-global-trace-delay}.
+    The result of applying the \((\mealyeqn)\) rule to the circuit in
+    \autoref{fig:sr-latch-global-trace-delay} is shown in
+    \autoref{fig:sr-latch-pre-mealy}.
     Here the initial state word is just \(\bot\).
 \end{exa}
 
@@ -3411,11 +3442,11 @@ constructed using cycles~\cite{rivest1977necessity,riedel2003synthesis}.
     circuit is \(
     \circuittofunc[
         \iltikzfig{circuits/examples/cyclic-combinational/reduced-false}
-    ]{\interpretation_\star}
+    ]{\belnapinterpretation}
     \) and when the control is \(\belnaptrue\) then the behaviour is \(
     \circuittofunc[
         \iltikzfig{circuits/examples/cyclic-combinational/reduced-true}
-    ]{\interpretation_\star}
+    ]{\belnapinterpretation}
     \).
     The feedback is just used as a clever way to share circuit components.
 \end{exa}
@@ -3461,9 +3492,9 @@ Kleene fixed-point theorem.
     Given a combinational circuit \(
     \iltikzfig{strings/category/f-2-2}[box=f,colour=comb,dom1=x,dom2=m,cod1=x,cod2=n],
     \)
-    its \emph{\(n\)-th iteration} \(
+    its \emph{\(i\)-th iteration} \(
     \iltikzfig{strings/category/f-1-2}[box=f^n,colour=comb,dom=m,cod1=x,cod2=n]
-    \) is defined inductively over \(n\) in the following way: \[
+    \) is defined inductively over \(i\) in the following way: \[
         \iltikzfig{circuits/instant-feedback/f0-box}[dom=m,trace=x,cod=n]
         \coloneqq
         \iltikzfig{circuits/instant-feedback/f0-definition}[box=f,dom=m,trace=x,cod=n]
@@ -3477,7 +3508,7 @@ Kleene fixed-point theorem.
 The trace in \(\streami\) is by the least fixed point, computed by repeatedly
 applying \(f\) to itself starting from \(\bot\).
 The above lemma gives a fixed upper bound for the number of times we need to
-apply \(f\) to reach this fixed point, based on the size of the lattice.
+iterate \(f\) to reach this fixed point, based on the size of the lattice.
 We can use this in the syntactic setting.
 
 \begin{defi}[Unrolling]\label{def:unrolling}
@@ -3503,7 +3534,7 @@ combinational circuit.
 \end{prop}
 \begin{proof}
     By \autoref{lem:monotone-fixpoint}, applying the function \(
-    (\listvar{x}) \mapsto \proj{x}\left(\circuittofunci[
+    (\listvar{x}) \mapsto \proj{0}\left(\circuittofunci[
         \iltikzfig{strings/category/f-2-2}[box=f,colour=comb]
     ]\right)(\listvar{x}, \listvar{v})\) to itself \(c\) times reaches a
     fixed point.
@@ -5741,7 +5772,7 @@ ordinary value in future reductions and outputs.
     \iltikzfig{circuits/components/values/vs}[val=v]
     \)
     \,\,
-    if \(\forall i,j < |\listvar{v?}|\), \(\listvar{v?}(i) = \listvar{v?}(j)\)
+    if \(\forall i,j < |\listvar{v?}|\), \(\listvar{v?}(i) = \listvar{v?}(j) = v\)
     \\[0.4em]
     \rule{\textwidth}{0.1mm}
     \\[0.5em]
@@ -5751,7 +5782,7 @@ ordinary value in future reductions and outputs.
     \iltikzfig{circuits/components/waveforms/infinite-register}[val=v]
     \)
     \,\,
-    if \(\forall i,j < |\listvar{v?}|\), \(\listvar{v?}(i) = \listvar{v?}(j)\)
+    if \(\forall i,j < |\listvar{v?}|\), \(\listvar{v?}(i) = \listvar{v?}(j) = v\)
     \\[0.4em]
     \rule{\textwidth}{0.1mm}
     \caption{Rules for uncertain values}
@@ -5907,7 +5938,7 @@ behaviour of a circuit.
     \iltikzfig{strings/category/f}[box=g,colour=seq,dom=m,cod=n]
     \) with \(c\) and \(c^\prime\) delay components respectively, we say that \(
     \iltikzfig{strings/category/f}[box=f,colour=seq,dom=m,cod=n]
-    \) is \emph{logically equivalent} to \(
+    \) is a \emph{more efficient version of} \(
     \iltikzfig{strings/category/f}[box=g,colour=seq,dom=m,cod=n]
     \), written \(
     \iltikzfig{strings/category/f}[box=f,colour=seq,dom=m,cod=n]
@@ -5915,13 +5946,13 @@ behaviour of a circuit.
     \iltikzfig{strings/category/f}[box=g,colour=seq,dom=m,cod=n]
     \), if for all sequences \(\listlistvar{v},\listlistvar{w}\) produced by the
     productive operational semantics for inputs of length
-    \(\mathsf{max}(c,c^\prime)\),  \(\listlistvar{v} \ll \listlistvar{w}\)
+    \(\mathsf{max}(c,c^\prime)\),  \(\listlistvar{v} \ll \listlistvar{w}\).
 \end{defi}
 
-Including this notion of equivalence in algebraic reasoning allows us to reason
+Including this notion of efficiency in algebraic reasoning allows us to reason
 with \emph{inequalities} as well as equalities, so more efficient circuits can
 be identified.
-The simplest form of reasoning with logical equivalence is where we have the
+The simplest form of reasoning in this manner is where we have the
 same circuit but guarded by different numbers of delays.
 
 \begin{nota}
