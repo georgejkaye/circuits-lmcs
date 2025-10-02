@@ -1827,8 +1827,9 @@ those that do: those that map to stream functions in \(\streami\).
 We must also impose a monotonicity condition.
 
 \begin{defi}[Monotone Mealy machine]
-    Let \(A\), \(B\) be posets; an \((A,B)\)-Mealy machine \((S, f)\)
-    is called a \emph{monotone} Mealy machine if \(S\) is also a poset and
+    Let \(A\), \(B\) be posets with a bottom element; an \((A,B)\)-Mealy machine
+    \((S, f)\) is called a \emph{monotone} Mealy machine if \(S\) is also a
+    poset with a bottom element and
     \(f\) is \(\bot\)-preserving monotone with respect to the ordering on
     \(A\), \(B\), and \(S\).
 \end{defi}
@@ -1948,7 +1949,7 @@ This can be computed in much the same way as it was for stream functions.
     is a \((\valuetuple{m}, \valuetuple{n})\)-Mealy machine \(\left(
     S, (s, \listvar{a})
     \mapsto
-    f\left(\mu_{s}\listvar{a} \concat \listvar{a}\right), s_0
+    f\left(s, \mu_{s}\listvar{a} \concat \listvar{a}\right), s_0
     \right)
     \)
 \end{defi}
@@ -1970,7 +1971,8 @@ This can be computed in much the same way as it was for stream functions.
     \).
 \end{exa}
 
-We must show that this is the trace on \(\mealyi\).
+We must show that the least fixed point on Mealy machines is in fact the trace
+on \(\mealyi\).
 
 \begin{prop}
     The least fixed point is a trace on \(\mealyi\).
