@@ -953,8 +953,8 @@ Recall that a function \(f\) between two posets is \emph{monotone}
 if \(x \leq y \Rightarrow f(x) \leq f(y)\), and a \emph{lattice} is a poset
 in which each pair of elements has a least upper bound \(\vee\) (a \emph{join})
 and a greatest lower bound \(\wedge\) (a \emph{meet}); subsequently
-every \emph{finite} lattice has an \emph{infimum} \(\bot\) and a \emph{supremum}
-\(\top\).
+every \emph{finite} lattice has an \emph{greatest element} \(\bot\) and a
+\emph{least element} \(\top\).
 We write \(v^n\) for the \(n\)-tuple containing only \(v\), and call a function
 \(\morph{f}{\valuetuple{m}}{\valuetuple{n}}\) \emph{\(\bot\)-preserving} if
 \(f(\bot^m) = \bot^n\).
@@ -1380,29 +1380,51 @@ turns out that it is implied by causality and monotonicity.
     for an arbitrary causal, monotone and finitely specified function \(f\) we
     have that \(f\left(\bigvee D\right) = \bigvee f[D]\).
 
-    First consider the case when there is a greatest element in \(D\).
-    In this case, \(\bigvee D\) must be the greatest element, and as such
-    \(\bigvee D \in D\).
-    As \(f\) is monotone then \(f(\bigvee D)\) must be the greatest element in
-    \(f[D]\); subsequently, \(f\left(\bigvee D\right) = \bigvee f[D]\).
+    Let \(\morph{\proj{n}}{\stream{B}}{B^n}\) be defined as the
+    function that takes the first \(n\) elements of an input stream i.e.\
+    \(
+    \proj{n}\left(\sigma\right)
+    \coloneqq
+    \sigma(0) \streamcons \sigma(1) \streamcons \ldots, \sigma(n-1)
+    \).
+    For some \(d \in \stream{B}\) and \(D \subseteq \stream{B}\), we have that
+    \(d = \bigvee D\) precisely if \(
+    \proj{n}\left(d\right)
+    =
+    \bigvee\left(\proj{n}[D]\right)
+    \) for all \(n \in \nat\).
+    Therefore to show our desired result, it suffices to show that \(
+    \proj{n}\left(f\left(\bigvee D\right)\right)
+    =
+    \bigvee\left(\proj{n}\left(f[D]\right)\right)
+    \).
 
-    Now consider the case where there is no greatest element in \(D\) and
-    subsequently \(\bigvee D \not\in D\); if there is no greatest element,
-    \(D\) must be infinite.
-    Even though it is infinite, \(D\) is a directed subset so each pair of
-    elements must have an upper bound, and as \(\leq_{\stream{A}}\) is computed
-    pointwise by using \(\leq_A\) we can consider what the upper bounds are
-    pointwise too.
-    Because \(A\) is finite, there cannot be an infinite chain of upper bounds
-    for each element \(i\); there must exist an element \(a_i \in A\) such that
-    \(D\) contains infinitely many streams \(\sigma\) such that
-    \(\sigma(i) = a_i\).
-    This means that \(\left(\bigvee D\right)(i) = a\), so every prefix of
-    \(\bigvee D\) must exist as a prefix of a stream in \(D\).
-    As \(f\) is causal, for each prefix
-    \(f\left(\bigvee D\right)\) there must also exist a \(d \in D\) such that
-    \(f(d)\) has that prefix, and as such
-    \(\bigvee f[D] = f\left(\bigvee D\right)\).
+    Next, for a function \(\morph{f}{\stream{A}}{\stream{B}}\), let
+    \(\morph{f_n}{A^n}{B^n}\) be defined as \(
+    f_n(\listvar{a})
+    \coloneqq
+    \pi_n\left(f(\listvar{a} \streamcons \bot^\omega)\right)
+    \).
+    Note that when \(f\) is causal, we furthermore have that \(
+    \proj{n}\left(f(\listvar{a} \streamcons \bot^\omega)\right)
+    =
+    \proj{n}\left(f(\listvar{a} \streamcons \sigma)\right)
+    \) for any \(\sigma \in \stream{A}\), and subsequently can conclude for
+    causal \(f\) that \(\proj{n} \circ f = f_n \circ \proj{n}\).
+
+    As each of these functions \(f_n\) is a monotone function between finite
+    lattices, they preserve directed joins.
+    Putting everything together, we have that
+    \[
+        \proj{n}\left(f\left(\bigvee D\right)\right)
+        =
+        f_n\left(\proj{n}\left(\bigvee D\right)\right)
+        =
+        f_n\left(\bigvee \left(\proj{n}[D]\right)\right)
+        =
+        \bigvee \left(\proj{n}\left(f[D]\right)\right)
+    \]
+    and subsequently that \(f\) is Scott-continuous.
 \end{proof}
 
 This means we can use the Kleene fixed point theorem as a tool to show that the
