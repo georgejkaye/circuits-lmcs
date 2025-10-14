@@ -1388,7 +1388,7 @@ turns out that it is implied by causality and monotonicity.
     \sigma(0) \streamcons \sigma(1) \streamcons \ldots, \sigma(n-1)
     \).
     For some \(d \in \stream{B}\) and \(D \subseteq \stream{B}\), we have that
-    \(d = \bigvee D\) precisely if \(
+    \(d = \bigvee po\) precisely if \(
     \proj{n}\left(d\right)
     =
     \bigvee\left(\proj{n}[D]\right)
@@ -1601,8 +1601,7 @@ in \(\streami\) produces another causal, finitely specified,
     \(\sigma \mapsto \proj{1}(f(\mu_f(\sigma), \sigma))\) are causal, monotone and
     finitely specified, and as these properties are preserved by composition,
     the composite must also have them, so
-    \(\sigma \mapsto \proj{1}(f(\mu_f(\sigma), \sigma))\) is in \(\streami\).
-\end{proof}
+    \(\sigma \mapsto \proj{1}(f(\mu_f(\sigma), \sigma))\) is in \(\streami\).  \end{proof}
 
 Even if \(\streami\) is closed under least fixed point, this does not mean that
 it is a valid trace.
@@ -1626,61 +1625,92 @@ To verify this we must establish that the categorical axioms of the trace hold.
     \morph{f}{\valuetuplestream{x+m}}{\valuetuplestream{y+n}}
     \) and \(
     \morph{g}{\valuetuplestream{y}}{\valuetuplestream{x}}
-    \), we have that \(
-    \trace{y}{(\tau, \sigma) \mapsto f(g(\tau), \sigma)}
+    \), \[
+        \trace{y}{(\tau, \sigma) \mapsto f(g(\tau), \sigma)}
+        =
+        \trace{x}{
+            (\tau, \sigma)
+            \mapsto
+            g\left(
+            \proj{0}\mleft(f(\tau, \sigma)\mright)
+            \right),
+            \proj{1}\mleft(f(\tau, \sigma)\mright)
+        }
+    \]
+
+    To this end, let
+    \(
+    l_\sigma \coloneqq \tau \mapsto \proj{0}(f(g(\tau), \sigma))
+    \)
+    and let
+    \(
+    r_\sigma \coloneqq \tau \mapsto g(\proj{0}(f(\tau, \sigma)))
+    \).
+    As per the usual notation, this means that \(\mu_{l_\sigma}(\sigma)\) and
+    \(\mu_{r_\sigma}(\sigma)\) are the least fixed points of \(l_\sigma\) and
+    \(r_\sigma\) respectively.
+    By applying the definition of the proposed trace operation, we reduce the
+    original required equation to
+    \(
+    \proj{1}(f(g(\mu_{l_\sigma}(\sigma)), \sigma))
     =
-    \trace{x}{
-        (\tau, \sigma)
-        \mapsto
-        g(\proj{0}\mleft(f(\tau, \sigma)\mright),
-        \proj{1}\mleft(f(\tau, \sigma)\mright))
-    }
+    \proj{1}\mleft(f(\mu_{r_\sigma}(\sigma), \sigma)\mright)
+    \),
+    which can be further reduced to
+    \(
+    g(\mu_{l_\sigma}(\sigma))
+    =
+    \mu_r(\sigma)
     \).
 
-    Let \(l \coloneqq (\tau, \sigma) \mapsto f(g(\tau), \sigma)\) and
-    \(r \coloneqq (\tau, \sigma)
+    Now let \(
+    h_\sigma \coloneqq \tau
     \mapsto
-    g(\proj{0}\mleft(f(\tau, \sigma)\mright),
-    \proj{1}\mleft(f(\tau, \sigma)\mright))\); we must apply the candidate
-    trace construction to both of these and check they are equal.
-    For \(l\), the least fixed point of \(
-    \tau \mapsto \proj{0}\mleft(f(g(\tau), \sigma)\mright)
-    \) is \[
-        \mu_l(\sigma) =
-        \proj{0}\mleft(f(g(\bot^\omega), \sigma)\mright) \ljoin
-        \proj{0}\mleft(f(g(\proj{0}\mleft(f(g(\bot^\omega), \sigma))\mright), \sigma)\mright) \ljoin
-        \cdots.\]
-    Plugging this into the candidate trace construction we have that \begin{align*}
-         &
-        \sigma \mapsto \proj{1}\mleft(f(g(\mu_l^l(\sigma)), \sigma)\mright)
-        \\
-         & \qquad=
-        \sigma \mapsto \proj{1}\mleft(f(g(\proj{0}\mleft(f(g(\dots f(g(\proj{0}\mleft(f(g(\bot^\omega), \sigma)\mright)), \sigma)))\mright)), \sigma)\mright)
-    \end{align*}
-    For the right-hand side, the least fixed point of \(
-    \tau \mapsto g(\proj{0}\mleft(f(\tau, \sigma)\mright))
-    \) is \[
-        \mu_r(\sigma) =
-        g(\proj{0}\mleft(f(\bot^\omega, \sigma)\mright)) \ljoin
-        g(\proj{0}\mleft(f(g(\proj{0}\mleft(f(g(\bot^\omega), \sigma)\mright)), \sigma)\mright)) \ljoin
-        \cdots
+    \proj{0}\left(f\left(\tau, \sigma\right)\right)
+    \); note that
+    \(g \circ h_\sigma = r_\sigma\)
+    and
+    \(h_\sigma \circ g = l_\sigma\).
+    Let \(\upsilon_l\) be a fixed point of \(l_\sigma\); we show that
+    \(g\) maps this to a fixed point of \(r_\sigma\):
+    \[
+        r_\sigma\left(g\left(\upsilon_l\right)\right)
+        =
+        g\mleft(\proj{0}\mleft(f\mleft(g\mleft(\upsilon_l\mright), \sigma\mright)\mright)\mright)
+        =
+        g\mleft(h_\sigma\mleft(g\mleft(\upsilon_k\mright)\mright)\mright)
+        =
+        g\mleft(l_\sigma\mleft(\upsilon_l\mright)\mright)
+        =
+        g\mleft(\upsilon_l\mright)
     \]
-    When plugged into the candidate trace construction this produces \begin{align*}
-         & \sigma \mapsto \proj{1}\mleft(g(\proj{0}(f(\mu_r(\sigma), \sigma))), \proj{1}(f(\mu_r(\sigma), \sigma))\mright)
-        \\
-         & \qquad =
-        \sigma \mapsto \proj{1}(f(\mu_\sigma^r, \sigma))
-        \\
-         & \qquad=
-        \sigma \mapsto \proj{1}(f(
-        g(\proj{0}\mleft(f(g(\dots f(g(\proj{0}\mleft(f(g(\bot^\omega), \sigma)\mright)), \sigma)\mright)), \sigma))))
-        \\
-         & \qquad=
-        \sigma \mapsto \proj{1}(f(
-        g(\proj{0}\mleft(f(g(\dots f(g(\proj{0}\mleft(f(\bot^\omega, \sigma)\mright)), \sigma)\mright)), \sigma))))
-    \end{align*}
-    Both the left-hand and the right-hand sides of the sliding equation are
-    equal, so the construction is indeed a trace.
+    Similarly, let \(\upsilon_r\) be a fixed point of \(r_\sigma\);
+    we show that \(h_\sigma\) maps fixed points of \(r_\sigma\) to fixed
+    points of \(l_\sigma\):
+    \[
+        l_\sigma\mleft(h_\sigma\mleft(\upsilon_r\mright)\mright)
+        =
+        \proj{0}\mleft(f\mleft(g\mleft(h_\sigma\mleft(\upsilon_r\mright)\mright), \sigma\mright)\mright)
+        =
+        \proj{0}\mleft(f\mleft(r_\sigma\mleft(\upsilon_r\mright), \sigma\mright)\mright)
+        =
+        \proj{0}\mleft(f\mleft(\upsilon_r, \sigma\mright)\mright)
+        =
+        h_\sigma\mleft(\upsilon_r\mright)
+    \]
+
+    In particular, we have that \(g\left(\mu_l(\sigma)\right)\) is a fixed point
+    of \(r_\sigma\), so \(g(\mu_l(\sigma)) \geq \mu_r(\sigma)\).
+    Conversely, \(h_\sigma(\mu_r(\sigma))\) is a fixed point of \(l_\sigma\),
+    so \(h_\sigma(\mu_r(\sigma)) \geq \mu_l(\sigma)\).
+    Subsequently we have that
+    \(\mu_r(\sigma) = g(h_\sigma(\mu_r(\sigma))) \geq g(\mu_l(\sigma))\).
+    As we have that
+    \(g(\mu_l(\sigma)) \leq \mu_r(\sigma)\)
+    and
+    \(mu_r(\sigma) \leq g(\mu_l(\sigma))\),
+    it follows that
+    \(g(\mu_l(\sigma)) = \mu_r(\sigma)\) as originally required.
 \end{proof}
 
 We now have two traced PROPs: a \emph{syntactic} PROP of sequential circuit
@@ -1971,7 +2001,7 @@ This can be computed in much the same way as it was for stream functions.
     is a \((\valuetuple{m}, \valuetuple{n})\)-Mealy machine \(\left(
     S, (s, \listvar{a})
     \mapsto
-    f\left(s, \mu_{s}\listvar{a} \concat \listvar{a}\right), s_0
+    f\left(s, \mu_{s}\mleft(\listvar{a}\mright) \concat \listvar{a}\right), s_0
     \right)
     \)
 \end{defi}
