@@ -1635,7 +1635,7 @@ To verify this we must establish that the categorical axioms of the trace hold.
             \proj{0}\mleft(f(\tau, \sigma)\mright)
             \right),
             \proj{1}\mleft(f(\tau, \sigma)\mright)
-        }
+        }.
     \]
 
     To this end, let
@@ -1979,7 +1979,8 @@ monotone Mealy machines form a PROP.
 \begin{defi}
     Let \(\mealyi\) be the PROP in which the morphisms
     \(m \to n\) are the initialised monotone
-    \((\valuetuple{m}, \valuetuple{n})\)-Mealy machines.
+    \((\valuetuple{m}, \valuetuple{n})\)-Mealy machines \((S, f, s_0)\) in which
+    \(S\) is a lattice.
     Composition is by cascade product and tensor on morphisms is by
     direct product.
     The identity and the symmetry are the single-state machines that output the
@@ -1995,32 +1996,71 @@ This can be computed in much the same way as it was for stream functions.
     \)-Mealy machine.
     For a state \(s \in S\) and input \(\listvar{a} \in \valuetuple{m}\), let
     \(\mu_{s}(\listvar{a})\) be the least fixed point of \(
-    \listvar{r} \mapsto \proj{0}\mleft(f\left(s, \listvar{r} \concat \listvar{a}\right)\mright)
+    \listvar{r} \mapsto \proj{0}\mleft(\mealyfunctionoutput{f}\mleft(s, \listvar{r} \concat \listvar{a}\mright)\mright)
     \).
     The \emph{least fixed point} of an initialised Mealy machine \((S, f, s_0)\)
-    is a \((\valuetuple{m}, \valuetuple{n})\)-Mealy machine \(\left(
-    S, (s, \listvar{a})
-    \mapsto
-    f\left(s, \mu_{s}\mleft(\listvar{a}\mright) \concat \listvar{a}\right), s_0
-    \right)
-    \)
+    is a \((\valuetuple{m}, \valuetuple{n})\)-Mealy machine \[\left(
+        S, (s, \listvar{a})
+        \mapsto
+        \langle{
+            \mealyfunctiontransition{f}\mleft(s, \mu_{s}\mleft(\listvar{a}\mright) \concat \listvar{a}\mright),
+            \proj{1}\mleft(\mealyfunctionoutput{f}\mleft(s, \mu_{s}\mleft(\listvar{a}\mright) \concat \listvar{a}\mright)\mright)
+        }\rangle,
+        s_0
+        \right).
+    \]
 \end{defi}
 
 \begin{exa}\label{ex:trace-mealy}
-    Consider the monotone \((\valuetuple{3},\valuetuple{3})\)-Mealy machine with
+    Consider the monotone \((\valuetuple{2},\valuetuple{2})\)-Mealy machine with
     state set \(\belnapvalues\), initial state \(\bot\), and Mealy function \[
-        g \coloneqq (s, (x, y, z))
-        \mapsto \left\langle \neg y \land \neg x,
-        \left(\neg s \land \neg z, s, \neg s \land \neg z\right)
-        \right\rangle
-        ).\]
+        f
+        \coloneqq
+        (s, (a, b))
+        \mapsto
+        \langle{s \land b, (a \land b, b \lor \neg a)}\rangle.
+    \]
     To compute the least fixed point of this machine we must first compute the
-    least fixed point of the function \(v \mapsto \neg s \land \neg z\), which
-    is clearly just \(\neg s \land \neg z\).
-    Therefore the least fixed point of the original machine is a
-    \((\valuetuple{2}, \valuetuple{2})\)-Mealy machine with Mealy function \(
-    (s, (y, z)) \mapsto g(s, (\neg s \land \neg z, y, \neg s \land \neg z))
+    least fixed point of the function \(a \mapsto a \land b\), which
+    is clearly just \(
+    \bot
+    \ljoin (\bot \land b)
+    \ljoin ((\bot \land b) \land b)
+    \ljoin \cdots
+    =
+    (\bot \land b)
+    \ljoin (\bot \land b)
+    \ljoin \cdots
+    = \bot \land b
     \).
+    Therefore the least fixed point of the original machine is a
+    \((\values, \values)\)-Mealy machine with Mealy function
+    \begin{align*}
+        (s, b)
+         & \mapsto
+        \langle{
+            \mealyfunctiontransition{f}\mleft(s, \mleft(\mu_{s}\mleft(b\mright), b\mright)\mright),
+            \proj{1}\mealyfunctionoutput{f}\mleft(s, \mleft(\mu_{s}\mleft(b\mright), b\mright)\mright)
+        }\rangle     \\
+        (s, b)
+         & = \mapsto
+        \langle{
+            s \land b,
+            b \lor \neg \mleft(\bot \land b\mright)
+        }\rangle     \\
+        (s, b)
+         & = \mapsto
+        \langle{
+            s \land b,
+            b \lor \bot \lor \neg b
+        }\rangle     \\
+        (s, b)
+         & = \mapsto
+        \langle{
+            s \land b,
+            \belnaptrue
+        }\rangle
+    \end{align*}
 \end{exa}
 
 We must show that the least fixed point on Mealy machines is in fact the trace
@@ -2032,7 +2072,7 @@ on \(\mealyi\).
 \begin{proof}
     Let \((S, f)\) be a monotone
     \((\valuetuple{x+m}, \valuetuple{x+n})\)-Mealy machine; this means that
-    \(S\) must be a poset.
+    \(S\) must be a poset with a least element.
     The Mealy function \(
     \morph{f}{
         S \times \valuetuple{x+m}
@@ -2040,12 +2080,12 @@ on \(\mealyi\).
         S \times \valuetuple{x+n}
     }
     \) is monotone with regards to the orders on \(S\) and
-    \(\valuetuple{x+m}\) and \(S \times (x+n)\) is finite, so
+    \(\valuetuple{x+m}\) and \(S \times (x+n)\) is a finite lattice, so
     \(f\) has a least fixed point.
     The function \(
     f^\prime \coloneqq (s, \listvar{a})
     \mapsto
-    \proj{1}\mleft(f(\mu_{s}(\listvar{a}) \concat \listvar{a})\mright)
+    \proj{1}\mleft(f(s, \mu_{s}(\listvar{a}) \concat \listvar{a})\mright)
     \) is a composition of \(\bot\)-preserving monotone functions, so it is
     itself \(\bot\)-preserving monotone; this makes \((S, f^\prime)\) a monotone
     \((\valuetuple{m}, \valuetuple{n})\)-Mealy machine.
@@ -2553,9 +2593,9 @@ states.
     Let \(s_i, s_j \in S\) such that \(s_i \stateorder s_j\); we need to show
     that for every \(l < |S|\),
     \(\gamma_\leq(s_i)(l) \sqsubseteq \gamma_\leq(s_j)(l)\).
-    The only way this can be violated is if \(s_i(l) = \top\) and
-    \(s_j(l) = \bot\); this can only occur if \(s_l \stateorder s_i\) and
-    \(s_l \not\stateorder s_j\).
+    The only way this can be violated is if \(\gamma_\leq(s_i)(l) = \top\) and
+    \(\gamma_\leq(s_j)(l) = \bot\); this can only occur if
+    \(s_l \stateorder s_i\) and \(s_l \not\stateorder s_j\).
     But since \(s_i \stateorder s_j\), this is a contradiction due to
     transitivity so \(\gamma_\leq(s_l) \sqsubseteq \gamma_\leq(s_j)\) also
     holds.
@@ -2798,16 +2838,27 @@ we must show a lemma linking the behaviour of circuits in the image of
     The machine \(\circuittomealyi[
         \iltikzfig{circuits/productivity/mealy-form}[core=f,state=\listvar{s},dom=m,cod=n,delay=x]
     ]\) is computed as the fixed point of the machine \(
-    \left(\valuetuple{x},
-    (\listvar{r}, \listvar{a}) \mapsto \left\langle
+    \left(
+    \valuetuple{x},
+    (\listvar{r}, (\listvar{a}, \listvar{b}))
+    \mapsto
+    \left\langle
     \listvar{r}, g(\listvar{s}, \listvar{a})
-    \right\rangle, \listvar{s}\right)
-    \), which is \(
-    \left(\valuetuple{x},
-    \listvar{v} \mapsto \left\langle
+    \right\rangle,
+    \listvar{s}
+    \right)
+    \),
+    which is
+    \(
+    \left(
+    \valuetuple{x},
+    \left(\listvar{s}, \listvar{b}\right)
+    \mapsto
+    \left\langle
     \proj{0}\mleft(g(\listvar{s},\listvar{a})\mright),
     \proj{1}\mleft(g(\listvar{s}, \listvar{a})\mright)
-    \right\rangle, \listvar{s}\right)
+    \right\rangle, \listvar{s}
+    \right)
     \).
     The output and derivative of \(
     \mealytocircuiti[
@@ -2835,15 +2886,15 @@ Mealy machines instead.
     \).
 \end{thm}
 \begin{proof}
-    Let \((S ,f)\) be a monotone Mealy machine and let \(s \in S\) be an arbitrary
-    state.
+    Let \((S ,f)\) be a monotone Mealy machine and let \(s \in S\) be an
+    arbitrary state.
     By \autoref{prop:mealy-to-stream}, the initial output of
     \(\mealytostreami[(S, f, s)]\) is
     \(\listvar{a} \mapsto \mealyfunctionoutput{f}\mleft(s, \listvar{a}\mright)\)
     and the stream derivative of \(\mealytostreami[(S, f, s)]\) is \(
     \listvar{a}
     \mapsto
-    \mealytostreami[(\mealyfunctiontransition{f}\mleft(s, \listvar{a}\mright))]
+    \mealytostreami[(S, f, \mealyfunctiontransition{f}\mleft(s, \listvar{a}\mright))]
     \).
 
     Now we consider the composite
@@ -2875,10 +2926,10 @@ Mealy machines instead.
 
     We can now use \autoref{prop:mealy-form-image} to compute the initial output
     and stream derivative of \(\circuittostreami[\mealytocircuiti[(S, f, s)]]\).
-    To show that \(\mealytostreami = \circuittostreami \circ \mealytostreami\),
+    To show that \(\mealytostreami = \circuittostreami \circ \mealytocircuiti\),
     we need to show that these `agree' with those of
     \(\mealytostreami[(S, f, s)]\).
-    For the initial output, this means we just need to show they are equal:
+    For the initial outputs, we just need to show they are equal:
     \begin{align*}
         \initialoutput{\circuittostreami[\mealytocircuiti[(S, f, s)]]}{\listvar{a}}
          & =
@@ -2899,7 +2950,7 @@ Mealy machines instead.
          & =
         \mealyfunctionoutput{f}(s, \listvar{a})
     \end{align*}
-    For the stream derivative, we need to show that as states vary over
+    For the stream derivatives, we need to show that as states vary over
     \(s \in S\), the stream derivative of \(
     \circuittostreami[\mealytocircuiti[(S, f, s)]]
     \) is the \(\gamma_\leq\)-encoding of \(\mealytostreami[(S, f, s)]\).
