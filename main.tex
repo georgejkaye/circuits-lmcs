@@ -2184,7 +2184,7 @@ In fact, it produces the \emph{minimal} such Mealy machine.
     For a stream function \(\morph{f}{\stream{M}}{\stream{N}}\),
     \(\mealytostream[f]{}\) has the smallest state space of all Mealy machines
     with the property \(
-    \mealytostreami[\streamtomealyi[f]] = f
+    \mealytostream[\streamtomealy[f]{}]{} = f
     \).
 \end{cor}
 \begin{proof}
@@ -2264,8 +2264,8 @@ monotonicity, we can use it to define a PROP morphism between \(\streami\) and
     this is a poset ordered by \(\stateorder\) as defined in
     \autoref{def:state-order}. and
     The Mealy function is the pairing of the initial output and stream
-    derivative; by \autoref{lem:initial-derivative-monotone} these are monotone so
-    the Mealy function must also be monotone.
+    derivative; by \autoref{lem:initial-derivative-monotone} these are monotone
+    so the Mealy function must also be monotone.
 \end{proof}
 
 \begin{defi}
@@ -3585,9 +3585,12 @@ Kleene fixed-point theorem.
     Then, for \(j > c\), \(f^c(x) = f^{j}(x)\).
 \end{lem}
 \begin{proof}
-    Since \(f\) is monotone and \(\values^{n}\) is finite, the former has a
-    least fixed point by the Kleene fixed-point theorem.
-    This will either be some value \(v\) or the \(\top\) element.
+    Since \(f\) is monotone and \(\values^{n}\) is finite, the function
+    \(\listvar{s} \mapsto f(\listvar{s}, \listvar{v})\) for arbitrary
+    \(\values{v} \in \values{m}\) has a least fixed point by the Kleene
+    fixed-point theorem.
+    This will either be some word \(\listvar{r} \in \valuetuple{m}\) or the
+    maximal element \(\top^m\).
     The most iterations of \(f\) it would take to obtain this fixed point is
     \(c\), i.e.\ the function produces a value one step up the lattice each
     time.
@@ -4629,32 +4632,86 @@ functions between the state sets that preserve transitions and outputs.
 We will use Mealy homomorphisms as circuits to encode state sets; this means we
 need to ensure the encoders and decoders are monotone.
 
+\begin{not}\label{not:minimal-mealy-sets}
+    Let \((S, f)\) be a Mealy coalgebra.
+    We write \((\hat{S}, \hat{f})\) for the
+    result of applying the unique Mealy homomorphism
+    \(\streamtomealy{} \circ \mealytostream{}\).
+    Then, for a state \(u \in \hat{S}\), let \(S_u \subseteq S\) be the set of states
+    such that for all \(s \in S_u\),
+    \(\streamtomealy[\mealytostream[(S, f)]{}]{}(s) = u\).
+\end{not}
+
+Recall that by \autoref{cor:minimal-mealy}, the Mealy coalgebra \((U, k)\) is
+the \emph{minimal} Mealy coalgebra with the same behaviour as \((S, f)\); each
+state in \(U\) corresponds to a unique stream function.
+Subsequently, the set \(S_u\) contains all the states in \(S\) that map to the
+same stream function as \(u\) does.
+
 \begin{lem}
-    For partial orders \(S\) and \(T\) and monotone Mealy coalgebras
-    \((S,f)\) and \((T,g)\), any Mealy homomorphism \(\morph{h}{(S,f)}{(T,g)}\)
-    is monotone.
+    Let \((S, f)\) and \((T, g)\) be Mealy coalgebra.
+    Then a function \(\morph{h}{S}{T}\) is a valid Mealy homomorphism if and
+    only if there exists a Mealy coalgebra \((U, k)\) such that
+    \(
+    \streamtomealy{}[\mealytostream{}[(S, f)]]
+    =
+    \streamtomealy{}[\mealytostream{}[(T, g)]]
+    = (U, k)
+    \), and for all \(u \in U\) and \(s \in S_u\), \(h(s) \in T_u\).
 \end{lem}
 \begin{proof}
-    In a monotone Mealy coalgebra, the functions \(f\) and \(g\) are monotone,
-    and for \(h\) to be a Mealy homomorphism, \(
-    \mealyfunctionoutput{f}(s)
-    =
-    \mealyfunctionoutput{g}(h(s))
-    \).
-    For states \(s,r \in S\) we have \(
-    \mealyfunctionoutput{g}(h(s), a)
-    =
-    \mealyfunctionoutput{f}(s, a)
-    \leq
-    \mealyfunctionoutput{f}(r, a)
-    =
-    \mealyfunctionoutput{g}(h(r), a)
-    \).
-    This means that the function \(
-    s \mapsto \mealyfunctionoutput{g}(h(s), a)
-    \) is monotone; as \(\mealyfunctionoutput{g}\) is monotone, \(h\) must
-    also be monotone.
+
 \end{proof}
+
+\begin{lem}
+    Let \((S, f)\) be a Mealy coalgebra.
+    Then for states \(u_0\) and \(u_1\) such that \(u_0 \neq u_1\), and for
+    states \(s_0 \in S_{u_0}\) and \(s_1 \in S_{u_1}\),
+    if \(u_0 \leq u_1\) then \(s_0 \leq s_1\).
+\end{lem}
+\begin{proof}
+    Assume that \(s_1 \leq s_0\).
+    Then by monotonicity of the Mealy function we have for any \(a \in A\):
+    \[
+        \mealyfunctionoutput{f}\left(s_1, a\right)
+        \leq
+        \mealyfunctionoutput{f}\left(s_0, a\right)
+    \]
+    As \(\mealyfunctionoutput{f}\left(s, a\right)
+    =
+    \mealyfunctionoutput{k}\left(h(s), a\right)
+    \) by definition of Mealy homomorphisms, we furthermore have that
+    \[
+        \mealyfunctionoutput{k}\left(h(s_1), a\right)
+        \leq
+        \mealyfunctionoutput{k}\left(h(s_0), a\right).
+    \]
+    By \autoref{not:minimal-mealy-sets}, \(h(s_0) = u_0\) and \(h(s_1) = u_1\),
+    so we have
+    \[
+        \mealyfunctionoutput{k}\left(u_1, a\right)
+        \leq
+        \mealyfunctionoutput{k}\left(u_0, a\right).
+    \]
+    But as \(\mealyfunctionoutput{k}\) is monotone and \(u_0 \leq u_1\), this
+    means that \(
+    \mealyfunctionoutput{k}\left(u_0, a\right)
+    \leq
+    \mealyfunctionoutput{k}\left(u_1, a\right)
+    \) and as such \(
+    \mealyfunctionoutput{f}\left(s_0, a\right)
+    \leq
+    \mealyfunctionoutput{f}\left(s_1, a\right)
+    \).
+    The only way this can be the case is if \(
+    \mealyfunctionoutput{f}\left(s_0, a\right)
+    =
+    \mealyfunctionoutput{f}\left(s_1, a\right)
+    \), but this cannot be the case because \(s_0\) is in \(S_{u_0}\) and
+    \(s_1\) is in \(S_{u_1}\): they must have different outputs.
+    Therefore it must be the case that \(s_0 \leq s_1\).
+\end{proof}
+
 
 For two circuits \(
 \iltikzfig{circuits/productivity/mealy-form-wide}[core=\mealytofunc[f],state=\listvar{s},colour=seq,dom=m,cod=n,delay=x]
