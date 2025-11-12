@@ -3385,12 +3385,14 @@ strategy for evaluating inputs to circuits.
     \)
 \end{nota}
 
-A reduction is effectively a directed equation, which we will apply to circuits
-in \(\scircsigma\).
+A reduction is effectively a directed equation that can be applied to circuits
+in \(\scircsigma\), usually transforming a circuit into a simpler one, for
+example by applying a gate to some input values.
 This means that the only equations that hold `on the nose' are the axioms of
 STMCs; diagrams can be deformed in order to expose redexes.
-To mechanise the reduction process it is also preferable to appeal to the
-graphical notation and use \emph{graph rewriting}~\cite{ghica2023rewriting}.
+Any other reductions must be specified explicitly; in this section we will
+present a set of reduction rules with which we can evaluate the streams of
+inputs applied to circuits in a step-by-step, syntactic manner.
 
 \subsection{Feedback}\label{sec:feedback}
 
@@ -4165,9 +4167,13 @@ equivalence for sequential circuits.
     There is an isomorphism \(\scircsigmai \cong \scircsigmaobs\).
 \end{cor}
 
-The results of the previous section give us an upper bound on the length of
-waveforms required to establish observational equivalence, so we have a
-terminating strategy for comparing digital circuits.
+This means that reasoning with the operational semantics is equivalent to
+reasoning denotationally with the stream function semantics; if two circuits
+have the same stream functions then they can be shown to be observationally
+equivalent, and vice versa.
+As the results of the previous section give us an upper bound on the length of
+waveforms required to establish observational equivalence, we have a
+terminating strategy for comparing digital circuits syntactically.
 Unfortunately, this is still an \emph{exponential} upper bound, so it is
 infeasible to check for the equivalence of circuits with more than a few delay
 components.
@@ -4329,6 +4335,43 @@ nicely to the multicoloured case.
 \begin{cor}
     There is an isomorphism \(\scircsigmaig \cong \scircsigmagobs\).
 \end{cor}
+
+\subsection{Mechanising the operational semantics}
+
+The operational semantics lends itself well to pen-and-paper reasoning: one can
+draw circuits and apply the reduction rules in sequence to evaluate them.
+However, for anything more complex than toy examples, this would become quite
+unwieldy as the number of gates quickly increases.
+Ideally one would \emph{mechanise} the evaluation process: we could provide
+the circuit and inputs to a computer and let it perform the procedure
+automatically.
+
+While string diagrams as topological structures are not exactly the most
+favourable structure for providing to a computer, there has recently been an
+extensive line of work into string diagram rewriting using
+\emph{hypergraphs}~\cite{bonchi2022string,bonchi2022stringa,bonchi2022stringb}.
+Of particular relevance to us is string diagram rewriting for settings with a
+traced comonoid structure~\cite{ghica2023rewriting}, which is exactly the
+structure we work with in digital circuits.
+
+In the string diagram hypergraph rewriting approach, string diagram terms are
+interpreted as cospans of hypergraphs; in \emph{loc. cit.}\ it has been shown
+precisely which classes of cospans correspond to different types of string
+diagrams.
+For example, any such cospan of hypergraphs corresponds to a string diagram
+term in a symmetric monoidal setting equipped with a \emph{Frobenius} structure.
+
+\todo[inline]{Flip flop diagram}
+
+Reductions in the operational semantics can then be performed using
+\emph{double pushout} (DPO) rewriting~\cite{ehrig1976parallelism}, in which
+rewrites are identified by using a `reverse pushout' to remove the left side
+of a reduction from a larger graph, followed by a regular pushout to paste in
+the right side of the reduction.
+
+While the hypergraph approach is a useful way to implement the operational
+semantics, it is by no means an essential part of it.
+
 
 \section{Algebraic semantics}
 
