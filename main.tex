@@ -4362,7 +4362,25 @@ diagrams.
 For example, any such cospan of hypergraphs corresponds to a string diagram
 term in a symmetric monoidal setting equipped with a \emph{Frobenius} structure.
 
-\todo[inline]{Flip flop diagram}
+\begin{exa}
+    Recall the SR NOR latch from \autoref{ex:sr-latch}.
+    Its interpretation as a cospan of hypergraphs is illustrated in
+    \autoref{fig:latch-graph}, in which the black dots are nodes and the
+    white boxes are hyperedges.
+    Nodes are annotated with numbers to indicate if they are in the image of
+    the left leg of the cospan (inputs) or the image of the right leg of the
+    cospan (outputs).
+\end{exa}
+
+\begin{figure}
+    \centering
+    \iltikzfig{graphs/examples/sr-latch}
+    \caption{
+        Interpretation of the SR NOR latch from \autoref{ex:sr-latch} as
+        a cospan of hypergraphs
+    }
+    \label{fig:latch-graph}
+\end{figure}
 
 Reductions in the operational semantics can then be performed using
 \emph{double pushout} (DPO) rewriting~\cite{ehrig1976parallelism}, in which
@@ -4370,9 +4388,36 @@ rewrites are identified by using a `reverse pushout' to remove the left side
 of a reduction from a larger graph, followed by a regular pushout to paste in
 the right side of the reduction.
 
-While the hypergraph approach is a useful way to implement the operational
-semantics, it is by no means an essential part of it.
+\begin{exa}
+    Consider the simple term rewrite \(
+    \iltikzfig{strings/category/generator}[box=e_1]
+    \grewrite
+    \iltikzfig{strings/category/generator}[box=e_2]
+    \).
+    An example of how this could be applied as a double pushout rewrite is
+    shown in \autoref{fig:dpo}.
+    The rewrite rule itself occupies the top row of the diagram and the graph in
+    which the rewrite is being applied in on the left of the middle row.
+    The rewrite context (the target graph with the instance of the rewrite rule
+    removed) sits in the middle of the diagram, and the rewritten graph on its
+    right.
+\end{exa}
 
+\begin{figure}
+    \center
+    \includestandalone{figures/graphs/dpo/example/rewrite}
+    \caption{
+        Example of a DPO rewrite
+    }
+    \label{fig:dpo}
+\end{figure}
+
+While the hypergraph approach is a useful way to implement the operational
+semantics, it is by no means an essential part of it: reductions on circuits may
+be performed without ever appealing to the combinatorial graph perspective.
+That being said, hypergraph string diagram rewriting is a powerful tool that
+allows the theoretical basis to be applied to deeply complicated real-world
+circuits.
 
 \section{Algebraic semantics}
 
