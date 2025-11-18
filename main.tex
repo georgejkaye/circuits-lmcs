@@ -603,6 +603,7 @@ of STMCs intuitive graphical interpretations, illustrated in
         \iltikzfig{strings/traced/yanking-rhs}[obj=m]
         \)
     \end{minipage}
+    \todo[inline]{Maybe these should all be in one column}
     \caption{The trace equations in string diagram notation}
     \label{fig:stmc-axioms}
 \end{figure*}
@@ -916,7 +917,7 @@ Sequential circuits are generalised in the same way.
     \(\stmc{\generators[\scirc{}^+]}\).
 \end{defi}
 
-Most of the upcoming results will be shown for the monochromatic case, as the
+Most of the upcoming results will be shown for the single-width case, as the
 proofs are more elegant.
 However, most of the results also generalise to the coloured case, and this will
 be remarked upon throughout.
@@ -2844,7 +2845,7 @@ we must show a lemma linking the behaviour of circuits in the image of
     (\listvar{r}, (\listvar{a}, \listvar{b}))
     \mapsto
     \left\langle
-    \listvar{r}, g(\listvar{s}, \listvar{a})
+    \listvar{a}, g(\listvar{r}, \listvar{a})
     \right\rangle,
     \listvar{s}
     \right)
@@ -2853,11 +2854,11 @@ we must show a lemma linking the behaviour of circuits in the image of
     \(
     \left(
     \valuetuple{x},
-    \left(\listvar{s}, \listvar{b}\right)
+    \left(\listvar{r}, \listvar{b}\right)
     \mapsto
     \left\langle
-    \proj{0}\mleft(g(\listvar{s},\listvar{a})\mright),
-    \proj{1}\mleft(g(\listvar{s}, \listvar{a})\mright)
+    \proj{0}\mleft(g(\listvar{r}, \listvar{a})\mright),
+    \proj{1}\mleft(g(\listvar{r}, \listvar{a})\mright)
     \right\rangle, \listvar{s}
     \right)
     \).
@@ -3072,8 +3073,9 @@ algebraic semantics presented in the remainder of this paper.
 
 \subsection{Denotational semantics for generalised circuits}
 
-Although we have discussed the denotational semantics in terms of monochromatic
-circuit signatures, it is straightforward to extend the results to categories
+Although we have discussed the denotational semantics in terms of circuit
+signatures with only a single width of wires, it is straightforward to extend
+the results to categories
 generated over \emph{generalised} circuit signatures
 
 In the semantic categories \(\funci\), \(\streami\), and \(\mealyi\), the
@@ -3102,7 +3104,7 @@ values.
 Note that for a word \(\listvar{m} \coloneqq 11\dots1\) of length \(k\), the set
 \(A^{\listvar{m}} = A^1 \times A^1 \times \dots A^1\) is isomorphic to \(A^k\),
 much like how setting the set of colours in a coloured PROP to the singleton
-recovers a monochromatic PROP.
+recovers a PROP with a single colour.
 
 The semantic categories can now be extended to these \emph{coloured} interfaces.
 
@@ -3121,7 +3123,7 @@ The semantic categories can now be extended to these \emph{coloured} interfaces.
 \end{defi}
 
 The various PROP morphisms between these categories are defined in a similar way
-to the monochromatic versions, but now we have to account for the structural
+to the single-width versions, but now we have to account for the structural
 generators for each \(n \in \natplus\), as well as the bundlers.
 
 \begin{defi}
@@ -3604,7 +3606,7 @@ Kleene fixed-point theorem.
     \iltikzfig{strings/category/f-2-2}[box=f,colour=comb,dom1=x,dom2=m,cod1=x,cod2=n],
     \)
     its \emph{\(i\)-th iteration} \(
-    \iltikzfig{strings/category/f-1-2}[box=f^n,colour=comb,dom=m,cod1=x,cod2=n]
+    \iltikzfig{strings/category/f-1-2}[box=f^i,colour=comb,dom=m,cod1=x,cod2=n]
     \) is defined inductively over \(i\) in the following way: \[
         \iltikzfig{circuits/instant-feedback/f0-box}[dom=m,trace=x,cod=n]
         \coloneqq
@@ -4721,144 +4723,7 @@ functions between the state sets that preserve transitions and outputs.
 We will use Mealy homomorphisms as circuits to encode state sets; this means we
 need to ensure the encoders and decoders are monotone.
 
-\begin{nota}\label{not:minimal-mealy-sets}
-    Let \((S, f)\) be a Mealy coalgebra.
-    We write \((\hat{S}, \hat{f})\) for the
-    result of applying the unique Mealy homomorphism
-    \(\streamtomealy{} \circ \mealytostream{}\).
-    Then, for a state \(u \in \hat{S}\), let \(S_u \subseteq S\) be the set of
-    states such that for all \(s \in S_u\),
-    \(\streamtomealy[\mealytostream[(S, f)]{}]{}(s) = u\).
-\end{nota}
-
-Recall that by \autoref{cor:minimal-mealy}, the Mealy coalgebra \((U, k)\) is
-the \emph{minimal} Mealy coalgebra with the same behaviour as \((S, f)\); each
-state in \(U\) corresponds to a unique stream function.
-Subsequently, the set \(S_u\) contains all the states in \(S\) that map to the
-same stream function as \(u\) does.
-
-\begin{lem}\label{lem:mealy-homomorphism-characterisation}
-    Let \((S, f)\) and \((T, g)\) be Mealy coalgebra, and let
-    \(\morph{h}{S}{T}\) be a Mealy homomorphism between them.
-    Then for the Mealy coalgebra \(
-    (U, k)
-    \coloneqq
-    \streamtomealy{}[\mealytostream{}[(S, f)]]
-    =
-    \streamtomealy{}[\mealytostream{}[(T, g)]]
-    \)
-    for all \(u \in U\) and \(s \in S_u\), \(h(s) \in T_u\).
-\end{lem}
-\begin{proof}
-    For the \((\ifdir)\) direction, \(\mealytostream{}\) is the final Mealy
-    homomorphism, so if therre
-
-
-
-    As \(\mealytostream{}\) is the final Mealy homomorphismA
-\end{proof}
-
-\begin{lem}\label{lem:ordered-states-homomorphism}
-    Let \((S, f)\) be a Mealy coalgebra.
-    Then for states \(u_0\) and \(u_1\) such that \(u_0 \neq u_1\), and for
-    states \(s_0 \in S_{u_0}\) and \(s_1 \in S_{u_1}\),
-    \(u_0 \leq u_1\) if and only if \(s_0 \leq s_1\).
-\end{lem}
-\begin{proof}
-    First the \((\onlyifdir)\) direction.
-    Let \(u_0 \leq u_1\), and assume that that \(s_1 \leq s_0\).
-    Then by monotonicity of the Mealy function we have for any \(a \in A\):
-    \[
-        \mealyfunctionoutput{f}\left(s_1, a\right)
-        \leq
-        \mealyfunctionoutput{f}\left(s_0, a\right)
-    \]
-    As \(\mealyfunctionoutput{f}\left(s, a\right)
-    =
-    \mealyfunctionoutput{k}\left(h(s), a\right)
-    \) by definition of Mealy homomorphisms, we furthermore have that
-    \[
-        \mealyfunctionoutput{k}\left(h(s_1), a\right)
-        \leq
-        \mealyfunctionoutput{k}\left(h(s_0), a\right).
-    \]
-    By \autoref{not:minimal-mealy-sets}, \(h(s_0) = u_0\) and \(h(s_1) = u_1\),
-    so we have
-    \[
-        \mealyfunctionoutput{k}\left(u_1, a\right)
-        \leq
-        \mealyfunctionoutput{k}\left(u_0, a\right).
-    \]
-    But as \(\mealyfunctionoutput{k}\) is monotone and \(u_0 \leq u_1\), this
-    means that \(
-    \mealyfunctionoutput{k}\left(u_0, a\right)
-    \leq
-    \mealyfunctionoutput{k}\left(u_1, a\right)
-    \) and as such \(
-    \mealyfunctionoutput{f}\left(s_0, a\right)
-    \leq
-    \mealyfunctionoutput{f}\left(s_1, a\right)
-    \).
-    The only way this can be the case is if \(
-    \mealyfunctionoutput{f}\left(s_0, a\right)
-    =
-    \mealyfunctionoutput{f}\left(s_1, a\right)
-    \), but this cannot be the case because \(s_0\) is in \(S_{u_0}\) and
-    \(s_1\) is in \(S_{u_1}\): they must have different outputs.
-    Therefore it must be the case that \(s_0 \leq s_1\).
-
-    Now the \((\ifdir)\) direction.
-    Let \(s_0 \leq s_1\); by definition of Mealy homomorphisms we have that for
-    any \(a \in A\), \(
-    \mealyfunctionoutput{k}\left(h(s_0), a\right)
-    \leq
-    \mealyfunctionoutput{k}\left(h(s_1), a\right)
-    \).
-    If we assume that \(h(s_1) \leq h(s_0\), then by monotonicity we also have
-    that
-    \(
-    \mealyfunctionoutput{k}\left(h(s_1), a\right)
-    \leq
-    \mealyfunctionoutput{k}\left(h(s_1), a\right)
-    \), \(
-    \mealyfunctionoutput{k}\left(\mealyfunctiontransition{k}\left(h(s_1), a_1\right), a_2\right)
-    \) and so on; this is only possible if each element of the output stream
-    is equal, which we know is not the case as \((U, k)\) is the \emph{minimal}
-    Mealy coalgebra; there cannot be multiple states with the same behaviour.
-\end{proof}
-
-\begin{prop}
-    Let \((S, f)\) and \((T, g)\) be Mealy coalgebra such that there exist
-    some number of Mealy homomorphisms
-    \(\morph{h_0, h_1, \cdots}{S}{T}\).
-    Then there exists at least one Mealy homomorphism
-    \(\morph{h_i}{S}{T}\) such that \(h_i\) is monotone.
-\end{prop}
-\begin{proof}
-    By \autoref{lem:mealy-homomorphism-characterisation}, we know for a given
-    Mealy homomorphism \(\morph{h}{S}{T}\) and state \(s \in S\), \(
-    \streamtomealy{}[\mealytostream{}[(S, f)]](s)
-    =
-    \streamtomealy{}[\mealytostream{}[(T, g)]](h_i(s))
-    \)
-    Let \((U, k) \coloneqq \streamtomealy{}[\mealytostream{}[(S, f)]]\); as
-    there is a Mealy homomorphism from \((S, f)\) to \((T, g)\), we also have
-    that \(
-    (U, k) = \streamtomealy{}[\mealytostream{}[(T, g)]]
-    \).
-
-    We construct a Mealy homomorphism \(\morph{h}{S}{T}\) as follows.
-    For each state \(u \in U\), pick an element in \(t \in T_u\); we then define
-    the action of \(h\) on a state \(s \in S_u\) as mapping to \(t\).
-
-    Now we must show that \(h\) is monotone.
-    Let \(s_0, s_1 \in S\) be such that \(s_0 \leq s_1\).
-    For the case when both \(s_0\) and \(s_1\) are in the same set \(S_u\),
-    then \(h(s_0) = h(s_1)\) and so monotonicity holds.
-    When \(s_0\) and \(s_1\) are in different sets \(S_{u_0}\) and \(S_{u_1}\),
-    we have that \(u_0 \leq u_1\) by \autoref{lem:ordered-states-homomorphism},
-    so by applying the same lemma in reverse we have that \(h(s_0) \leq h(s_1)\).
-\end{proof}
+\todo[inline]{Monotone encoders-decoders?}
 
 For two circuits \(
 \iltikzfig{circuits/productivity/mealy-form-wide}[core=\mealytofunc[f],state=\listvar{s},colour=seq,dom=m,cod=n,delay=x]
@@ -6247,7 +6112,7 @@ behaviour of a circuit.
     \iltikzfig{strings/category/f}[box=g,colour=seq,dom=m,cod=n]
     \) with \(c\) and \(c^\prime\) delay components respectively, we say that \(
     \iltikzfig{strings/category/f}[box=f,colour=seq,dom=m,cod=n]
-    \) is a \emph{more efficient version of} \(
+    \) is \emph{more efficient} than \(
     \iltikzfig{strings/category/f}[box=g,colour=seq,dom=m,cod=n]
     \), written \(
     \iltikzfig{strings/category/f}[box=f,colour=seq,dom=m,cod=n]
