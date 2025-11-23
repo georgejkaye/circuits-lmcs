@@ -17,73 +17,73 @@ improvements to the paper.
 \section{Improvements to proofs}
 
 \begin{itemize}
-    \item \textbf{Proposition 3.23}: used proof strategy suggested by reviewer
-    \item \textbf{Theorem 3.28}: reworked proof
-          \begin{itemize}
-              \item \todo[inline]{Sum up reworked proof}
-          \end{itemize}
-    \item \textbf{Theorem 3.29}: used proof strategy suggested by reviewer
-    \item \textbf{Definition 3.38}: adjusted definition to state that the state
-          set \(S\) is a poset with a minimal element
-    \item \textbf{Definition 3.46}: fix typo in definition of least fixed point
-          of Mealy machine; add in necessary projections to make expressions
-          typescheck
-    \item \textbf{Proposition 3.48}: reword proof to state that the Mealy
-          machine \((S, f)\) has a least fixed point, and fix typo in definition
-          of \(f^\prime\)
-    \item \textbf{Lemma 3.67} (originally Lemma 3.66): use \(\gamma_\leq\)
-          function where appropriate
-    \item \textbf{Proposition 3.78} (originally Proposition 3.76): updated
-          Mealy machines to use correct variables
-    \item \textbf{Theorem 3.79} (originally Theorem 3.79): fixed typos in
-          expressions
-    \item \textbf{Lemma 4.10}: referenced correct fixed point
-    \item \textbf{Lemma 5.13}: reworked proof strategy in order to avoid false
-          statement
-          \begin{itemize}
-              \item No longer show that any monotone Mealy homomorphism is monotone
-                    (which is indeed false)
-              \item \todo[inline]{Sum up reworked proof}
-          \end{itemize}
+      \item \textbf{Proposition 3.23}: used proof strategy suggested by reviewer
+      \item \textbf{Theorem 3.28}: reworked proof
+            \begin{itemize}
+                  \item \todo[inline]{Sum up reworked proof}
+            \end{itemize}
+      \item \textbf{Theorem 3.29}: used proof strategy suggested by reviewer
+      \item \textbf{Definition 3.38}: adjusted definition to state that the state
+            set \(S\) is a poset with a minimal element
+      \item \textbf{Definition 3.46}: fix typo in definition of least fixed point
+            of Mealy machine; add in necessary projections to make expressions
+            typecheck
+      \item \textbf{Proposition 3.48}: reword proof to state that the Mealy
+            machine \((S, f)\) has a least fixed point, and fix typo in definition
+            of \(f^\prime\)
+      \item \textbf{Lemma 3.67} (originally Lemma 3.66): use \(\gamma_\leq\)
+            function where appropriate
+      \item \textbf{Proposition 3.78} (originally Proposition 3.76): updated
+            Mealy machines to use correct variables
+      \item \textbf{Theorem 3.79} (originally Theorem 3.79): fixed typos in
+            expressions
+      \item \textbf{Lemma 4.10}: referenced correct fixed point
+      \item \textbf{Lemma 5.13}: reworked proof strategy in order to avoid false
+            statement
+            \begin{itemize}
+                  \item No longer show that any monotone Mealy homomorphism is monotone
+                        (which is indeed false)
+                  \item \todo[inline]{Sum up reworked proof}
+            \end{itemize}
 \end{itemize}
 
 \section{Improvements to narrative}
 
 \begin{itemize}
-    \item Moved diagram showing interactions of PROPs to end of paper
-    \item References to `Belnap signature' replaced with `gate-level' signature,
-          and remark about historical relevance of Belnap added
-    \item Term `monochromatic' dropped
-    \item Add Remark 3.4 discussing the choice between \(\leq\) and \(\sqsubseteq\)
-    \item For discussing completeness of combinational circuit semantics,
-          explicitly make reference to how we used \(\bot\)-preserving
-    \item Extract Definition 3.50 out of Corollary 3.52
-          (originally Corollary 3.51)
-    \item Explicitly mention what we mean by soundness and completeness
-    \item Add Remark 3.72 about how a monotone completion can be viewed as a Kan
-          extension
-    \item \textbf{Section 4}: added section 4.5 elaborating on how the
-          operational semantics can be mechanised by interpreting circuits as
-          hypergraphs, and clarifying that this is only a useful tool for
-          implementation purposes rather than a core part of the framework
+      \item Moved diagram showing interactions of PROPs to end of paper
+      \item References to `Belnap signature' replaced with `gate-level' signature,
+            and remark about historical relevance of Belnap added
+      \item Term `monochromatic' dropped
+      \item Add Remark 3.4 discussing the choice between \(\leq\) and \(\sqsubseteq\)
+      \item For discussing completeness of combinational circuit semantics,
+            explicitly make reference to how we used \(\bot\)-preserving
+      \item Extract Definition 3.50 out of Corollary 3.52
+            (originally Corollary 3.51)
+      \item Explicitly mention what we mean by soundness and completeness
+      \item Add Remark 3.72 about how a monotone completion can be viewed as a Kan
+            extension
+      \item \textbf{Section 4}: added section 4.5 elaborating on how the
+            operational semantics can be mechanised by interpreting circuits as
+            hypergraphs, and clarifying that this is only a useful tool for
+            implementation purposes rather than a core part of the framework
 \end{itemize}
 
 \section{Improvements to presentation}
 
 \begin{itemize}
-    \item Changed string diagram boxes representing composite morphisms to have
-          rounded corners
-    \item Become consistent where possible about using uncurried Mealy function
-          \begin{itemize}
-              \item \todo[inline]{Check we actually do this}
-              \item When discussing the Mealy coalgebra the curried form is
-                    preferred as the functor concerned really is
-                    \(S \to (S \times B)^A\)
-          \end{itemize}
-    \item Add trace equation names to Figure 2
-    \item \textbf{Definition 4.11}: use \(i\) for the index of iteration
-    \item \textbf{Definition 6.14}: use `more efficient' rather than 'logically
-          equivalent'
+      \item Changed string diagram boxes representing composite morphisms to have
+            rounded corners
+      \item Become consistent where possible about using uncurried Mealy function
+            \begin{itemize}
+                  \item \todo[inline]{Check we actually do this}
+                  \item When discussing the Mealy coalgebra the curried form is
+                        preferred as the functor concerned really is
+                        \(S \to (S \times B)^A\)
+            \end{itemize}
+      \item Add trace equation names to Figure 2
+      \item \textbf{Definition 4.11}: use \(i\) for the index of iteration
+      \item \textbf{Definition 6.14}: use `more efficient' rather than 'logically
+            equivalent'
 \end{itemize}
 
 
