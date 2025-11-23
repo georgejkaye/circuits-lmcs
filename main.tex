@@ -563,47 +563,77 @@ of STMCs intuitive graphical interpretations, illustrated in
 \autoref{fig:stmc-axioms}.
 
 \begin{figure*}
-    \textbf{Tightening}
-    \(
-    \iltikzfig{strings/traced/naturality-lhs}[box1=f,box2=g,box3=h,colour=white,dom=m,cod=q]
-    =
-    \iltikzfig{strings/traced/naturality-rhs}[box1=f,box2=g,box3=h,colour=white,dom=m,cod=q]
-    \)
-    \\[1.5em]
-    \textbf{Sliding}
-    \(
-    \iltikzfig{strings/traced/sliding-lhs}[box1=f,box2=g,colour=white,dom=m,cod=n]
-    =
-    \iltikzfig{strings/traced/sliding-rhs}[box1=f,box2=g,colour=white,dom=m,cod=n]
-    \)
-    \\[1.5em]
-    \textbf{Vanishing}
-    \(
-    \iltikzfig{strings/traced/vanishing-lhs}[box=f,colour=white,dom=m,cod=n,trace1=x,trace2=y]
-    =
-    \iltikzfig{strings/traced/vanishing-prop-rhs}[box=f,colour=white,dom=m,cod=n,trace1=x,trace2=y]
-    \)
-    \\[1.5em]
-    \begin{minipage}{0.45\textwidth}
-        \centering
+    \def\arraystretch{2}
+    \begin{tabular}{lccc}
+        \textbf{Tightening}
+         &
+        \(
+        \iltikzfig{strings/traced/naturality-lhs}[box1=f,box2=g,box3=h,colour=white,dom=m,cod=q]
+        \)
+         &
+        \(
+        =
+        \)
+         &
+        \(
+        \iltikzfig{strings/traced/naturality-rhs}[box1=f,box2=g,box3=h,colour=white,dom=m,cod=q]
+        \)
+        \\
+        \textbf{Sliding}
+         &
+        \(
+        \iltikzfig{strings/traced/sliding-lhs}[box1=f,box2=g,colour=white,dom=m,cod=n]
+        \)
+         &
+        \(=\)
+         &
+        \(
+        \iltikzfig{strings/traced/sliding-rhs}[box1=f,box2=g,colour=white,dom=m,cod=n]
+        \)
+        \\
+        \textbf{Vanishing}
+         &
+        \(
+        \iltikzfig{strings/traced/vanishing-lhs}[box=f,colour=white,dom=m,cod=n,trace1=x,trace2=y]
+        \)
+         &
+        \(
+        =
+        \)
+         &
+        \(
+        \iltikzfig{strings/traced/vanishing-prop-rhs}[box=f,colour=white,dom=m,cod=n,trace1=x,trace2=y]
+        \)
+        \\
         \textbf{Superposing}
+         &
         \(
         \iltikzfig{strings/traced/superposing-lhs}[box1=f,box2=g,colour=white,dom1=m,dom2=p,cod1=n,cod2=q]
+        \)
+         &
+        \(
         =
+        \)
+         &
+        \(
         \iltikzfig{strings/traced/superposing-rhs}[box1=f,box2=g,colour=white,dom1=m,dom2=p,cod1=n,cod2=q]
         \)
-    \end{minipage}
-    \qquad
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \textbf{Tightening}
+        \\
+        \textbf{Yanking}
+         &
         \(
         \iltikzfig{strings/traced/yanking-lhs}[obj=m,colour=white]
+        \)
+         &
+        \(
         =
+        \)
+         &
+        \(
         \iltikzfig{strings/traced/yanking-rhs}[obj=m]
         \)
-    \end{minipage}
-    \todo[inline]{Maybe these should all be in one column}
+    \end{tabular}
+    \def\arraystretch{1}
     \caption{The trace equations in string diagram notation}
     \label{fig:stmc-axioms}
 \end{figure*}
@@ -5548,8 +5578,8 @@ As non-delay-guarded feedback is already handled by the
 \end{figure}
 
 \begin{prop}
-    Applying the refactoring rules to a Mealy form is confluent and
-    terminating.
+    Applying the refactoring rules to a Mealy form is a confluent and
+    terminating procedure.
 \end{prop}
 \begin{proof}
     The refactoring rules always decrease the size of the circuit.
@@ -5706,7 +5736,7 @@ be unsound.
     \label{fig:shortcut-waveform-rules}
 \end{figure}
 
-\begin{exa}[Control switches]
+\begin{exa}[Control switches]\label{ex:shortcut-switches}
     Recall that a \emph{multiplexer} is a circuit component constructed as \(
     \iltikzfig{circuits/components/gates/mux}
     \coloneqq
@@ -5724,24 +5754,31 @@ be unsound.
     subcircuits will become the output.
     We will assume that the control signal is held at false, and reduce
     accordingly by instantiating the rule in \autoref{fig:waveform-rules} detailing
-    the interaction of gates and waveforms to the \(\notgate\) case.
-    \begin{gather*}
-        \iltikzfig{circuits/examples/control/circuit-mux-applied}
-        \coloneqq
-        \iltikzfig{circuits/examples/control/circuit-applied}
-        \reduction
-        \\[1em]
-        \iltikzfig{circuits/examples/control/circuit-applied-1}
-        \reduction
-        \iltikzfig{circuits/examples/control/circuit-applied-2}
-        \reduction
-        \\[1em]
-        \iltikzfig{circuits/examples/control/circuit-applied-3}
-        \reduction
-        \iltikzfig{circuits/examples/control/circuit-applied-4}
-        \reduction
-        \iltikzfig{circuits/examples/control/circuit-applied-5}
-    \end{gather*}
+    the interaction of gates and waveforms to the \(\notgate\) case; the steps
+    of reasoning are illustrated in \autoref{fig:shortcut-control}.
+    \begin{figure}
+        \begin{gather*}
+            \iltikzfig{circuits/examples/control/circuit-mux-applied}
+            \coloneqq
+            \iltikzfig{circuits/examples/control/circuit-applied}
+            \reduction
+            \\[1em]
+            \iltikzfig{circuits/examples/control/circuit-applied-1}
+            \reduction
+            \iltikzfig{circuits/examples/control/circuit-applied-2}
+            \reduction
+            \\[1em]
+            \iltikzfig{circuits/examples/control/circuit-applied-3}
+            \reduction
+            \iltikzfig{circuits/examples/control/circuit-applied-4}
+            \reduction
+            \iltikzfig{circuits/examples/control/circuit-applied-5}
+        \end{gather*}
+        \caption{
+            Reducing the circuit in \autoref{ex:control-switches} by using the
+            shortcut rules in \autoref{fig:shortcut-waveform-rules}}
+        \label{fig:shortcut-control}
+    \end{figure}
 \end{exa}
 
 \subsection{Shortcuts after streaming}
