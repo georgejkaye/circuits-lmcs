@@ -78,6 +78,7 @@
         \hypersetup{
             hidelinks,
             final,
+            hypertexnames=false,
         }
     \else
     \fi
@@ -548,7 +549,8 @@
 %%%%%%%%%%%%
 
 \def\endfront@text{%
-    \insert\copyins{\hsize\textwidth%
+    \begin{figure}
+        \hsize\textwidth%
         \fontsize{6}{7\p@}\normalfont\upshape%
         \noindent%
         \IfFileExists{./LMCS-logo.mf}{%
@@ -571,7 +573,8 @@
             \vbox{\fontsize{6}{8 pt}\baselineskip=6 pt\vss
                 \hbox{\headertextsf{\hspace{2 pt}\copyright\quad \shortauthors}\hfil}
                 \hbox{\headertextsf{\crC\ \href{http://creativecommons.org/about/licenses}{Creative Commons}}\hfil}}}
-        \par\kern\z@}%
+        \par\kern\z@
+    \end{figure}
 }
 
 % If the logo is not present, then emulate an \lmcsheading call
@@ -606,18 +609,22 @@
     % if the page is quite filled, the text is simply hidden
     % otherwise.
     \nobreak%
-    \insert\copyins{\hsize.58\textwidth
-        \vbox to 0pt{\vskip12 pt%
-                \fontsize{6}{7\p@}\normalfont\upshape
-                \everypar{}%
-                \noindent\fontencoding{T1}%
-                \headertextsf{This work is licensed under the Creative Commons
-                    Attribution License. To view a copy of this license, visit
-                    \texttt{https://creativecommons.org/licenses/by/4.0/} or send a
-                    letter to Creative Commons, 171 Second St, Suite 300, San Francisco,
-                    CA 94105, USA, or Eisenacher Strasse~2, 10777 Berlin, Germany}\vss}
-        \par
-        \kern\z@}%
+    \begin{figure}[b]
+        \hfill\begin{minipage}{.58\textwidth}
+            %    \hsize.58\textwidth
+            \vbox to 0pt{\vskip12 pt%
+                    \fontsize{6}{7\p@}\normalfont\upshape
+                    \everypar{}%
+                    \noindent\fontencoding{T1}%
+                    \headertextsf{This work is licensed under the Creative Commons
+                        Attribution License. To view a copy of this license, visit
+                        \texttt{https://creativecommons.org/licenses/by/4.0/} or send a
+                        letter to Creative Commons, 171 Second St, Suite 300, San Francisco,
+                        CA 94105, USA, or Eisenacher Strasse~2, 10777 Berlin, Germany}\vss}
+            \par
+            \kern\z@
+        \end{minipage}
+    \end{figure}
 }
 
 %% Defines the pagestyle for the rest of the pages
@@ -725,6 +732,7 @@
 {\thmname{#1} \thmnumber{#2} \thmnote{\normalfont#3}}% {theorem head spec}
 \theoremstyle{defC}
 \newtheorem{defiC}[thm]{Definition}
+\newtheorem{remC}[thm]{Remark}
 
 \newtheoremstyle{thmC}%
 {6pt}% (space above)
