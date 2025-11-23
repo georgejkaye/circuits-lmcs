@@ -29,6 +29,7 @@
 
 ## We will never need to commit the main pdf in the root
 /main.pdf
+/changes.pdf
 
 ## Bibliography auxiliary files (bibtex/biblatex/biber):
 *.bbl
