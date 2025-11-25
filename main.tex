@@ -1408,27 +1408,30 @@ turns out that it is implied by causality and monotonicity.
     be Scott-continuous.
 \end{prop}
 \begin{proof}
-    Consider a directed subset \(D \subseteq \stream{A}\); we need to show that
+    Consider a directed subset \(C \subseteq \stream{A}\); we need to show that
     for an arbitrary causal, monotone and finitely specified function \(f\) we
-    have that \(f\left(\bigvee D\right) = \bigvee f[D]\).
+    have that \(f\left(\bigvee C\right) = \bigvee f[C]\).
 
     Let \(\morph{\proj{n}}{\stream{B}}{B^n}\) be defined as the
     function that takes the first \(n\) elements of an input stream i.e.\
     \(
     \proj{n}\left(\sigma\right)
-    \coloneqq
-    \sigma(0) \streamcons \sigma(1) \streamcons \ldots, \sigma(n-1)
-    \).
+    \coloneqq \left(
+    \sigma(0),
+    \sigma(1),
+    \ldots,
+    \sigma(n-1)\right)\).
     For some \(d \in \stream{B}\) and \(D \subseteq \stream{B}\), we have that
-    \(d = \bigvee po\) precisely if \(
+    \(d = \bigvee D\) if \(
     \proj{n}\left(d\right)
     =
     \bigvee\left(\proj{n}[D]\right)
     \) for all \(n \in \nat\).
-    Therefore to show our desired result, it suffices to show that \(
-    \proj{n}\left(f\left(\bigvee D\right)\right)
+    Therefore to show our desired result we substitute \(D \coloneqq f[C]\) and
+    \(d \coloneqq f\left(\bigvee C\right)\), and show that \(
+    \proj{n}\left(f\left(\bigvee C\right)\right)
     =
-    \bigvee\left(\proj{n}\left(f[D]\right)\right)
+    \bigvee\left(\proj{n}\left(f[C]\right)\right)
     \).
 
     Next, for a function \(\morph{f}{\stream{A}}{\stream{B}}\), let
@@ -1437,24 +1440,36 @@ turns out that it is implied by causality and monotonicity.
     \coloneqq
     \pi_n\left(f(\listvar{a} \streamcons \bot^\omega)\right)
     \).
-    Note that when \(f\) is causal, we furthermore have that \(
+    Note that when \(f\) is causal, we have for \(
+    \sigma \in \stream{A}
+    \) and \(
+    \listvar{a} \in A^n
+    \) that \(
     \proj{n}\left(f(\listvar{a} \streamcons \bot^\omega)\right)
     =
     \proj{n}\left(f(\listvar{a} \streamcons \sigma)\right)
-    \) for any \(\sigma \in \stream{A}\), and subsequently can conclude for
-    causal \(f\) that \(\proj{n} \circ f = f_n \circ \proj{n}\).
-
+    \), so the following line of reasoning holds:
+    \[
+        \proj{n}\left(f(\sigma)\right)
+        =
+        \proj{n}\left(f(\proj{n}(\sigma) \streamcons \tau)\right)
+        =
+        \proj{n}\left(f(\proj{n}(\sigma) \streamcons \bot^\omega)\right)
+        =
+        f_n\left(\proj{n}(\sigma)\right)
+    \]
+    i.e.\ \(\proj{n} \circ f = f^n \circ \proj{n}\).
     As each of these functions \(f_n\) is a monotone function between finite
     lattices, they preserve directed joins.
     Putting everything together, we have that
     \[
-        \proj{n}\left(f\left(\bigvee D\right)\right)
+        \proj{n}\left(f\left(\bigvee C\right)\right)
         =
-        f_n\left(\proj{n}\left(\bigvee D\right)\right)
+        f_n\left(\proj{n}\left(\bigvee C\right)\right)
         =
-        f_n\left(\bigvee \left(\proj{n}[D]\right)\right)
+        f_n\left(\bigvee \left(\proj{n}[C]\right)\right)
         =
-        \bigvee \left(\proj{n}\left(f[D]\right)\right)
+        \bigvee \left(\proj{n}\left(f[C]\right)\right)
     \]
     and subsequently that \(f\) is Scott-continuous.
 \end{proof}
@@ -1740,7 +1755,7 @@ To verify this we must establish that the categorical axioms of the trace hold.
     As we have that
     \(g(\mu_l(\sigma)) \leq \mu_r(\sigma)\)
     and
-    \(mu_r(\sigma) \leq g(\mu_l(\sigma))\),
+    \(\mu_r(\sigma) \leq g(\mu_l(\sigma))\),
     it follows that
     \(g(\mu_l(\sigma)) = \mu_r(\sigma)\) as originally required.
 \end{proof}
@@ -1911,11 +1926,10 @@ those that do: those that map to stream functions in \(\streami\).
 We must also impose a monotonicity condition.
 
 \begin{defi}[Monotone Mealy machine]
-    Let \(A\), \(B\) be posets with a bottom element; an \((A,B)\)-Mealy machine
-    \((S, f)\) is called a \emph{monotone} Mealy machine if \(S\) is also a
-    poset with a bottom element and
-    \(f\) is \(\bot\)-preserving monotone with respect to the ordering on
-    \(A\), \(B\), and \(S\).
+    Let \(A\), \(B\) be lattices; an \((A,B)\)-Mealy machine
+    \((S, f)\) is called a \emph{monotone} Mealy machine if \(S\) is a
+    lattice and \(f\) is \(\bot\)-preserving monotone with respect to the
+    ordering on \(A\), \(B\), and \(S\).
 \end{defi}
 
 To map to Mealy machines from circuits we need to assemble the former into
@@ -2028,7 +2042,10 @@ This can be computed in much the same way as it was for stream functions.
     \)-Mealy machine.
     For a state \(s \in S\) and input \(\listvar{a} \in \valuetuple{m}\), let
     \(\mu_{s}(\listvar{a})\) be the least fixed point of \(
-    \listvar{r} \mapsto \proj{0}\mleft(\mealyfunctionoutput{f}\mleft(s, \listvar{r} \concat \listvar{a}\mright)\mright)
+    \listvar{r}
+    \mapsto
+    \proj{0}\mleft(
+    \mealyfunctiontransition{f}\mleft(s, \listvar{r} \concat \listvar{a}\mright)\mright)
     \).
     The \emph{least fixed point} of an initialised Mealy machine \((S, f, s_0)\)
     is a \((\valuetuple{m}, \valuetuple{n})\)-Mealy machine \[\left(
@@ -2073,21 +2090,21 @@ This can be computed in much the same way as it was for stream functions.
         \langle{
             \mealyfunctiontransition{f}\mleft(s, \mleft(\mu_{s}\mleft(b\mright), b\mright)\mright),
             \proj{1}\mealyfunctionoutput{f}\mleft(s, \mleft(\mu_{s}\mleft(b\mright), b\mright)\mright)
-        }\rangle     \\
+        }\rangle   \\
         (s, b)
-         & = \mapsto
+         & \mapsto
         \langle{
             s \land b,
             b \lor \neg \mleft(\bot \land b\mright)
-        }\rangle     \\
+        }\rangle   \\
         (s, b)
-         & = \mapsto
+         & \mapsto
         \langle{
             s \land b,
             b \lor \bot \lor \neg b
-        }\rangle     \\
+        }\rangle   \\
         (s, b)
-         & = \mapsto
+         & \mapsto
         \langle{
             s \land b,
             \belnaptrue
@@ -2095,7 +2112,7 @@ This can be computed in much the same way as it was for stream functions.
     \end{align*}
 \end{exa}
 
-We must show that the least fixed point on Mealy machines is in fact the trace
+We must show that the least fixed point on Mealy machines is the trace
 on \(\mealyi\).
 
 \begin{prop}
@@ -2104,7 +2121,7 @@ on \(\mealyi\).
 \begin{proof}
     Let \((S, f)\) be a monotone
     \((\valuetuple{x+m}, \valuetuple{x+n})\)-Mealy machine; this means that
-    \(S\) must be a poset with a least element.
+    \(S\) is a lattice.
     The Mealy function \(
     \morph{f}{
         S \times \valuetuple{x+m}
@@ -2875,7 +2892,7 @@ we must show a lemma linking the behaviour of circuits in the image of
     (\listvar{r}, (\listvar{a}, \listvar{b}))
     \mapsto
     \left\langle
-    \listvar{a}, g(\listvar{r}, \listvar{a})
+    \listvar{a}, g(\listvar{r}, \listvar{b})
     \right\rangle,
     \listvar{s}
     \right)
@@ -2887,8 +2904,8 @@ we must show a lemma linking the behaviour of circuits in the image of
     \left(\listvar{r}, \listvar{b}\right)
     \mapsto
     \left\langle
-    \proj{0}\mleft(g(\listvar{r}, \listvar{a})\mright),
-    \proj{1}\mleft(g(\listvar{r}, \listvar{a})\mright)
+    \proj{0}\mleft(g(\listvar{r}, \listvar{b})\mright),
+    \proj{1}\mleft(g(\listvar{r}, \listvar{b})\mright)
     \right\rangle, \listvar{s}
     \right)
     \).
