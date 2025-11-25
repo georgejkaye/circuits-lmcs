@@ -1112,9 +1112,12 @@ The semantic domain for \emph{combinational} circuits is straightforward: each
 circuit maps to a monotone function.
 
 \begin{defi}
-    Let \(\funci\) be the PROP in which the morphisms
-    \(m \to n\) are the \(\bot\)-preserving monotone
-    functions \(\valuetuple{m} \to \valuetuple{n}\).
+    For a circuit signature \(\circuitsignature\) and interpretation
+    \(\interpretation\) of \(\circuitsignature\) where \(\values\) is the
+    underlying values lattice, let
+    \(\funci\) be the PROP in which the morphisms \(m \to n\) are the
+    \(\bot\)-preserving monotone functions
+    \(\valuetuple{m} \to \valuetuple{n}\).
 \end{defi}
 
 To map between PROPs we must use a \emph{PROP morphism}, a strict symmetric
