@@ -37,6 +37,8 @@
 \usepackage{hyperref}
 \usepackage[capitalise]{cleveref}
 
+\usepackage{todonotes}
+
 \input{macros/letters}
 \input{macros/sets}
 \input{macros/category}
@@ -1293,21 +1295,22 @@ are built from a finite number of components.
 This means they cannot specify infinite \emph{behaviour}.
 
 \begin{nota}
-    Given a finite word \(\listvar{a} \in \freemon{A}\), we abuse notation
+    Given a finite word \(w \in \freemon{A}\), we abuse notation
     and write \(\streamderivative{f}{\listvar{a}}\) for the repeated
     application of the functional stream derivative for the elements of
     \(\listvar{a}\), i.e.\ \(
     \streamderivative{f}{\varepsilon} \coloneqq f
     \) and \(
-    \streamderivative{f}{a \streamcons \listvar{b}} \coloneqq
-    \streamderivative{(\streamderivative{f}{a})}{\listvar{b}}
-    \).
+    \streamderivative{f}{wa} \coloneqq
+    \streamderivative{(\streamderivative{f}{w})}{a}
+    \)
+    if \(w \in \freemon{A}\) and \(a \in A\).
 \end{nota}
 
 \begin{defi}
     Given a stream function \(\morph{f}{\stream{A}}{\stream{B}}\), we say it is
     \emph{finitely specified} if the set \(\{
-    \streamderivative{f}{\listvar{a}} \,|\, \listvar{a} \in \freemon{A}
+    \streamderivative{f}{w} \,|\, w \in \freemon{A}
     \}\) is finite.
 \end{defi}
 
@@ -1510,14 +1513,14 @@ least fixed point is a trace on \(\streami\).
     causal and monotone, so it is Scott-continuous by
     \autoref{prop:monotone-causal-scott}.
     By the Kleene fixed point theorem, this function has a least fixed point,
-    defined as \(
+    namely \(
     \proj{0}\mleft(f(\bot^\omega, \sigma)\mright) \ljoin
     \proj{0}\mleft(f(\proj{0}\mleft(f(\bot^\omega, \sigma)\mright), \sigma)\mright) \ljoin
     \cdots
     \).
 \end{proof}
 
-We must show that this notion of least fixed point is a trace on \(\streami\).
+We show that this notion of least fixed point is a trace on \(\streami\).
 The first step is to show that taking the least fixed point of a stream function
 in \(\streami\) produces another causal, finitely specified,
 \(\bot\)-preserving, and monotone stream function.
@@ -1530,7 +1533,8 @@ in \(\streami\) produces another causal, finitely specified,
 \end{defi}
 
 \begin{thm}\label{thm:trace-well-defined}
-    For a function \(\morph{f}{\valuetuplestream{x+m}}{\valuetuplestream{x+n}}\),
+    For a function \(\morph{f}{\valuetuplestream{x+m}}{\valuetuplestream{x+n}}\)
+    where $\values$ is a lattice satisfying the ascending chain condition,
     let \(\mu_f(\sigma)\) be the least fixed point of the function \(
     \tau \mapsto \proj{0}\mleft(f(\tau,\sigma)\mright)
     \).
@@ -1539,119 +1543,96 @@ in \(\streami\) produces another causal, finitely specified,
     \) is in \(\streami\).
 \end{thm}
 \begin{proof}
-    To show this, we need to prove that
-    \(\sigma \mapsto \proj{1}\mleft(f(\mu_f(\sigma)\sigma)\mright)\) is in
-    \(\streami\): it is causal, finitely specified, and \(\bot\)-preserving
-    monotone.
+    We prove that
+    \(\sigma \mapsto \proj{1}\mleft(f(\mu_f(\sigma), \sigma)\mright)\)
+    is causal, finitely specified, and \(\bot\)-preserving monotone. 
+    The principal difficulty is establishing that the map
+    \(\sigma \mapsto \mu_f(\sigma)\) is in \(\streami\); 
+    the desired result follows immediately after this since \(f\) and 
+    \(\proj{1}\) are \(\streami\) morphisms.
 
-    Since \(
-    \morph{f}{\valuetuplestream{x+m}}{\valuetuplestream{x+n}}
-    \) is a morphism of \(\streami\), it has finitely many stream derivatives.
-    For each stream derivative \(\streamderivative{f}{\,\listvar{w}}\), let the
-    function \(
-    \morph{
-        \widehat{\streamderivative{f}{\listvar{w}}}
-    }{
-        \valuetuplestream{x+m}
-    }{
-        \valuetuplestream{x}
-    }
-    \) be defined as \(
-    \tau\sigma
-    \mapsto
-    \proj{0}(\streamderivative{f}{\listvar{w}}(\tau\sigma))
-    \).
-    Note that each of these functions are causal, \(\bot\)-preserving, and
-    monotone, because they are constructed from pieces that are causal
-    \(\bot\)-preserving and monotone.
+    Define \(\mu_f^i: \valuetuplestream{m} \to \valuetuplestream{x}\) 
+    for all \(i \in \nat\)
+    by \(\mu_f^0(\sigma) = (\bot^x)^\omega\) and 
+    \(\mu_f^{i+1}(\sigma) = \proj{0}(f(\mu_f^i(\sigma), \sigma))\) for \(i \geq 1\).
+    Then by the Kleene fixed point theorem, 
+    \(\mu_f(\sigma) = \bigsqcup_{i \in \nat} \mu_f^i(\sigma)\).
 
-    In particular, \(\mu_f(\sigma)\) is the least fixed point of
-    \(\widehat{f_\varepsilon}\left((-)\sigma\right)\).
-    Using the Kleene fixed point theorem, the least fixed point of
-    \(\widehat{f}((-)\sigma)\) can be obtained by composing
-    \(\widehat{f}((-)\sigma)\) repeatedly with itself.
-    This means that \(
-    \mu_f(\sigma)
-    =
-    \bigsqcup_{k \in \nat} \widehat{f^k}(\bot^\omega,\sigma)
-    \) where \(\widehat{f^k}\) is the \(k\)-fold composition of \(f(-,\sigma)\)
-    with itself, i.e.\ \(\widehat{f^0}(\tau\sigma) = \tau\) and \(
-    \widehat{f^{k+1}}(\tau\sigma)
-    =
-    \widehat{f}\left(\left(\widehat{f^{k}}(\sigma, \tau)\right)\sigma\right)
-    \).
-    That the mapping \(\mu_f\) is causal and monotone is
-    straightforward: each of the functions in the join is causal and monotone,
-    and join preserves these properties.
-    It remains to show that this mapping has finitely many stream derivatives.
+    It is a straightforward induction to establish that \(\mu_f^i\)
+    is in \(\streami\) for all \(i \in \nat\). 
+    Further, join preserves causality, \(\bot\)-preservation, and monotonicity, 
+    so \(\mu_f\) is causal and \(\bot\)-preserving monotone.
+    It remains to show that \(\mu_f\) is finitely specified; 
+    we thus investigate its derivatives.
 
-    When equipped with \(\stateorder\), the set of functions
-    \(\valuetuplestream{x+m} \to \valuetuplestream{x}\)
-    is a poset, of which
-    \(\{\widehat{f_w} \,|\, w \in (\valuetuple{x+m})^\star\}\)
-    is a finite subset.
-    Restricting the ordering \(\stateorder\) to this set yields a finite poset.
-    Since this poset is finite, the set of strictly increasing sequences in this
-    poset is also finite.
-    We will now demonstrate a relationship between these sequences and stream
-    derivatives of \(\mu_f\).
-
-    Suppose \(
-    S = \widehat{f_{\,\listvar{w_0}}} \prec \widehat{f_{\,\listvar{w_1}}} \prec
-    \cdots \prec \widehat{f_{\,\listvar{w_{\ell-1}}}}
-    \) is a strictly increasing sequence of length \(\ell\) in the set of stream
-    functions \(
-    \{\widehat{f_w} \,|\, w \in (\valuetuple{x+m})^\star\}
-    \).
-    We define a function \(
-    \morph{g_S}{
-        \valuetuplestream{m}
-    }{
-        \valuetuplestream{x}
-    }
-    \) as \(
-    (\sigma) \mapsto \bigsqcup_{k \in \nat} g_k(\sigma)
-    \) where \[
-        g_k(\sigma) =
-        \begin{cases}
-            \bot^\omega                                                                & \text{ if } k = 0              \\
-            \widehat{f_{\,\listvar{w_k}}}(\left(g_{k-1}(\sigma), \sigma\right))        & \text{ if } 1 \leq k \leq \ell \\
-            \widehat{f_{\,\listvar{w_{\ell-1}}}}(\left(g_{k-1}(\sigma), \sigma\right)) & \text{ if } \ell < k
-        \end{cases}.
-    \]
-    Let the set \(G \coloneqq \{
-    g_S \,|\, S \text{ is a strictly increasing sequence}
-    \}\).
-    When \(S\) is set to the one-item sequence \(\widehat{f}\), \(g_S\) is
-    \(\mu_f\), so \(\mu_f \in G\).
-    As \(G\) is finite, this means that if \(G\) is closed under stream
-    derivative, \(\mu_f\) has finitely many stream derivatives.
-    Any element of \(G\) is either \(\bot^\omega\) or has the form \(
-    \sigma
-    \mapsto
-    \widehat{\streamderivative{f}{\,\listvar{w}}}(g_k(\sigma), \sigma)
-    \) for some \(\sigma \in \valuetuplestream{m}\) and
-    \(k > 0\).
-    As the former is its own stream derivative, we need to show that the stream
-    derivative of the latter is in \(G\).
+    Next, we claim that for all \(i \in \nat\) and all 
+    \(w \in \freemon{(\valuetuple{m})}\) that 
+    \[\streamderivative{(\mu_f^{i+1})}{w}(\sigma) = \proj{0}(
+    \streamderivative{f}{\mu_f^i[w]\concat w}(
+    \streamderivative{(\mu_f^i)}{w}(\sigma),\sigma)).\]
+    We prove this by induction on \(w\). When \(w = \varepsilon\), this
+    claim is precisely the definition of \(\mu_f^{i+1}\). When \(w = ua\)
+    where \(u \in \freemon{(\valuetuple{m})}\) and \(a \in \valuetuple{m}\),
+    this claim is
     \begin{align*}
-        \streamderivative{\sigma \mapsto \left(\widehat{\streamderivative{f}{\, \listvar{w}}}\left(g_{k-1}(\sigma), \sigma\right)\right)}{(a,b)}
-         & = \sigma \mapsto \streamderv\left(\widehat{\streamderivative{f}{\, \listvar{w}}}((a,b) \streamcons \left(g_{k-1}(\sigma), \sigma\right))\right)              \\
-         & = \sigma \mapsto \streamderv\left(\proj{0}\mleft(\streamderivative{f}{\, \listvar{w}}((a,b) \streamcons \left(g_{k-1}(\sigma), \sigma\right))\mright)\right) \\
-         & = \sigma \mapsto \proj{0}\mleft(\streamderv\left(\streamderivative{f}{\, \listvar{w}}((a,b) \streamcons \left(g_{k-1}(\sigma), \sigma\right))\right)\mright) \\
-         & = \sigma \mapsto \proj{0}\mleft(\streamderivative{\left(\streamderivative{f}{\, \listvar{w}}(g_{k-1}(\sigma), \sigma)\right)}{(a,b)}\mright)                 \\
-         & = \sigma \mapsto \proj{0}\mleft(\streamderivative{f}{\, (a,b) \streamcons \listvar{w}}(g_{k-1}(\sigma), \sigma)\mright)                                      \\
-         & = \sigma \mapsto \widehat{\streamderivative{f}{\, (a,b) \streamcons \listvar{w}}}(g_{k-1}(\sigma), \sigma)
+        \streamderivative{(\mu_f^{i+1})}{w}(\sigma) &= \streamderivative{(\mu_f^{i+1})}{ua}(\sigma) = \streamderv{(\streamderivative{(\mu_f^{i+1})}{u}(a\streamcons\sigma))}\\
+        &= \streamderv(\proj{0}(
+        \streamderivative{f}{\mu_f^i[u]\concat u}(
+        \streamderivative{(\mu_f^i)}{u}(a\streamcons\sigma),a\streamcons\sigma))) \\
+        &= \proj{0}(\streamderv(\streamderivative{f}{\mu_f^i[u]\concat u}(
+            (\streamderivative{(\mu_f^i)}{u}[a]\concat a)\streamcons (\streamderivative{(\mu_f^i)}{ua}(\sigma) \concat \sigma)
+        ))) \\
+        &= \proj{0}(\streamderivative{
+        (\streamderivative{f}{\mu_f^i[u]\concat u})}{
+         \streamderivative{(\mu_f^i)}{u}[a]\concat a)} (
+        \streamderivative{(\mu_f^i)}{w}(\sigma), \sigma)) \\
+        &= \proj{0}(
+        (\streamderivative{f}{\mu_f^i[ua]\concat ua})(
+        \streamderivative{(\mu_f^i)}{w}(\sigma), \sigma))
     \end{align*}
-    As \(\proj{0}\mleft(\streamderivative{f}{(a,b) \streamcons \listvar{w}}\mright)\)
-    is in \(G\), the latter  is closed under stream derivative.
-    Subsequently, \(\mu_f\) has finitely many stream derivatives.
+    as desired. 
 
-    This means that all the components of
-    \(\sigma \mapsto \proj{1}(f(\mu_f(\sigma), \sigma))\) are causal, monotone and
-    finitely specified, and as these properties are preserved by composition,
-    the composite must also have them, so
-    \(\sigma \mapsto \proj{1}(f(\mu_f(\sigma), \sigma))\) is in \(\streami\).  \end{proof}
+    %% TODO: not in keeping with macros established elsewhere.
+    Note that $\mu_f^0[w] = (\bot^x)^{|w|}$, where $|w|$ is
+    the length of $w$ as a word in $\freemon{(\valuetuple{m})}$. Thus,
+    $\mu_f^0[w] = (\bot^x)^{|w|} \leq \mu_f^1[w]$. By induction,
+    $\mu_f^i[w] = \pi_0[f[\mu_f^{i-1}[w], w]] 
+    \leq \pi_0[f[\mu_f^i[w], w]] = \mu_f^{i+1}[w]$ 
+    since $\pi_0$ and $f$ are monotone. 
+    Since all ascending chains in $\values$ stabilize, this chain of fixed length
+    words in $\freemon{(\valuetuple{m})}$ must also stabilize.
+    Note also if $\mu_f^i[w] = \mu_f^{i+1}[w]$ for some $i \in \nat$, then
+    $\mu_f^i[w] = \mu_f^j[w]$ for all $j \geq i$.
+
+    It is straightforward to check that 
+    $f_{\mu_f^i[w]\concat w} \stateorder f_{\mu_f^{i+1}[w]\concat w}$ 
+    since $\mu_f^i[w] \leq \mu_f^{i+1}[w]$.
+
+    From our claim we know 
+    \[
+    (\mu_f)_w(\sigma) = \bigsqcup_{i \in \nat} (\mu_f^i)_w(\sigma) 
+    = \left(\bigsqcup_{i = 1}^\infty \proj{0}(
+    \streamderivative{f}{\mu_f^{i}[w]\concat w}(
+    \streamderivative{(\mu_f^i)}{w}(\sigma),\sigma))\right) \sqcup \mu_f^0(\sigma),
+    \]
+    and additionally for all $w \in \freemon{(\valuetuple{m})}$ we know the sequence
+    $\{\streamderivative{f}{\mu_f^{i}[w]\concat w}\}_{i \in \nat}$ is an 
+    ascending infinite chain in
+    $\stateorder$ with the property that 
+    if $\streamderivative{f}{\mu_f^{n}[w]\concat w} = \streamderivative{f}{\mu_f^{n+1}[w]\concat w}$, then the chain stabilizes at $n$.
+    Hence this ascending infinite chain is actually a finite strictly ascending
+    chain followed by infinitely many instances of the last element of the finite chain.
+
+    If $w, w' \in \freemon{(\valuetuple{m})}$ are two words such that
+    $\streamderivative{f}{\mu_f^{i}[w]\concat w} = \streamderivative{f}{\mu_f^{i}[w']\concat w'}$ for all $i \in \nat$, then certainly $(\mu_f)_w = (\mu_f)_{w'}$
+    Hence, the number of distinct derivatives of $\mu_f$ is bounded above by
+    the number of strictly ascending finite chains in the set
+    $\{f_z \,|\, z \in \freemon{(\valuetuple{x+m})}\}$. 
+    However, since $f$ is finitely specified, this is a finite set 
+    and therefore there are only finitely many strictly ascending finite chains
+    in this set. 
+    %% END TODO
+    \end{proof}
 
 Even if \(\streami\) is closed under least fixed point, this does not mean that
 it is a valid trace.
