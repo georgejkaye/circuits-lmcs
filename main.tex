@@ -1545,80 +1545,80 @@ in \(\streami\) produces another causal, finitely specified,
 \begin{proof}
     We prove that
     \(\sigma \mapsto \proj{1}\mleft(f(\mu_f(\sigma), \sigma)\mright)\)
-    is causal, finitely specified, and \(\bot\)-preserving monotone. 
+    is causal, finitely specified, and \(\bot\)-preserving monotone.
     The principal difficulty is establishing that the map
-    \(\sigma \mapsto \mu_f(\sigma)\) is in \(\streami\); 
-    the desired result follows immediately after this since \(f\) and 
+    \(\sigma \mapsto \mu_f(\sigma)\) is in \(\streami\);
+    the desired result follows immediately after this since \(f\) and
     \(\proj{1}\) are \(\streami\) morphisms.
 
-    Define \(\mu_f^i: \valuetuplestream{m} \to \valuetuplestream{x}\) 
+    Define \(\mu_f^i: \valuetuplestream{m} \to \valuetuplestream{x}\)
     for all \(i \in \nat\)
-    by \(\mu_f^0(\sigma) = (\bot^x)^\omega\) and 
+    by \(\mu_f^0(\sigma) = (\bot^x)^\omega\) and
     \(\mu_f^{i+1}(\sigma) = \proj{0}(f(\mu_f^i(\sigma), \sigma))\) for \(i \geq 1\).
-    Then by the Kleene fixed point theorem, 
+    Then by the Kleene fixed point theorem,
     \(\mu_f(\sigma) = \bigsqcup_{i \in \nat} \mu_f^i(\sigma)\).
 
     It is a straightforward induction to establish that \(\mu_f^i\)
-    is in \(\streami\) for all \(i \in \nat\). 
-    Further, join preserves causality, \(\bot\)-preservation, and monotonicity, 
+    is in \(\streami\) for all \(i \in \nat\).
+    Further, join preserves causality, \(\bot\)-preservation, and monotonicity,
     so \(\mu_f\) is causal and \(\bot\)-preserving monotone.
-    It remains to show that \(\mu_f\) is finitely specified; 
+    It remains to show that \(\mu_f\) is finitely specified;
     we thus investigate its derivatives.
 
-    Next, we claim that for all \(i \in \nat\) and all 
-    \(w \in \freemon{(\valuetuple{m})}\) that 
+    Next, we claim that for all \(i \in \nat\) and all
+    \(w \in \freemon{(\valuetuple{m})}\) that
     \[\streamderivative{(\mu_f^{i+1})}{w}(\sigma) = \proj{0}(
-    \streamderivative{f}{\mu_f^i[w]\concat w}(
-    \streamderivative{(\mu_f^i)}{w}(\sigma),\sigma)).\]
+        \streamderivative{f}{\mu_f^i[w]\concat w}(
+        \streamderivative{(\mu_f^i)}{w}(\sigma),\sigma)).\]
     We prove this by induction on \(w\). When \(w = \varepsilon\), this
     claim is precisely the definition of \(\mu_f^{i+1}\). When \(w = ua\)
     where \(u \in \freemon{(\valuetuple{m})}\) and \(a \in \valuetuple{m}\),
     this claim is
     \begin{align*}
-        \streamderivative{(\mu_f^{i+1})}{w}(\sigma) &= \streamderivative{(\mu_f^{i+1})}{ua}(\sigma) = \streamderv{(\streamderivative{(\mu_f^{i+1})}{u}(a\streamcons\sigma))}\\
-        &= \streamderv(\proj{0}(
+        \streamderivative{(\mu_f^{i+1})}{w}(\sigma) & = \streamderivative{(\mu_f^{i+1})}{ua}(\sigma) = \streamderv{(\streamderivative{(\mu_f^{i+1})}{u}(a\streamcons\sigma))} \\
+                                                    & = \streamderv(\proj{0}(
         \streamderivative{f}{\mu_f^i[u]\concat u}(
-        \streamderivative{(\mu_f^i)}{u}(a\streamcons\sigma),a\streamcons\sigma))) \\
-        &= \proj{0}(\streamderv(\streamderivative{f}{\mu_f^i[u]\concat u}(
-            (\streamderivative{(\mu_f^i)}{u}[a]\concat a)\streamcons (\streamderivative{(\mu_f^i)}{ua}(\sigma) \concat \sigma)
-        ))) \\
-        &= \proj{0}(\streamderivative{
+        \streamderivative{(\mu_f^i)}{u}(a\streamcons\sigma),a\streamcons\sigma)))                                                                                             \\
+                                                    & = \proj{0}(\streamderv(\streamderivative{f}{\mu_f^i[u]\concat u}(
+        (\streamderivative{(\mu_f^i)}{u}[a]\concat a)\streamcons (\streamderivative{(\mu_f^i)}{ua}(\sigma) \concat \sigma)
+        )))                                                                                                                                                                   \\
+                                                    & = \proj{0}(\streamderivative{
         (\streamderivative{f}{\mu_f^i[u]\concat u})}{
-         \streamderivative{(\mu_f^i)}{u}[a]\concat a)} (
-        \streamderivative{(\mu_f^i)}{w}(\sigma), \sigma)) \\
-        &= \proj{0}(
+        \streamderivative{(\mu_f^i)}{u}[a]\concat a)} (
+        \streamderivative{(\mu_f^i)}{w}(\sigma), \sigma))                                                                                                                     \\
+                                                    & = \proj{0}(
         (\streamderivative{f}{\mu_f^i[ua]\concat ua})(
         \streamderivative{(\mu_f^i)}{w}(\sigma), \sigma))
     \end{align*}
-    as desired. 
+    as desired.
 
     %% TODO: not in keeping with macros established elsewhere.
     Note that $\mu_f^0[w] = (\bot^x)^{|w|}$, where $|w|$ is
     the length of $w$ as a word in $\freemon{(\valuetuple{m})}$. Thus,
     $\mu_f^0[w] = (\bot^x)^{|w|} \leq \mu_f^1[w]$. By induction,
-    $\mu_f^i[w] = \pi_0[f[\mu_f^{i-1}[w], w]] 
-    \leq \pi_0[f[\mu_f^i[w], w]] = \mu_f^{i+1}[w]$ 
-    since $\pi_0$ and $f$ are monotone. 
+    $\mu_f^i[w] = \pi_0[f[\mu_f^{i-1}[w], w]]
+        \leq \pi_0[f[\mu_f^i[w], w]] = \mu_f^{i+1}[w]$
+    since $\pi_0$ and $f$ are monotone.
     Since all ascending chains in $\values$ stabilize, this chain of fixed length
     words in $\freemon{(\valuetuple{m})}$ must also stabilize.
     Note also if $\mu_f^i[w] = \mu_f^{i+1}[w]$ for some $i \in \nat$, then
     $\mu_f^i[w] = \mu_f^j[w]$ for all $j \geq i$.
 
-    It is straightforward to check that 
-    $f_{\mu_f^i[w]\concat w} \stateorder f_{\mu_f^{i+1}[w]\concat w}$ 
+    It is straightforward to check that
+    $f_{\mu_f^i[w]\concat w} \stateorder f_{\mu_f^{i+1}[w]\concat w}$
     since $\mu_f^i[w] \leq \mu_f^{i+1}[w]$.
 
-    From our claim we know 
+    From our claim we know
     \[
-    (\mu_f)_w(\sigma) = \bigsqcup_{i \in \nat} (\mu_f^i)_w(\sigma) 
-    = \left(\bigsqcup_{i = 1}^\infty \proj{0}(
-    \streamderivative{f}{\mu_f^{i}[w]\concat w}(
-    \streamderivative{(\mu_f^i)}{w}(\sigma),\sigma))\right) \sqcup \mu_f^0(\sigma),
+        (\mu_f)_w(\sigma) = \bigsqcup_{i \in \nat} (\mu_f^i)_w(\sigma)
+        = \left(\bigsqcup_{i = 1}^\infty \proj{0}(
+            \streamderivative{f}{\mu_f^{i}[w]\concat w}(
+            \streamderivative{(\mu_f^i)}{w}(\sigma),\sigma))\right) \sqcup \mu_f^0(\sigma),
     \]
     and additionally for all $w \in \freemon{(\valuetuple{m})}$ we know the sequence
-    $\{\streamderivative{f}{\mu_f^{i}[w]\concat w}\}_{i \in \nat}$ is an 
+    $\{\streamderivative{f}{\mu_f^{i}[w]\concat w}\}_{i \in \nat}$ is an
     ascending infinite chain in
-    $\stateorder$ with the property that 
+    $\stateorder$ with the property that
     if $\streamderivative{f}{\mu_f^{n}[w]\concat w} = \streamderivative{f}{\mu_f^{n+1}[w]\concat w}$, then the chain stabilizes at $n$.
     Hence this ascending infinite chain is actually a finite strictly ascending
     chain followed by infinitely many instances of the last element of the finite chain.
@@ -1627,12 +1627,12 @@ in \(\streami\) produces another causal, finitely specified,
     $\streamderivative{f}{\mu_f^{i}[w]\concat w} = \streamderivative{f}{\mu_f^{i}[w']\concat w'}$ for all $i \in \nat$, then certainly $(\mu_f)_w = (\mu_f)_{w'}$
     Hence, the number of distinct derivatives of $\mu_f$ is bounded above by
     the number of strictly ascending finite chains in the set
-    $\{f_z \,|\, z \in \freemon{(\valuetuple{x+m})}\}$. 
-    However, since $f$ is finitely specified, this is a finite set 
+    $\{f_z \,|\, z \in \freemon{(\valuetuple{x+m})}\}$.
+    However, since $f$ is finitely specified, this is a finite set
     and therefore there are only finitely many strictly ascending finite chains
-    in this set. 
+    in this set.
     %% END TODO
-    \end{proof}
+\end{proof}
 
 Even if \(\streami\) is closed under least fixed point, this does not mean that
 it is a valid trace.
@@ -1846,6 +1846,16 @@ These results use an alternative definition of Mealy machines as types of
     }\rangle\).
     Then \((\Gamma,\nu)\) is a \((A,B)\)-Mealy coalgebra.
 \end{exa}
+
+\begin{rem}
+    Note that the interpretation of a Mealy function as a coalgebra differs from
+    how we have presented Mealy functions so far as it is curried
+    (i.e.\ \(S \to (A \to (S \times B)\) as opposed to
+    \(S \times A \to S \times B\).
+    In general we prefer to use the latter as it corresponds closer to how we
+    will later interpret Mealy functions string diagrammatically as boxes
+    with state, input and output wires.
+\end{rem}
 
 The above example lays the groundwork to establish connections between circuits,
 stream functions and Mealy machines.
