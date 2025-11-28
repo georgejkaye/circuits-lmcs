@@ -1554,7 +1554,7 @@ in \(\streami\) produces another causal, finitely specified,
     Define \(\mu_f^i: \valuetuplestream{m} \to \valuetuplestream{x}\)
     for all \(i \in \nat\)
     by \(\mu_f^0(\sigma) = (\bot^x)^\omega\) and
-    \(\mu_f^{i+1}(\sigma) = \proj{0}(f(\mu_f^i(\sigma), \sigma))\) for \(i \geq 1\).
+    \(\mu_f^{i+1}(\sigma) = \proj{0}(f(\mu_f^i(\sigma), \sigma))\) for \(i \geq 0\).
     Then by the Kleene fixed point theorem,
     \(\mu_f(\sigma) = \bigsqcup_{i \in \nat} \mu_f^i(\sigma)\).
 
@@ -1567,30 +1567,34 @@ in \(\streami\) produces another causal, finitely specified,
 
     Next, we claim that for all \(i \in \nat\) and all
     \(w \in \freemon{(\valuetuple{m})}\) that
-    \[\streamderivative{(\mu_f^{i+1})}{w}(\sigma) = \proj{0}(
+    \begin{align}
+        \streamderivative{(\mu_f^{i+1})}{w}(\sigma) = \proj{0}(
         \streamderivative{f}{\mu_f^i[w]\concat w}(
-        \streamderivative{(\mu_f^i)}{w}(\sigma),\sigma)).\]
+        \streamderivative{(\mu_f^i)}{w}(\sigma),\sigma)). \label{eq:twdf-claim}
+    \end{align}
     We prove this by induction on \(w\). When \(w = \varepsilon\), this
     claim is precisely the definition of \(\mu_f^{i+1}\). When \(w = ua\)
     where \(u \in \freemon{(\valuetuple{m})}\) and \(a \in \valuetuple{m}\),
     this claim is
     \begin{align*}
         \streamderivative{(\mu_f^{i+1})}{w}(\sigma) & = \streamderivative{(\mu_f^{i+1})}{ua}(\sigma) = \streamderv{(\streamderivative{(\mu_f^{i+1})}{u}(a\streamcons\sigma))} \\
-                                                    & = \streamderv(\proj{0}(
+        & = \streamderv(\proj{0}(
         \streamderivative{f}{\mu_f^i[u]\concat u}(
-        \streamderivative{(\mu_f^i)}{u}(a\streamcons\sigma),a\streamcons\sigma)))                                                                                             \\
-                                                    & = \proj{0}(\streamderv(\streamderivative{f}{\mu_f^i[u]\concat u}(
+        \streamderivative{(\mu_f^i)}{u}(a\streamcons\sigma),a\streamcons\sigma))) & \text{(IH)}\\
+        & = \proj{0}(\streamderv(\streamderivative{f}{\mu_f^i[u]\concat u}(
         (\streamderivative{(\mu_f^i)}{u}[a]\concat a)\streamcons (\streamderivative{(\mu_f^i)}{ua}(\sigma) \concat \sigma)
-        )))                                                                                                                                                                   \\
-                                                    & = \proj{0}(\streamderivative{
+        ))) & \text{($\streaminit, \streamderv$ decomp.)}\\
+        & = \proj{0}(\streamderivative{
         (\streamderivative{f}{\mu_f^i[u]\concat u})}{
-        \streamderivative{(\mu_f^i)}{u}[a]\concat a)} (
-        \streamderivative{(\mu_f^i)}{w}(\sigma), \sigma))                                                                                                                     \\
-                                                    & = \proj{0}(
+        \streamderivative{(\mu_f^i)}{u}[a]\concat a} (
+        \streamderivative{(\mu_f^i)}{ua}(\sigma), \sigma)) 
+        & \text{(def'n $\streamderivative{f}{-}$)} 
+        \\
+        & = \proj{0}(
         (\streamderivative{f}{\mu_f^i[ua]\concat ua})(
-        \streamderivative{(\mu_f^i)}{w}(\sigma), \sigma))
+        \streamderivative{(\mu_f^i)}{ua}(\sigma), \sigma)) & (*)
     \end{align*}
-    as desired.
+    as desired. Note the starred step is an application of $g[u] \streamcons g_u[a] = g[ua]$ when $g = \mu_f^i$.
 
     %% TODO: not in keeping with macros established elsewhere.
     Note that $\mu_f^0[w] = (\bot^x)^{|w|}$, where $|w|$ is
@@ -1608,7 +1612,7 @@ in \(\streami\) produces another causal, finitely specified,
     $f_{\mu_f^i[w]\concat w} \stateorder f_{\mu_f^{i+1}[w]\concat w}$
     since $\mu_f^i[w] \leq \mu_f^{i+1}[w]$.
 
-    From our claim we know
+    From our claim (\ref{eq:twdf-claim}) we know
     \[
         (\mu_f)_w(\sigma) = \bigsqcup_{i \in \nat} (\mu_f^i)_w(\sigma)
         = \left(\bigsqcup_{i = 1}^\infty \proj{0}(
