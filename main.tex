@@ -1925,13 +1925,13 @@ As we must also impose a monotonicity condition, we move from Mealy machines
 over sets and functions to Mealy machines over posets and monotone functions.
 
 \begin{defi}[Monotone Mealy machine]
-    Let \(A\), \(B\) be posets with a bottom element; an \((A,B)\)-Mealy machine
+    Let \(A\), \(B\) be lattices; an \((A,B)\)-Mealy machine
     \((S, f)\) is called a \emph{monotone} Mealy machine if \(S\) is a
     lattice and \(f\) is \(\bot\)-preserving monotone with respect to the
     ordering on \(A\), \(B\), and \(S\).
 \end{defi}
 
-To map to Mealy machines from circuits we need to assemble the former into
+To map from Mealy machines to circuits we need to assemble the former into
 another PROP, in which the morphisms \(m \to n\) are
 \((\valuetuple{m},\valuetuple{n})\)-Mealy machines; we must also take into
 account the `initial state' of circuits in \(\scircsigma\).
@@ -4752,18 +4752,28 @@ As the above example dictates, there may be many denotationally equivalent
 circuits with different state sets.
 A major part of an equational theory for circuits will be to translate between
 the states of different circuits in a behaviour-preserving manner.
-To do this we turn back to the notion of Mealy homomorphisms: for two circuits \(
+To do this we turn back to the notion of Mealy homomorphisms:
+
+Much like how we can view regular Mealy machines as \(\set\)-valued coalgebra,
+we can view monotone Mealy machines as \(\pos_\bot\)-valued coalgebra.
+In this setting, the Mealy homomorphisms are \(\bot\)-preserving monotone
+functions and as such can be interpreted as circuits.
+This means that for two circuits \(
 \iltikzfig{circuits/productivity/mealy-form-wide}[core=\mealytofunc[f],state=\listvar{s},colour=seq,dom=m,cod=n,delay=x]
 \) and \(
 \iltikzfig{circuits/productivity/mealy-form-wide}[core=\mealytofunc[g],state=\listvar{t},colour=seq,dom=m,cod=n,delay=y]
-\), the encoders and decoders will be homomorphisms
+\), a suitable encoder and decoder can be constructed from the the pair of
+homomorphisms
 \((S_{f,\listvar{s}},f) \to (S_{g,\listvar{t}},g)\)
 and
 \((S_{g,\listvar{t}},g) \to (S_{f,\listvar{s}},f)\).
-These are homomorphisms on the subset of states that a circuit
+
+These homomorphisms map between states that the circuits
 can assume, \emph{not} the entire set of words that can fit into the state.
 This means that encoding and decoding circuits cannot be inserted arbitrarily
 but only in certain contexts.
+For this reason any equation that involves using an encoder and decoder must
+take into account the entire circuit.
 
 \begin{prop}[Encoding equation]\label{prop:encoding-equation}
     For a normalised circuit \(
