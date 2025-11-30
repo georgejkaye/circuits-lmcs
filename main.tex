@@ -5343,16 +5343,16 @@ a circuit \(
     \circuittostreami[
         \iltikzfig{circuits/productivity/mealy-form-wide}[core=\mealytofunc[\hat{g}],state=\listvar{t}, colour=seq]
     ]
-    \).
-    This induces monotone Mealy machines \((S_{\hat{f}, \listvar{s}}, \hat{f})\)
+    \); this induces monotone Mealy machines
+    \((S_{\hat{f}, \listvar{s}}, \hat{f})\)
     and \((S_{\hat{g}, \listvar{t}}, \hat{g})\).
     These Mealy machines have equal stream functions so have the same behaviour;
     since we are operating over Mealy coalgebra of posets and monotone functions
     this means there exist monotone Mealy homomorphisms
     \(\morph{\phi}{S_{\hat{f}, \listvar{s}}}{S_{\hat{g}, \listvar{t}}}\) and
-    \(\morph{\psi}{S_{\hat{g}, \listvar{t}}}{S_{\hat{f}, \listvar{s}}}\);
-    subsequently the composite of these homomorphisms is also a monotone Mealy
-    homomorphism; these homomorphisms will act as a decoder-encoder pair;
+    \(\morph{\psi}{S_{\hat{g}, \listvar{t}}}{S_{\hat{f}, \listvar{s}}}\).
+    The composite of \(\phi\) and \(\psi\) is also a monotone Mealy
+    homomorphism so we have a decoder-encoder pair;
     by \autoref{thm:encoding} we have that \[
         \iltikzfig{circuits/productivity/mealy-form-wide}[core=\mealytofunc[\hat{f}],state=\listvar{s}, colour=seq]
         =
