@@ -1577,22 +1577,22 @@ in \(\streami\) produces another causal, finitely specified,
     where \(u \in \freemon{(\valuetuple{m})}\) and \(a \in \valuetuple{m}\),
     this claim is
     \begin{align*}
-        \streamderivative{(\mu_f^{i+1})}{w}(\sigma) & = \streamderivative{(\mu_f^{i+1})}{ua}(\sigma) = \streamderv{(\streamderivative{(\mu_f^{i+1})}{u}(a\streamcons\sigma))} \\
-        & = \streamderv(\proj{0}(
+        \streamderivative{(\mu_f^{i+1})}{w}(\sigma)                               & = \streamderivative{(\mu_f^{i+1})}{ua}(\sigma) = \streamderv{(\streamderivative{(\mu_f^{i+1})}{u}(a\streamcons\sigma))} \\
+                                                                                  & = \streamderv(\proj{0}(
         \streamderivative{f}{\mu_f^i[u]\concat u}(
-        \streamderivative{(\mu_f^i)}{u}(a\streamcons\sigma),a\streamcons\sigma))) & \text{(IH)}\\
-        & = \proj{0}(\streamderv(\streamderivative{f}{\mu_f^i[u]\concat u}(
+        \streamderivative{(\mu_f^i)}{u}(a\streamcons\sigma),a\streamcons\sigma))) & \text{(IH)}                                                                                                             \\
+                                                                                  & = \proj{0}(\streamderv(\streamderivative{f}{\mu_f^i[u]\concat u}(
         (\streamderivative{(\mu_f^i)}{u}[a]\concat a)\streamcons (\streamderivative{(\mu_f^i)}{ua}(\sigma) \concat \sigma)
-        ))) & \text{($\streaminit, \streamderv$ decomp.)}\\
-        & = \proj{0}(\streamderivative{
+        )))                                                                       & \text{($\streaminit, \streamderv$ decomp.)}                                                                             \\
+                                                                                  & = \proj{0}(\streamderivative{
         (\streamderivative{f}{\mu_f^i[u]\concat u})}{
         \streamderivative{(\mu_f^i)}{u}[a]\concat a} (
-        \streamderivative{(\mu_f^i)}{ua}(\sigma), \sigma)) 
-        & \text{(def'n $\streamderivative{f}{-}$)} 
+        \streamderivative{(\mu_f^i)}{ua}(\sigma), \sigma))
+                                                                                  & \text{(def'n $\streamderivative{f}{-}$)}
         \\
-        & = \proj{0}(
+                                                                                  & = \proj{0}(
         (\streamderivative{f}{\mu_f^i[ua]\concat ua})(
-        \streamderivative{(\mu_f^i)}{ua}(\sigma), \sigma)) & (*)
+        \streamderivative{(\mu_f^i)}{ua}(\sigma), \sigma))                        & (*)
     \end{align*}
     as desired. Note the starred step is an application of $g[u] \streamcons g_u[a] = g[ua]$ when $g = \mu_f^i$.
 
@@ -1921,10 +1921,11 @@ those that do: those that map to stream functions in \(\streami\).
     \(S\) is finite, and \(\mealytostream\) must preserve transitions.
 \end{proof}
 
-We must also impose a monotonicity condition.
+As we must also impose a monotonicity condition, we move from Mealy machines
+over sets and functions to Mealy machines over posets and monotone functions.
 
 \begin{defi}[Monotone Mealy machine]
-    Let \(A\), \(B\) be lattices; an \((A,B)\)-Mealy machine
+    Let \(A\), \(B\) be posets with a bottom element; an \((A,B)\)-Mealy machine
     \((S, f)\) is called a \emph{monotone} Mealy machine if \(S\) is a
     lattice and \(f\) is \(\bot\)-preserving monotone with respect to the
     ordering on \(A\), \(B\), and \(S\).
@@ -4712,7 +4713,7 @@ A circuit in Mealy form is a syntactic representation of a Mealy machine: the
 combinational core is the Mealy function, and the registers are the initial
 state.
 It is important to determine the states that the circuit might assume, as these
-determine whether or not an equation is valid.
+dictate whether or not an equation is valid.
 
 \begin{defi}[States]
     Let \(\morph{f}{\valuetuple{x+m}}{\valuetuple{x+n}}\) be a
@@ -4747,30 +4748,11 @@ determine whether or not an equation is valid.
     \), but this circuit only has a single state \(\belnaptrue\).
 \end{exa}
 
-We need to \emph{encode} the states of one circuit as another; we have already
-encountered this notion using \emph{Mealy homomorphisms}
-(\autoref{def:mealy-homomorphism});
-functions between the state sets that preserve transitions and outputs.
-
-\begin{lem}
-    Given two Mealy homomorphisms \(\morph{h}{(S,f)}{(T,g)}\) and
-    \(\morph{h^\prime}{(T,g)}{(S,f)}\), any state \(s \in S\) and input
-    \(a \in A\), \(
-    \mealyfunctiontransition{f}(s, a)
-    =
-    \mealyfunctiontransition{f}(h^\prime(h(s)), a)
-    \).
-\end{lem}
-\begin{proof}
-    Immediate as Mealy homomorphisms preserve outputs.
-\end{proof}
-
-We will use Mealy homomorphisms as circuits to encode state sets; this means we
-need to ensure the encoders and decoders are monotone.
-
-\todo[inline]{Monotone encoders-decoders?}
-
-For two circuits \(
+As the above example dictates, there may be many denotationally equivalent
+circuits with different state sets.
+A major part of an equational theory for circuits will be to translate between
+the states of different circuits in a behaviour-preserving manner.
+To do this we turn back to the notion of Mealy homomorphisms: for two circuits \(
 \iltikzfig{circuits/productivity/mealy-form-wide}[core=\mealytofunc[f],state=\listvar{s},colour=seq,dom=m,cod=n,delay=x]
 \) and \(
 \iltikzfig{circuits/productivity/mealy-form-wide}[core=\mealytofunc[g],state=\listvar{t},colour=seq,dom=m,cod=n,delay=y]
@@ -4788,17 +4770,17 @@ but only in certain contexts.
     \iltikzfig{strings/category/f-2-2-wide}[box=\mealytofunc[f],colour=seq,dom1=x,dom2=m,cod1=x,cod2=y]
     \) and \(\listvar{s} \in \valuetuple{x}\), let
     \(\morph{\mathsf{enc}}{S_{f,\listvar{s}}}{\valuetuple{y}}\) and
-    \(\morph{\mathsf{dec}}{\valuetuple{y}}{S_{f, \listvar{s}}}\) be functions
-    such that \(
+    \(\morph{\mathsf{dec}}{\valuetuple{y}}{S_{f, \listvar{s}}}\) be monotone
+    functions such that the composite \(
     \morph{\mathsf{dec} \circ \mathsf{enc}}{S_{f, \listvar{s}}}{S_{f, \listvar{s}}}
     \) is a Mealy homomorphism.
     Then the \emph{encoding equation} \((\encodingequation)\) in
     \autoref{fig:encoding-equation} is sound, where
     \(\mathsf{enc}_\mathsf{m}\) and \(\mathsf{dec}_\mathsf{m}\) are monotone
-    completions as defined in \autoref{def:monotone-completion}.
+    completions as in \autoref{def:monotone-completion}.
 \end{prop}
 \begin{proof}
-    Let \(g\) be defined as the map \(\listvar{r} \mapsto
+    Let \(g\) be the map \(\listvar{r} \mapsto
     \circuittostreami[\iltikzfig{circuits/algebraic/state-encoding}[core=\mealytofunc[f],delay=x,state=\listvar{r}]]
     \); by \autoref{prop:mealy-form-image} we know that \(
     \mealyoutput{g(\listvar{t})}{\listvar{v}}
@@ -4809,8 +4791,7 @@ but only in certain contexts.
     =
     g(\proj{0}(f(\mathsf{dec}(\mathsf{enc}(\listvar{t})), \listvar{v})))
     \).
-    As \(\mathsf{dec} \circ \mathsf{enc}\) is a Mealy homomorphism, for
-    \(\listvar{t} \in S_{f, \listvar{s}}\) we have that \(
+    For a given state \(\listvar{t} \in S_{f, \listvar{s}}\) we have that \(
     \mealyoutput{g(\listvar{t})}{\listvar{v}}
     =
     \proj{1}(f(\listvar{t}), \listvar{v})
@@ -4818,7 +4799,7 @@ but only in certain contexts.
     \mealytransition{g(\listvar{t})}{\listvar{v}}
     \) shares outputs and transitions with \(
     g(\proj{0}(f(\listvar{t})), \listvar{v})
-    \).
+    \) as \(\mathsf{dec} \circ \mathsf{enc}\) is a Mealy homomorphism.
     As \(
     \iltikzfig{circuits/algebraic/state-encoding}[core=\mealytofunc[f],delay=x,state=\listvar{s}]
     \coloneqq
@@ -5363,15 +5344,16 @@ a circuit \(
         \iltikzfig{circuits/productivity/mealy-form-wide}[core=\mealytofunc[\hat{g}],state=\listvar{t}, colour=seq]
     ]
     \).
-    This induces Mealy machines \((S_{\hat{f}, \listvar{s}}, \hat{f})\) and
-    \((S_{\hat{g}, \listvar{t}}, \hat{g})\).
-    As their stream functions are equal, there are Mealy homomorphisms
+    This induces monotone Mealy machines \((S_{\hat{f}, \listvar{s}}, \hat{f})\)
+    and \((S_{\hat{g}, \listvar{t}}, \hat{g})\).
+    These Mealy machines have equal stream functions so have the same behaviour;
+    since we are operating over Mealy coalgebra of posets and monotone functions
+    this means there exist monotone Mealy homomorphisms
     \(\morph{\phi}{S_{\hat{f}, \listvar{s}}}{S_{\hat{g}, \listvar{t}}}\) and
-    \(\morph{\psi}{S_{\hat{g}, \listvar{t}}}{S_{\hat{f}, \listvar{s}}}\) and
-    subsequently the composite of these homomorphisms is also a Mealy
-    homomorphism; these will act as a decoder-encoder pair.
-
-    Using the encoding equation, we have by \autoref{thm:encoding} that \[
+    \(\morph{\psi}{S_{\hat{g}, \listvar{t}}}{S_{\hat{f}, \listvar{s}}}\);
+    subsequently the composite of these homomorphisms is also a monotone Mealy
+    homomorphism; these homomorphisms will act as a decoder-encoder pair;
+    by \autoref{thm:encoding} we have that \[
         \iltikzfig{circuits/productivity/mealy-form-wide}[core=\mealytofunc[\hat{f}],state=\listvar{s}, colour=seq]
         =
         \iltikzfig{circuits/algebraic/state-encoded-theorem}.
