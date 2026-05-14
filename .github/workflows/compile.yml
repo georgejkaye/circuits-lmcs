@@ -17,11 +17,13 @@ jobs:
         id: name
         run: echo "name=$(date +'%Y-%m-%d-%H%M')" >> $GITHUB_OUTPUT
       - name: Package the paper
-        uses: georgejkaye/latex-packager@v1.3
+        uses: georgejkaye/latex-packager@v1.6
         with:
           input-dir: .
           main: main
           project-name: ${{ github.event.repository.name }}-${{ steps.name.outputs.name }}
+          replace-tikzfigs: true
+
       - name: Create a new release
         uses: actions/create-release@v1
         id: create_release
