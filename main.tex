@@ -1411,7 +1411,7 @@ turns out that it is implied by causality and monotonicity.
 \end{prop}
 \begin{proof}
     Consider a directed subset \(C \subseteq \stream{A}\); we need to show that
-    for an arbitrary causal, monotone and finitely specified function \(f\) we
+    for an arbitrary causal and monotone \(f\) we
     have that \(f\left(\bigvee C\right) = \bigvee f[C]\).
 
     Let \(\morph{\proj{n}}{\stream{B}}{B^n}\) be defined as the
@@ -1450,7 +1450,8 @@ turns out that it is implied by causality and monotonicity.
     \proj{n}\left(f(\listvar{a} \streamcons \bot^\omega)\right)
     =
     \proj{n}\left(f(\listvar{a} \streamcons \sigma)\right)
-    \), so the following line of reasoning holds:
+    \), so the following line of reasoning holds for an arbitrary stream
+    \(\tau \in \stream{A}\):
     \[
         \proj{n}\left(f(\sigma)\right)
         =
@@ -1529,18 +1530,20 @@ in \(\streami\) produces another causal, finitely specified,
 \end{defi}
 
 \begin{thm}\label{thm:trace-well-defined}
-    For a function \(\morph{f}{\valuetuplestream{x+m}}{\valuetuplestream{x+n}}\)
+    For a function \(
+    \morph{f}{\valuetuplestream{x+m}}{\valuetuplestream{x+n}} \in \streami
+    \)
     where $\values$ is a lattice satisfying the ascending chain condition,
     let \(\mu_f(\sigma)\) be the least fixed point of the function \(
-    \tau \mapsto \proj{0}\mleft(f(\tau,\sigma)\mright)
+    \tau \mapsto \proj{0}\mleft(f(\tau \concat \sigma)\mright)
     \).
     Then, the stream function \(
-    \sigma \mapsto \proj{1}\mleft(f(\mu_f(\sigma), \sigma)\mright)
+    \sigma \mapsto \proj{1}\mleft(f(\mu_f(\sigma) \concat \sigma)\mright)
     \) is in \(\streami\).
 \end{thm}
 \begin{proof}
     We prove that
-    \(\sigma \mapsto \proj{1}\mleft(f(\mu_f(\sigma), \sigma)\mright)\)
+    \(\sigma \mapsto \proj{1}\mleft(f(\mu_f(\sigma) \concat \sigma)\mright)\)
     is causal, finitely specified, and \(\bot\)-preserving monotone.
     The principal difficulty is establishing that the map
     \(\sigma \mapsto \mu_f(\sigma)\) is in \(\streami\);
@@ -1550,7 +1553,7 @@ in \(\streami\) produces another causal, finitely specified,
     Define \(\mu_f^i: \valuetuplestream{m} \to \valuetuplestream{x}\)
     for all \(i \in \nat\)
     by \(\mu_f^0(\sigma) = (\bot^x)^\omega\) and
-    \(\mu_f^{i+1}(\sigma) = \proj{0}(f(\mu_f^i(\sigma), \sigma))\) for \(i \geq 0\).
+    \(\mu_f^{i+1}(\sigma) = \proj{0}(f(\mu_f^i(\sigma) \concat \sigma))\) for \(i \geq 0\).
     Then by the Kleene fixed point theorem,
     \(\mu_f(\sigma) = \bigsqcup_{i \in \nat} \mu_f^i(\sigma)\).
 
@@ -1566,29 +1569,29 @@ in \(\streami\) produces another causal, finitely specified,
     \begin{align}
         \streamderivative{(\mu_f^{i+1})}{w}(\sigma) = \proj{0}(
         \streamderivative{f}{\mu_f^i[w]\concat w}(
-        \streamderivative{(\mu_f^i)}{w}(\sigma),\sigma)). \label{eq:twdf-claim}
+        \streamderivative{(\mu_f^i)}{w}(\sigma) \concat \sigma)). \label{eq:twdf-claim}
     \end{align}
     We prove this by induction on \(w\). When \(w = \varepsilon\), this
     claim is precisely the definition of \(\mu_f^{i+1}\). When \(w = ua\)
     where \(u \in \freemon{(\valuetuple{m})}\) and \(a \in \valuetuple{m}\),
     this claim is
     \begin{align*}
-        \streamderivative{(\mu_f^{i+1})}{w}(\sigma)                               & = \streamderivative{(\mu_f^{i+1})}{ua}(\sigma) = \streamderv{(\streamderivative{(\mu_f^{i+1})}{u}(a\streamcons\sigma))} \\
-                                                                                  & = \streamderv(\proj{0}(
+        \streamderivative{(\mu_f^{i+1})}{w}(\sigma)                                       & = \streamderivative{(\mu_f^{i+1})}{ua}(\sigma) = \streamderv{(\streamderivative{(\mu_f^{i+1})}{u}(a\streamcons\sigma))} \\
+                                                                                          & = \streamderv(\proj{0}(
         \streamderivative{f}{\mu_f^i[u]\concat u}(
-        \streamderivative{(\mu_f^i)}{u}(a\streamcons\sigma),a\streamcons\sigma))) & \text{(IH)}                                                                                                             \\
-                                                                                  & = \proj{0}(\streamderv(\streamderivative{f}{\mu_f^i[u]\concat u}(
+        \streamderivative{(\mu_f^i)}{u}(a\streamcons\sigma) \concat a\streamcons\sigma))) & \text{(IH)}                                                                                                             \\
+                                                                                          & = \proj{0}(\streamderv(\streamderivative{f}{\mu_f^i[u]\concat u}(
         (\streamderivative{(\mu_f^i)}{u}[a]\concat a)\streamcons (\streamderivative{(\mu_f^i)}{ua}(\sigma) \concat \sigma)
-        )))                                                                       & \text{($\streaminit, \streamderv$ decomp.)}                                                                             \\
-                                                                                  & = \proj{0}(\streamderivative{
+        )))                                                                               & \text{($\streaminit, \streamderv$ decomp.)}                                                                             \\
+                                                                                          & = \proj{0}(\streamderivative{
         (\streamderivative{f}{\mu_f^i[u]\concat u})}{
         \streamderivative{(\mu_f^i)}{u}[a]\concat a} (
-        \streamderivative{(\mu_f^i)}{ua}(\sigma), \sigma))
-                                                                                  & \text{(def'n $\streamderivative{f}{-}$)}
+        \streamderivative{(\mu_f^i)}{ua}(\sigma) \concat \sigma))
+                                                                                          & \text{(def'n $\streamderivative{f}{-}$)}
         \\
-                                                                                  & = \proj{0}(
+                                                                                          & = \proj{0}(
         (\streamderivative{f}{\mu_f^i[ua]\concat ua})(
-        \streamderivative{(\mu_f^i)}{ua}(\sigma), \sigma))                        & (*)
+        \streamderivative{(\mu_f^i)}{ua}(\sigma) \concat \sigma))                         & (*)
     \end{align*}
     as desired. Note the starred step is an application of $g[u] \streamcons g_u[a] = g[ua]$ when $g = \mu_f^i$.
 
@@ -1664,7 +1667,8 @@ To verify this we must establish that the categorical axioms of the trace hold.
             \mapsto
             g\left(
             \proj{0}\mleft(f(\tau, \sigma)\mright)
-            \right),
+            \right)
+            \concat
             \proj{1}\mleft(f(\tau, \sigma)\mright)
         }.
     \]
@@ -1686,8 +1690,8 @@ To verify this we must establish that the categorical axioms of the trace hold.
     \proj{1}(f(g(\mu_{l_\sigma}(\sigma)), \sigma))
     =
     \proj{1}\mleft(f(\mu_{r_\sigma}(\sigma), \sigma)\mright)
-    \),
-    which can be further reduced to
+    \).
+    Therefore the required equation holds if
     \(
     g(\mu_{l_\sigma}(\sigma))
     =
@@ -2040,7 +2044,7 @@ This can be computed in much the same way as it was for stream functions.
     \listvar{r}
     \mapsto
     \proj{0}\mleft(
-    \mealyfunctiontransition{f}\mleft(s, \listvar{r} \concat \listvar{a}\mright)\mright)
+    \mealyfunctionoutput{f}\mleft(s, \listvar{r} \concat \listvar{a}\mright)\mright)
     \).
     The \emph{least fixed point} of an initialised Mealy machine \((S, f, s_0)\)
     is a \((\valuetuple{m}, \valuetuple{n})\)-Mealy machine \[\left(
@@ -2124,7 +2128,7 @@ on \(\mealyi\).
         S \times \valuetuple{x+n}
     }
     \) is monotone with regards to the orders on \(S\) and
-    \(\valuetuple{x+m}\) and \(S \times (x+n)\) is a finite lattice, so
+    \(\valuetuple{x+m}\) and \(S \times \valuetuple{x+n}\) is a finite lattice, so
     \(f\) has a least fixed point.
     The function \(
     f^\prime \coloneqq (s, \listvar{a})
@@ -2350,10 +2354,13 @@ unsurprising; the main contribution of this chapter is to define maps
 This allows us to use monotone Mealy machines as a stepping stone in the
 correspondence between sequential circuits and stream functions.
 By exploiting the coalgebraic properties shared between Mealy machines and
-stream functions, this can be used to show that \(\streami\) is both a
-\emph{sound} and \emph{complete} denotational semantics, by which we mean there
-is a stream function in \(\streami\) for every circuit in \(\scircsigma\), and
-there is a circuit in \(\scircsigma\) for every stream function in \(\streami\).
+stream functions, this can be used to show that for every stream function
+\(f \in \streami\) we can recover a circuit \(
+\iltikzfig{strings/category/f}[box=g,dom=m,cod=n,colour=seq]
+\in \scircsigma
+\) such that the interpretation of \(
+\iltikzfig{strings/category/f}[box=g,dom=m,cod=n,colour=seq]\) as a stream
+function is \(f\).
 
 \subsection{Circuits to monotone Mealy machines}
 
@@ -3634,7 +3641,7 @@ Kleene fixed-point theorem.
 \begin{proof}
     Since \(f\) is monotone and \(\values^{n}\) is finite, the function
     \(\listvar{s} \mapsto f(\listvar{s}, \listvar{v})\) for arbitrary
-    \(\values{v} \in \values{m}\) has a least fixed point by the Kleene
+    \(\listvar{v} \in \values{m}\) has a least fixed point by the Kleene
     fixed-point theorem.
     This will either be some word \(\listvar{r} \in \valuetuple{m}\) or the
     maximal element \(\top^m\).
@@ -5404,7 +5411,7 @@ add equations to handle the bundlers.
 \begin{defi}
     Let the set \(\mealyequations^+\) be defined as \(\mealyequations\) but
     with equations \((\monoidunitleqn)\), \((\monoidunitreqn)\), and
-    \((\bottomdelayeqn)\) for wires of each with \(n \in \natplus\).
+    \((\bottomdelayeqn)\) for wires of each width \(n \in \natplus\).
 \end{defi}
 
 Since the set of normalising equations \(\normalisingequations\) is determined
