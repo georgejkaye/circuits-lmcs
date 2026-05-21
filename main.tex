@@ -25,7 +25,6 @@
 \usepackage{multicol}
 \usepackage{mathtools}
 \usepackage{subfig}
-\usepackage{todonotes}
 
 \usepackage{tikz}
 \usetikzlibrary{bbox, automata, positioning, arrows}
@@ -36,8 +35,6 @@
 \usepackage{mathpartir}
 \usepackage{hyperref}
 \usepackage[capitalise]{cleveref}
-
-\usepackage{todonotes}
 
 \input{macros/letters}
 \input{macros/sets}
@@ -890,7 +887,7 @@ colour (width) of wires.
 The only new generators are the \emph{bundlers} at the end of the bottom row;
 their intended meaning is that they can be used to \emph{split} and
 \emph{combine} bundles of wire buses into bundles with different widths.
-These constructs were first proposed by Wilson et al in~\cite{wilson2023string}
+These constructs were first proposed by Wilson et al.~\cite{wilson2023string}
 as a notation for \emph{non-strict monoidal categories}.
 We take inspiration from their observation that a similar idea could also be
 applied to strict monoidal categories.
@@ -1596,7 +1593,6 @@ in \(\streami\) produces another causal, finitely specified,
     \end{align*}
     as desired. Note the starred step is an application of $g[u] \streamcons g_u[a] = g[ua]$ when $g = \mu_f^i$.
 
-    %% TODO: not in keeping with macros established elsewhere.
     Note that $\mu_f^0[w] = (\bot^x)^{|w|}$, where $|w|$ is
     the length of $w$ as a word in $\freemon{(\valuetuple{m})}$. Thus,
     $\mu_f^0[w] = (\bot^x)^{|w|} \leq \mu_f^1[w]$. By induction,
@@ -1635,7 +1631,6 @@ in \(\streami\) produces another causal, finitely specified,
     However, since $f$ is finitely specified, this is a finite set
     and therefore there are only finitely many strictly ascending finite chains
     in this set.
-    %% END TODO
 \end{proof}
 
 Even if \(\streami\) is closed under least fixed point, this does not mean that
@@ -1767,9 +1762,9 @@ To answer this question, we will factor our proof through
 \emph{Mealy machines}.
 
 Mealy machines are used in circuit design to specify the behaviour of a circuit
-without having to use concrete components.  They also have
-a very useful \emph{coalgebraic} viewpoint which we will wield in order to
-build a bridge from circuits into stream functions.
+without having to use concrete components.
+They also have a very useful \emph{coalgebraic} viewpoint which we will wield in
+order to build a bridge from circuits into stream functions.
 In particular, there is a unique homomorphism from a Mealy machine to a causal,
 finitely specified stream function.
 Our strategy is to assemble a special class of Mealy machines which we dub
@@ -4403,7 +4398,7 @@ favourable structure for providing to a computer, there has recently been an
 extensive line of work into string diagram rewriting using
 \emph{hypergraphs}~\cite{bonchi2022string,bonchi2022stringa,bonchi2022stringb}.
 Of particular relevance to us is string diagram rewriting for settings with a
-traced comonoid structure~\cite{ghica2023rewriting}, which is exactly the
+traced comonoid structure~\cite{ghica2026rewriting}, which is exactly the
 structure we work with in digital circuits.
 
 In the string diagram hypergraph rewriting approach, string diagram terms are
@@ -6167,7 +6162,7 @@ behaviour of a circuit.
     \iltikzfig{strings/category/f}[box=g,colour=seq,dom=m,cod=n]
     \), if for all sequences \(\listlistvar{v},\listlistvar{w}\) produced by the
     productive operational semantics for inputs of length
-    \(\mathsf{max}(c,c^\prime)\),  \(\listlistvar{v} \ll \listlistvar{w}\).
+    \(\mathsf{max}(c,c^\prime)\), \(\listlistvar{v} \ll \listlistvar{w}\).
 \end{defi}
 
 Including this notion of efficiency in algebraic reasoning allows us to reason
@@ -6362,7 +6357,7 @@ rewriting~\cite{bonchi2022string,bonchi2022stringa,bonchi2022stringb} has used
 \emph{hypergraphs} for rewriting modulo Frobenius structure.
 This framework has been adapted for categories with a (co)monoid
 structure~\cite{fritz2023free,milosavljevic2023string}, and \emph{traced}
-comonoid structure~\cite{ghica2023rewriting}: the setting in which we model
+comonoid structure~\cite{ghica2026rewriting}: the setting in which we model
 digital circuits.
 We have already begun to develop an automated framework for rewriting
 circuits based on this work~\cite{kaye2026circuitcj}.
