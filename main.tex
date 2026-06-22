@@ -5132,7 +5132,7 @@ Finally, we use the above lemma to show how values can be applied to
 
 \begin{lem}\label{lem:essentially-combinational-applied}
     Let \(\morph{f}{\valuetuple{m}}{\valuetuple{n}}\) be a monotone function
-    such that \(
+    with \(
     \iltikzfig{strings/category/f-wide}[box=\mealytofunc[f],colour=seq]
     \coloneqq
     \iltikzfig{circuits/synthesis/normalised-function}[box=g]
@@ -5191,7 +5191,7 @@ translate between the state sets of any two denotationally equivalent circuits.
 \begin{thm}\label{thm:encoding}
     For a circuit \(
     \iltikzfig{strings/category/f-2-2-wide}[box=\mealytofunc[f],colour=seq,dom1=x,dom2=m,cod1=x,cod2=y]
-    \) and initial state \(\listvar{s} \in \valuetuple{x}\), the
+    \) and \(\listvar{s} \in \valuetuple{x}\), the
     equation \(
     \iltikzfig{circuits/productivity/mealy-form-wide}[core=\mealytofunc[f], colour=seq]
     =
@@ -5210,7 +5210,7 @@ translate between the state sets of any two denotationally equivalent circuits.
     it must be of the form \(
     \iltikzfig{circuits/synthesis/normalised-function}[box=g]
     \) by definition of complete interpretations.
-    This means we have
+    This means we have:
     \begin{align*}
         \iltikzfig{circuits/algebraic/encoding-state/step-0a}[box=g]
          & \coloneqq
