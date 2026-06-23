@@ -756,6 +756,7 @@
 \newtheorem{thmC}[thm]{Theorem}
 \newtheorem{propC}[thm]{Proposition}
 \newtheorem{lemC}[thm]{Lemma}
+\newtheorem{corC}[thm]{Corollary}
 
 % switch back to standard theorem style for document specific theorems
 \theoremstyle{plain}
