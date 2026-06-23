@@ -24,7 +24,6 @@
 \usepackage{microtype}
 \usepackage{multicol}
 \usepackage{mathtools}
-\usepackage{subfig}
 
 \usepackage{tikz}
 \usetikzlibrary{bbox, automata, positioning, arrows}
@@ -1837,7 +1836,7 @@ These results use an alternative definition of Mealy machines as types of
     \(S \mapsto (S \times B)^A\).
 \end{defi}
 
-\begin{exa}[\cite{bonsangue2008coalgebraic}]
+\begin{exaC}[\cite{bonsangue2008coalgebraic}]
     Given sets \(A\) and \(B\), let \(\Gamma\) be the set of causal stream
     functions \(\stream{A} \to \stream{B}\), and let
     \(\morph{\nu}{\Gamma}{(\Gamma \times B)^A}\) be the function defined as \(
@@ -1845,7 +1844,7 @@ These results use an alternative definition of Mealy machines as types of
         \streamderivative{f}{a},\initialoutput{f}{a}
     }\rangle\).
     Then \((\Gamma,\nu)\) is a \((A,B)\)-Mealy coalgebra.
-\end{exa}
+\end{exaC}
 
 \begin{rem}
     Note that the interpretation of a Mealy function as a coalgebra differs from
@@ -1872,7 +1871,7 @@ special than just being `an' \((A,B)\)-Mealy coalgebra.
 The \emph{final} \((A,B)\)-Mealy coalgebra is a \((A,B)\)-Mealy coalgebra to
 which every other \((A,B)\)-Mealy coalgebra has a unique homomorphism.
 
-\begin{prop}[\cite{rutten2006algebraic}, Prop.\ 2.2]
+\begin{propC}[\cite[Prod.\ 2.2]{rutten2006algebraic}]
     \label{prop:final-coalgebra}
     For every \((A,B)\)-Mealy coalgebra \((S,f)\), there exists a
     unique \((A,B)\)-Mealy homomorphism \(\morph{{!}}{(S,f)}{(\Gamma,\nu)}\).
@@ -2224,13 +2223,13 @@ This procedure does not just find an arbitrary Mealy machine with the same
 behaviour as the stream function.
 In fact, it produces the \emph{minimal} such Mealy machine.
 
-\begin{cor}[{\cite[Corollary 2.3]{rutten2006algebraic}}]\label{cor:minimal-mealy}
+\begin{corC}[{\cite[Corollary 2.3]{rutten2006algebraic}}]\label{cor:minimal-mealy}
     For a stream function \(\morph{f}{\stream{M}}{\stream{N}}\),
     \(\mealytostream[f]{}\) has the smallest state space of all Mealy machines
     with the property \(
     \mealytostream[\streamtomealy[f]{}]{} = f
     \).
-\end{cor}
+\end{corC}
 \begin{proof}
     Since \(S\) is generated from the function \(f\) and is the \emph{smallest}
     possible set, there are no unreachable states in \(S\).
