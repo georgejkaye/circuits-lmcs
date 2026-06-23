@@ -31,7 +31,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           release_name: Latest draft
-          tag_name: ${{ steps.name.outputs.name }}
+          tag_name: ${{ steps.name.outputs.name }}-draft
       - name: Upload paper to the release
         uses: actions/upload-release-asset@v1
         env:
@@ -55,5 +55,6 @@ jobs:
         with:
           keep_latest: 1
           delete_tags: true
+          delete_tag_pattern: draft
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
